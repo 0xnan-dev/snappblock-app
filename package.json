@@ -1,0 +1,71 @@
+{
+  "name": "hksnapshot",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "pods": "pod-install",
+    "patch:rn": "patch-package --patch-dir node_modules/react-native-polyfill-globals/patches",
+    "patch:ipfs": "patch-package --patch-dir patches/ipfs",
+    "postinstall": "npm run pods && npm run patch:rn && npm run patch:ipfs"
+  },
+  "dependencies": {
+    "@react-native-community/masked-view": "0.1.10",
+    "@react-navigation/native": "5.7.3",
+    "@react-navigation/stack": "5.9.0",
+    "base-64": "1.0.0",
+    "ipfs-http-client": "48.2.0",
+    "multiaddr": "8.1.2",
+    "react": "16.13.1",
+    "react-native": "0.63.3",
+    "react-native-device-info": "6.2.0",
+    "react-native-fetch-api": "1.0.1",
+    "react-native-gesture-handler": "1.7.0",
+    "react-native-get-random-values": "1.7.0",
+    "react-native-paper": "4.1.0",
+    "react-native-polyfill-globals": "3.0.0",
+    "react-native-reanimated": "1.13.0",
+    "react-native-safe-area-context": "3.1.7",
+    "react-native-safe-area-view": "1.1.1",
+    "react-native-screens": "2.10.1",
+    "react-native-url-polyfill": "1.2.0",
+    "react-native-vector-icons": "7.0.0",
+    "text-encoding": "0.7.0",
+    "util": "0.12.3",
+    "web-streams-polyfill": "3.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "7.8.4",
+    "@babel/plugin-proposal-async-generator-functions": "7.10.5",
+    "@babel/runtime": "7.8.4",
+    "@react-native-community/eslint-config": "1.1.0",
+    "@types/jest": "^26.0.23",
+    "@types/react-native": "^0.64.5",
+    "@types/react-test-renderer": "^16.9.2",
+    "babel-jest": "^26.6.3",
+    "eslint": "6.5.1",
+    "jest": "^27.0.6",
+    "metro-react-native-babel-preset": "0.59.0",
+    "patch-package": "6.2.2",
+    "pod-install": "0.1.10",
+    "typescript": "^4.3.5"
+  },
+  "resolutions": {
+    "@types/react": "16"
+  },
+  "jest": {
+    "preset": "react-native",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
+}
