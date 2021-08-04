@@ -22,12 +22,3 @@ target 'hksnapshot' do
   #   flipper_post_install(installer)
   # end
 end
-
-target 'hksnapshot-tvOS' do
-  # Pods for hksnapshot-tvOS
-
-  target 'hksnapshot-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-end
