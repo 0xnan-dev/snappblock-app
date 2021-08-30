@@ -11,15 +11,19 @@ import 'react-native-gesture-handler';
 import React from 'react';
 
 import {NavigationContainer} from '@react-navigation/native';
+import { NativeBaseProvider } from 'native-base';
+
 import AppStackNavigator from './navigation/app-stack-navigator';
 // import RootNavigator from './navigation/root-navigator';
 
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <AppStackNavigator />
-    </NavigationContainer>
+    <NativeBaseProvider>
+      <NavigationContainer>
+        <AppStackNavigator />
+      </NavigationContainer>
+    </NativeBaseProvider>
   );
 };
 export default App;

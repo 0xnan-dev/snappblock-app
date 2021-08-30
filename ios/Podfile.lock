@@ -185,11 +185,11 @@ PODS:
     - React-cxxreact (= 0.63.3)
     - React-jsi (= 0.63.3)
   - React-jsinspector (0.63.3)
-  - react-native-authcore (1.0.0):
-    - React
   - react-native-get-random-values (1.7.0):
     - React-Core
-  - react-native-safe-area-context (3.2.0):
+  - react-native-randombytes (3.6.1):
+    - React-Core
+  - react-native-safe-area-context (3.3.0):
     - React-Core
   - react-native-webview (8.2.1):
     - React
@@ -253,8 +253,6 @@ PODS:
     - React-Core (= 0.63.3)
     - React-cxxreact (= 0.63.3)
     - React-jsi (= 0.63.3)
-  - RNCMaskedView (0.1.11):
-    - React
   - RNDeviceInfo (6.2.0):
     - React-Core
   - RNGestureHandler (1.10.3):
@@ -263,6 +261,8 @@ PODS:
     - React-Core
   - RNScreens (2.18.1):
     - React-Core
+  - RNSVG (12.1.1):
+    - React
   - RNVectorIcons (7.0.0):
     - React
   - Yoga (1.14.0)
@@ -285,8 +285,8 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
-  - react-native-authcore (from `../node_modules/react-native-authcore`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
+  - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -299,11 +299,11 @@ DEPENDENCIES:
   - React-RCTText (from `../node_modules/react-native/Libraries/Text`)
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -342,10 +342,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
-  react-native-authcore:
-    :path: "../node_modules/react-native-authcore"
   react-native-get-random-values:
     :path: "../node_modules/react-native-get-random-values"
+  react-native-randombytes:
+    :path: "../node_modules/react-native-randombytes"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-webview:
@@ -370,8 +370,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/Libraries/Vibration"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
-  RNCMaskedView:
-    :path: "../node_modules/@react-native-community/masked-view"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
   RNGestureHandler:
@@ -380,6 +378,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   Yoga:
@@ -402,10 +402,10 @@ SPEC CHECKSUMS:
   React-jsi: df07aa95b39c5be3e41199921509bfa929ed2b9d
   React-jsiexecutor: b56c03e61c0dd5f5801255f2160a815f4a53d451
   React-jsinspector: 8e68ffbfe23880d3ee9bafa8be2777f60b25cbe2
-  react-native-authcore: cca08325158d4979caff295a8cd064733b78264f
   react-native-get-random-values: 237bffb1c7e05fb142092681531810a29ba53015
-  react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
-  react-native-webview: 160ac8d6bb974e2933f2de6bb7464a8e934ff31d
+  react-native-randombytes: 5fc412efe7b5c55b9002c0004d75fe5fabcaa507
+  react-native-safe-area-context: 8465df05de8106c584b117f0e027e17174d6e02e
+  react-native-webview: d3cf75764f98fd433f1222f5a7ca8e355ada2a15
   React-RCTActionSheet: 53ea72699698b0b47a6421cb1c8b4ab215a774aa
   React-RCTAnimation: 1befece0b5183c22ae01b966f5583f42e69a83c2
   React-RCTBlob: 0b284339cbe4b15705a05e2313a51c6d8b51fa40
@@ -416,11 +416,11 @@ SPEC CHECKSUMS:
   React-RCTText: 65a6de06a7389098ce24340d1d3556015c38f746
   React-RCTVibration: 8e9fb25724a0805107fc1acc9075e26f814df454
   ReactCommon: 4167844018c9ed375cc01a843e9ee564399e53c3
-  RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
-  RNDeviceInfo: eb63f95c93ff1aae15353d113c130aebc6127915
+  RNDeviceInfo: 980848feea8d74412b16f2e3e8758c8294d63ca2
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNReanimated: 514a11da3a2bcc6c3dfd9de32b38e2b9bf101926
   RNScreens: f7ad633b2e0190b77b6a7aab7f914fad6f198d8d
+  RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   RNVectorIcons: da6fe858f5a65d7bbc3379540a889b0b12aa5976
   Yoga: 7d13633d129fd179e01b8953d38d47be90db185a
 

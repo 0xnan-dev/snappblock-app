@@ -1,5 +1,3 @@
-import 'react-native-polyfill-globals/auto';
-
 if (typeof __dirname === 'undefined') global.__dirname = '/'
 if (typeof __filename === 'undefined') global.__filename = ''
 if (typeof process === 'undefined') {

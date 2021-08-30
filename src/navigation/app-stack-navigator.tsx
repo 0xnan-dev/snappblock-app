@@ -1,21 +1,17 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import HomeScreen from '../screens/home-screen';
-import SignInScreen from '../screens/sign-in-screen';
+import HomeScreen from '../screens/welcome';
+import ImportSeedPhraseScreen from '../screens/import-seed-phrase';
+
 const Stack = createStackNavigator();
 
 function AppStackNavigator() {
-  const isSignedIn = false
   return (
     <Stack.Navigator
       initialRouteName="Home"
       screenOptions={{gestureEnabled: false}}>
-        {isSignedIn ? (
-          <Stack.Screen name="Home" component={HomeScreen} />
-        ) : (
-          <Stack.Screen name="SignIn" component={SignInScreen} />
-        )}
-
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Import Seed Phrase" component={ImportSeedPhraseScreen} />
     </Stack.Navigator>
   );
 }
