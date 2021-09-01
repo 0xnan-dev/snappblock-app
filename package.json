@@ -12,7 +12,7 @@
     "patch:rn": "patch-package --patch-dir node_modules/react-native-polyfill-globals/patches",
     "patch:ipfs": "patch-package --patch-dir patches/ipfs",
     "patch:cipher-base": "patch-package --patch-dir patches/cipher-base",
-    "postinstall": "npm run pods && npm run patch:rn && npm run patch:ipfs && npm run patch:cipher-base"
+    "postinstall": "npm run pods && npm run patch:rn && npm run patch:ipfs && npm run patch:cipher-base && ./node_modules/.bin/rn-nodeify --hack --install "
   },
   "dependencies": {
     "@cosmjs/proto-signing": "^0.26.0",
