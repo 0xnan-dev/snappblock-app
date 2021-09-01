@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useForm, Controller} from 'react-hook-form';
 import {VStack, Button, TextArea, FormControl} from 'native-base';
-import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import {DirectSecp256k1HdWallet} from '@cosmjs/proto-signing';
 
 const ImportSeedPhraseScreen = () => {
   const {control, handleSubmit} = useForm({
@@ -13,8 +13,8 @@ const ImportSeedPhraseScreen = () => {
   const onSubmit = async (data: {seedPhrase: string}) => {
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(data.seedPhrase);
     const [firstAccount] = await wallet.getAccounts();
-    console.log(firstAccount)
-    console.log(firstAccount.pubkey)
+    console.log(firstAccount);
+    console.log(firstAccount.pubkey);
   };
 
   return (
