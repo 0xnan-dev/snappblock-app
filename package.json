@@ -12,10 +12,14 @@
     "patch:rn": "patch-package --patch-dir node_modules/react-native-polyfill-globals/patches",
     "patch:ipfs": "patch-package --patch-dir patches/ipfs",
     "patch:cipher-base": "patch-package --patch-dir patches/cipher-base",
-    "postinstall": "npm run pods && npm run patch:rn && npm run patch:ipfs && npm run patch:cipher-base && ./node_modules/.bin/rn-nodeify --hack --install "
+    "postinstall": "npm run pods && npm run patch:rn && npm run patch:ipfs && npm run patch:cipher-base && ./node_modules/.bin/rn-nodeify --hack --install ",
+    "reset": "rm -rf node_modules && rm -rf ios/Pods && pod cache clean --all && npm i && npm run postinstall",
+    "restart": "killall -9 node && npm start --reset-cache && react-native run-ios"
   },
   "dependencies": {
     "@cosmjs/proto-signing": "^0.26.0",
+    "@cosmjs/stargate": "^0.26.0",
+    "@likecoin/iscn-message-types": "^0.0.1",
     "@react-navigation/native": "^5.9.4",
     "@react-navigation/stack": "^5.14.5",
     "@tradle/react-native-http": "^2.0.1",
@@ -40,6 +44,7 @@
     "react": "16.13.1",
     "react-hook-form": "^7.14.0",
     "react-native": "0.63.3",
+    "react-native-camera": "^4.1.1",
     "react-native-crypto": "^2.2.0",
     "react-native-device-info": "6.2.0",
     "react-native-fetch-api": "1.0.1",

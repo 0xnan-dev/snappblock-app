@@ -7,14 +7,22 @@ const WelcomeScreen = ({navigation}) => {
       <Text fontSize="6xl">Welcome</Text>
       <Text>Let's start with generating a wallet.</Text>
       <Button
+        marginY="10px"
         colorScheme="success"
         onPress={() => navigation.navigate('Seed Phrase')}>
         New Wallet
       </Button>
       <Button
+        marginY="10px"
         colorScheme="info"
         onPress={() => navigation.navigate('Import Seed Phrase')}>
         Import
+      </Button>
+      <Button
+        marginY="10px"
+        colorScheme="primary"
+        onPress={() => navigation.navigate('Snap Shot')}>
+        Take Photo
       </Button>
     </Box>
   );
