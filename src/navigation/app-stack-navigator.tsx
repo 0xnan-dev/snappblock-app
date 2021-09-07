@@ -3,6 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import WelcomeScreen from '../screens/welcome';
 import NewWalletScreen from '../screens/new-wallet';
 import ImportSeedPhraseScreen from '../screens/import-seed-phrase';
+import SnapshotScreen from '../screens/snapshot';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,10 @@ function AppStackNavigator() {
       <Stack.Screen
         name="Import Seed Phrase"
         component={ImportSeedPhraseScreen}
+      />
+      <Stack.Screen
+        name="Snap Shot"
+        component={SnapshotScreen}
       />
     </Stack.Navigator>
   );
