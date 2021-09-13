@@ -9,24 +9,24 @@
  */
 import 'react-native-gesture-handler';
 import React from 'react';
-
 import {NavigationContainer} from '@react-navigation/native';
-import { NativeBaseProvider } from 'native-base';
-
+import {NativeBaseProvider} from 'native-base';
 import AppStackNavigator from './navigation/app-stack-navigator';
-import { IpfsProvider } from './navigation/ipfs-http-client';
-// import RootNavigator from './navigation/root-navigator';
-
+import {IpfsProvider} from './navigation/ipfs-http-client';
+import {Provider} from 'react-redux';
+import {store} from './store';
 
 const App = () => {
   return (
-    <IpfsProvider>
-      <NativeBaseProvider>
-        <NavigationContainer>
-          <AppStackNavigator />
-        </NavigationContainer>
-      </NativeBaseProvider>
-    </IpfsProvider>
+    <Provider store={store}>
+      <IpfsProvider>
+        <NativeBaseProvider>
+          <NavigationContainer>
+            <AppStackNavigator />
+          </NavigationContainer>
+        </NativeBaseProvider>
+      </IpfsProvider>
+    </Provider>
   );
 };
 export default App;
