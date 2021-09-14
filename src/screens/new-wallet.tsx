@@ -10,16 +10,22 @@ import {
   FormControl,
 } from 'native-base';
 import {useForm, Controller} from 'react-hook-form';
-import {DirectSecp256k1HdWallet} from '@cosmjs/proto-signing';
+import * as SecureStore from 'expo-secure-store';
+import {useAppSelector, useAppDispatch} from '../hooks';
+
+import {
+  generateNewWalletAsync,
+  saveNewWalletAsync,
+  selectOptionalWalletMnemonic,
+} from '../features/wallet/walletSlice';
 
 const NewWalletScreen = () => {
+  const newWalletMnemonic = useAppSelector(selectOptionalWalletMnemonic);
+  const dispatch = useAppDispatch();
   const [showConfirmSeedPhraseModal, setShowConfirmWalletModal] =
     useState(false);
   const initalShowConfirmSeedPhraseModalRef = useRef(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [newWallet, setNewWallet] = useState<DirectSecp256k1HdWallet | null>(
-    null,
-  );
   const [
     isConfirmSeedPhraseCopyButtonDisabled,
     setIsConfirmSeedPhraseCopyButtonDisabled,
@@ -31,28 +37,27 @@ const NewWalletScreen = () => {
   });
 
   const onPressGenerateWalletButton = async () => {
-    console.log('onPressGenerateWalletButton');
-    const wallet: DirectSecp256k1HdWallet =
-      await DirectSecp256k1HdWallet.generate(24);
-    setNewWallet(wallet);
+    dispatch(generateNewWalletAsync(24));
   };
 
   const onSubmit = async (data: {password: string}) => {
-    console.log('confirmWallet');
-    const serialization = await newWallet.serialize(data.password);
-    console.log(serialization);
-    const restore = await DirectSecp256k1HdWallet.deserialize(
-      serialization,
-      data.password,
-    );
-    console.log(restore);
+    dispatch(saveNewWalletAsync(data.password))
+      .unwrap()
+      .then((originalPromiseResult) => {
+        console.debug(originalPromiseResult);
+      })
+      .catch((rejectedValueOrSerializedError) => {
+        Alert.alert('Error ', rejectedValueOrSerializedError.message, [
+          {text: 'OK chillout'},
+        ]);
+      });
   };
 
   return (
     <VStack width="80%" space={4}>
-      {newWallet ? (
+      {newWalletMnemonic ? (
         <Box>
-          <Text>{newWallet.secret.data}</Text>
+          <Text selectable={true}>{newWalletMnemonic}</Text>
           <Checkbox
             value="checkSeedPhraseCopy"
             accessibilityLabel="I've written down the seed phrase and stored it in a secure place."
@@ -107,9 +112,7 @@ const NewWalletScreen = () => {
               </Modal.Body>
               <Modal.Footer>
                 <Button.Group variant="ghost" space={2}>
-                  <Button onPress={handleSubmit(onSubmit)}>
-                    Confirm
-                  </Button>
+                  <Button onPress={handleSubmit(onSubmit)}>Confirm</Button>
                   <Button
                     onPress={() => {
                       setShowConfirmWalletModal(false);
