@@ -3,6 +3,8 @@ import {DirectSecp256k1HdWallet} from '@cosmjs/proto-signing';
 import * as SecureStore from 'expo-secure-store';
 import {RootState} from 'src/store';
 
+export const DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY =
+  'DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY';
 export interface WalletState {
   mnemonic?: string;
   serialization?: string;
@@ -25,11 +27,11 @@ export const generateNewWalletAsync = createAsyncThunk(
 
 export const importWalletAsync = createAsyncThunk(
   'wallet/importNewWalletAsync',
-  async(mnemonic: string) => {
+  async (mnemonic: string) => {
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic);
     return wallet.mnemonic;
-  }
-)
+  },
+);
 
 export const saveNewWalletAsync = createAsyncThunk(
   'wallet/saveNewWalletAsync',
@@ -37,18 +39,18 @@ export const saveNewWalletAsync = createAsyncThunk(
     console.log('saveNewWalletAsync!!');
     const state = thunkAPI.getState();
     const mnemonic = state.wallet.wallet.mnemonic;
-    const directSecp256k1HdWallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic);
+    const directSecp256k1HdWallet = await DirectSecp256k1HdWallet.fromMnemonic(
+      mnemonic,
+    );
     const directSecp256k1HdWalletSerialization =
       await directSecp256k1HdWallet.serialize(password);
-    const walletSerializationSecureStoreKey =
-      'DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY';
     await SecureStore.setItemAsync(
-      walletSerializationSecureStoreKey,
+      DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY,
       directSecp256k1HdWalletSerialization,
     );
     try {
       const walletSerializationRestored = await SecureStore.getItemAsync(
-        walletSerializationSecureStoreKey,
+        DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY,
       );
       console.debug(walletSerializationRestored);
     } catch (e) {
@@ -62,7 +64,12 @@ export const saveNewWalletAsync = createAsyncThunk(
 const walletsSlice = createSlice({
   name: 'wallet',
   initialState,
-  reducers: {},
+  reducers: {
+    restoreSerialization: (state) => {
+      console.log("restoreSerialization")
+      state.serialization;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(generateNewWalletAsync.pending, (state) => {
@@ -79,15 +86,15 @@ const walletsSlice = createSlice({
         state.mnemonic = action.payload;
       })
       .addCase(importWalletAsync.pending, (state) => {
-        console.debug("importWalletAsync pending");
+        console.debug('importWalletAsync pending');
         state.status = 'loading';
       })
       .addCase(importWalletAsync.rejected, (state, action) => {
-        console.debug("importWalletAsync rejected");
+        console.debug('importWalletAsync rejected');
         state.status = 'failed';
       })
       .addCase(importWalletAsync.fulfilled, (state, action) => {
-        console.debug("importWalletAsync fulfilled");
+        console.debug('importWalletAsync fulfilled');
         state.status = 'idle';
         state.mnemonic = action.payload;
       })
@@ -113,5 +120,8 @@ export const {} = walletsSlice.actions;
 
 export const selectOptionalWalletMnemonic = (state: RootState) =>
   state.wallet.mnemonic;
+
+export const selectOptionalWalletSerialization = (state: RootState) => 
+  state.wallet.serialization;
 
 export default walletsSlice.reducer;
