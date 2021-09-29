@@ -206,13 +206,13 @@ PODS:
     - React-cxxreact (= 0.63.3)
     - React-jsi (= 0.63.3)
   - React-jsinspector (0.63.3)
-  - react-native-camera (4.1.1):
+  - react-native-camera (4.2.1):
     - React-Core
-    - react-native-camera/RCT (= 4.1.1)
-    - react-native-camera/RN (= 4.1.1)
-  - react-native-camera/RCT (4.1.1):
+    - react-native-camera/RCT (= 4.2.1)
+    - react-native-camera/RN (= 4.2.1)
+  - react-native-camera/RCT (4.2.1):
     - React-Core
-  - react-native-camera/RN (4.1.1):
+  - react-native-camera/RN (4.2.1):
     - React-Core
   - react-native-get-random-values (1.7.0):
     - React-Core
@@ -300,7 +300,7 @@ PODS:
     - React
   - UMAppLoader (2.2.0)
   - UMCore (7.1.2)
-  - UMReactNativeAdapter (6.3.7):
+  - UMReactNativeAdapter (6.3.9):
     - ExpoModulesCore
     - React-Core
     - UMCore
@@ -465,11 +465,11 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   DoubleConversion: cde416483dac037923206447da6e1454df403714
-  EXConstants: d0969e870d37f824cc940751d8e7e3c50afe6063
-  EXFileSystem: 94496f1160b0bf7f000fe04e38ecb2aa63083a2c
-  EXImageLoader: 6494524ac2b99af4edcacada0e19c71600423e59
-  ExpoModulesCore: 730c7158b2fb179ba5921230e56a083a2304974d
-  EXSecureStore: 051e95a9624704313c50e8c95ee65033ce210aee
+  EXConstants: 4cb52b6d8f636c767104a44bf7db3873e9c01a6f
+  EXFileSystem: 0a04aba8da751b9ac954065911bcf166503f8267
+  EXImageLoader: d3531a3fe530b22925c19977cb53bb43e3821fe6
+  ExpoModulesCore: 2734852616127a6c1fc23012197890a6f3763dc7
+  EXSecureStore: 1aa80d49a3a101418bbd2675e2a0d32dceea10c2
   FBLazyVector: 878b59e31113e289e275165efbe4b54fa614d43d
   FBReactNativeSpec: 7da9338acfb98d4ef9e5536805a0704572d33c2f
   Folly: b73c3869541e86821df3c387eb0af5f65addfab4
@@ -484,11 +484,11 @@ SPEC CHECKSUMS:
   React-jsi: df07aa95b39c5be3e41199921509bfa929ed2b9d
   React-jsiexecutor: b56c03e61c0dd5f5801255f2160a815f4a53d451
   React-jsinspector: 8e68ffbfe23880d3ee9bafa8be2777f60b25cbe2
-  react-native-camera: 457a5279a12864bc241c28518fecd5db2838754c
+  react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
   react-native-get-random-values: 237bffb1c7e05fb142092681531810a29ba53015
-  react-native-randombytes: 5fc412efe7b5c55b9002c0004d75fe5fabcaa507
-  react-native-safe-area-context: 5cf05f49df9d17261e40e518481f2e334c6cd4b5
-  react-native-udp: ccbd878f0f3b968217fc7e3d5eb5839fcaab8b6c
+  react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
+  react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
+  react-native-udp: ff9d13e523f2b58e6bc5d4d32321ac60671b5dc9
   React-RCTActionSheet: 53ea72699698b0b47a6421cb1c8b4ab215a774aa
   React-RCTAnimation: 1befece0b5183c22ae01b966f5583f42e69a83c2
   React-RCTBlob: 0b284339cbe4b15705a05e2313a51c6d8b51fa40
@@ -499,18 +499,18 @@ SPEC CHECKSUMS:
   React-RCTText: 65a6de06a7389098ce24340d1d3556015c38f746
   React-RCTVibration: 8e9fb25724a0805107fc1acc9075e26f814df454
   ReactCommon: 4167844018c9ed375cc01a843e9ee564399e53c3
-  RNDeviceInfo: 980848feea8d74412b16f2e3e8758c8294d63ca2
+  RNDeviceInfo: eb63f95c93ff1aae15353d113c130aebc6127915
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNReanimated: 514a11da3a2bcc6c3dfd9de32b38e2b9bf101926
   RNScreens: f7ad633b2e0190b77b6a7aab7f914fad6f198d8d
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   RNVectorIcons: da6fe858f5a65d7bbc3379540a889b0b12aa5976
-  TcpSockets: 8d839b9b14f6f344d98e4642ded13ab3112b462d
-  UMAppLoader: db2dae4bc3085e21f56d6d9cf7783d08c5999af4
-  UMCore: ad33bbda30dee343a248e3696f30502092d9842d
-  UMReactNativeAdapter: fadad42e25524911487098bf0aaa013b78533b22
-  UMTaskManagerInterface: 75462b0d8580ec91ae23f88a4f9271a3130efb02
+  TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
+  UMAppLoader: 21af63390e55c82e037fb9752d93114a80ecf16e
+  UMCore: ce3a4faa010239063b8343895b29a6d97b01069d
+  UMReactNativeAdapter: d03cefd0e4e4179ab8c490408589f1c8a6c8b785
+  UMTaskManagerInterface: 2be431101b73604e64fbfffcf759336f9d8fccbb
   Yoga: 7d13633d129fd179e01b8953d38d47be90db185a
 
 PODFILE CHECKSUM: 81db12717e5c83c7634bbc5192822ceec2d7262c

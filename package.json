@@ -19,6 +19,7 @@
   "dependencies": {
     "@cosmjs/proto-signing": "^0.26.0",
     "@cosmjs/stargate": "^0.26.0",
+    "@likecoin/iscn-js": "^0.0.4",
     "@likecoin/iscn-message-types": "^0.0.1",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.0.7",
