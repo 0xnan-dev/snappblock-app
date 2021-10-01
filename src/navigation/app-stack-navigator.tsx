@@ -28,7 +28,6 @@ function AppStackNavigator() {
         // Restoring token failed
         console.debug(e);
       }
-      console.debug('serialization', serialization);
       dispatch({type: 'restoreSerialization', serialization: serialization});
     };
 
@@ -41,17 +40,17 @@ function AppStackNavigator() {
       screenOptions={{gestureEnabled: false}}>
       {walletSerialization ? (
         <>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Snap Shot" component={SnapshotScreen} />
+        </>
+      ) : (
+        <>
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
           <Stack.Screen name="Seed Phrase" component={NewWalletScreen} />
           <Stack.Screen
             name="Import Seed Phrase"
             component={ImportSeedPhraseScreen}
           />
-        </>
-      ) : (
-        <>
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Snap Shot" component={SnapshotScreen} />
         </>
       )}
     </Stack.Navigator>
