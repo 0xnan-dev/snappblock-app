@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
 import {
@@ -279,10 +280,19 @@ const PostItem = ({
               fontWeight: '600',
               marginVertical: 5,
             }}>
-            {item.walletAddress?.slice(0, 20)}{' '}
+            {item.name}
           </Text>
+        </View>
+
+        <View
+          style={{
+            flexWrap: 'wrap',
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
           {content.map((Jsx) => Jsx)}
         </View>
+
         {item?.comments && item?.comments.length > 0 && (
           <>
             <View>
@@ -496,7 +506,7 @@ export function createFilterContent(content: string, navigation: any) {
     match: string;
     index: number;
   }[] = [];
-  content?.replace(/@[a-zA-Z0-9._]{4,}|\w+/g, (match, index) => {
+  content?.replace(/\B\#\w\w+\b/g, (match, index) => {
     matchedGroups.push({match, index});
     return match;
   });
@@ -536,5 +546,6 @@ export function createFilterContent(content: string, navigation: any) {
     );
     i += match.match.length - 1;
   });
+  console.log('matchedGroups', matchedGroups);
   return splitedContent;
 }
