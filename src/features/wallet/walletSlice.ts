@@ -7,7 +7,7 @@ export const DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY =
   'DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY';
 export interface WalletState {
   mnemonic?: string;
-  serialization?: string;
+  serialization?: null | string;
   firstAccountAddress?: string;
   status: 'idle' | 'loading' | 'failed';
 }
@@ -66,7 +66,6 @@ const walletsSlice = createSlice({
   initialState,
   reducers: {
     restoreSerialization: (state) => {
-      console.log("restoreSerialization")
       state.serialization;
     },
   },
