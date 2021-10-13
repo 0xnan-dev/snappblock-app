@@ -6,8 +6,8 @@ import {DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY} from '../features/wallet/
 import WelcomeScreen from '../screens/welcome';
 import NewWalletScreen from '../screens/new-wallet';
 import ImportSeedPhraseScreen from '../screens/import-seed-phrase';
-import HomeScreen from '../screens/home';
-import SnapshotScreen from '../screens/snapshot';
+import HomeTab, {PhotoStack} from './homeTab';
+
 import {selectOptionalWalletSerialization} from '../features/wallet/walletSlice';
 import {useAppSelector, useAppDispatch} from '../hooks';
 
@@ -28,11 +28,12 @@ function AppStackNavigator() {
         // Restoring token failed
         console.debug(e);
       }
+      console.debug('serialization', serialization);
       dispatch({type: 'restoreSerialization', serialization: serialization});
     };
 
     bootstrapAsync();
-  }, []);
+  }, [dispatch]);
 
   return (
     <Stack.Navigator
@@ -40,17 +41,17 @@ function AppStackNavigator() {
       screenOptions={{gestureEnabled: false}}>
       {walletSerialization ? (
         <>
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Snap Shot" component={SnapshotScreen} />
-        </>
-      ) : (
-        <>
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
           <Stack.Screen name="Seed Phrase" component={NewWalletScreen} />
           <Stack.Screen
             name="Import Seed Phrase"
             component={ImportSeedPhraseScreen}
           />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="HK SnapShot" component={HomeTab} />
+          <Stack.Screen name="PhotoStack" component={PhotoStack} />
         </>
       )}
     </Stack.Navigator>
