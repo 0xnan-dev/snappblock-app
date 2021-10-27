@@ -6,7 +6,6 @@ import {createStackNavigator} from '@react-navigation/stack';
 import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {TabBarComponent} from '../components/BottomTabBar';
-import CustomNotificationIcon from '../components/CustomTabIcons/CustomNotificationIcon';
 import CustomAccountIcon from '../components/CustomTabIcons/CustomAccountIcon';
 import HomeScreen from '../screens/home';
 import SnapshotScreen from '../screens/snapshot';
@@ -18,9 +17,7 @@ import LocationChooserScreen from '../screens/photos/locationChooser';
 
 export type HomeTabParamList = {
   Home: undefined;
-  Explore: undefined;
   Creator: undefined;
-  Activity: undefined;
   Account: undefined;
   Follow: {
     type: 1 | 2;
@@ -53,29 +50,6 @@ const CreatorStack = () => {
   );
 };
 
-const ActivityStack = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-        gestureEnabled: false,
-      }}>
-      <Stack.Screen component={HomeScreen} name="HomeScreen" />
-    </Stack.Navigator>
-  );
-};
-
-const ExploreStack = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-        gestureEnabled: false,
-      }}>
-      <Stack.Screen component={HomeScreen} name="HomeScreen" />
-    </Stack.Navigator>
-  );
-};
 const HomeStack = () => {
   return (
     <Stack.Navigator
@@ -133,35 +107,11 @@ const HomeTab = () => {
       <Tab.Screen
         options={{
           tabBarIcon: ({focused}) => (
-            <Icon name="magnify" size={30} color={focused ? '#000' : '#ddd'} />
-          ),
-        }}
-        component={ExploreStack}
-        name="Explore"
-      />
-      <Tab.Screen
-        // listeners={({navigation}) => ({
-        //   tabPress: (e) => {
-        //     e.preventDefault();
-        //     navigation.navigate('GalleryChooser');
-        //   },
-        // })}
-        options={{
-          tabBarIcon: ({focused}) => (
             <Icon name="plus-box" size={30} color={focused ? '#000' : '#ddd'} />
           ),
         }}
         component={CreatorStack}
         name="Creator"
-      />
-      <Tab.Screen
-        options={{
-          tabBarIcon: ({focused}) => (
-            <CustomNotificationIcon focused={focused} />
-          ),
-        }}
-        component={ActivityStack}
-        name="Activity"
       />
       <Tab.Screen
         options={{
