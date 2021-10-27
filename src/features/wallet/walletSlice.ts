@@ -115,12 +115,12 @@ const walletsSlice = createSlice({
   },
 });
 
-export const {} = walletsSlice.actions;
+export const {restoreSerialization} = walletsSlice.actions;
 
 export const selectOptionalWalletMnemonic = (state: RootState) =>
   state.wallet.mnemonic;
 
-export const selectOptionalWalletSerialization = (state: RootState) => 
+export const selectOptionalWalletSerialization = (state: RootState) =>
   state.wallet.serialization;
 
 export default walletsSlice.reducer;
