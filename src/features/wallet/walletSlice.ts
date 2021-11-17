@@ -48,15 +48,7 @@ export const saveNewWalletAsync = createAsyncThunk(
       DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY,
       directSecp256k1HdWalletSerialization,
     );
-    try {
-      const walletSerializationRestored = await SecureStore.getItemAsync(
-        DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY,
-      );
-      console.debug(walletSerializationRestored);
-    } catch (e) {
-      // Restoring token failed
-      console.debug(e);
-    }
+  
     return directSecp256k1HdWalletSerialization;
   },
 );
