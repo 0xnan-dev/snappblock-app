@@ -14,13 +14,6 @@ import {
   default as Icon,
   default as Icons,
 } from 'react-native-vector-icons/MaterialCommunityIcons';
-// import {useDispatch} from 'react-redux';
-// import {ToggleLikePostRequest} from '../../actions/postActions';
-// import {ToggleBookMarkRequest} from '../../actions/userActions';
-// import {navigate, navigation} from '../../navigations/rootNavigation';
-// import {useSelector} from '../../reducers';
-// import {ExtraPost} from '../../reducers/postReducer';
-// import {store} from '../../store';
 import {SCREEN_WIDTH} from '../../lib/constants';
 import {timestampToString} from '../../lib/utils';
 import CirclePagination from '../CirclePagination';
