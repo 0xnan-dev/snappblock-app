@@ -18,12 +18,6 @@ const WelcomeScreen = ({navigation}) => {
         onPress={() => navigation.navigate('Import Seed Phrase')}>
         Import
       </Button>
-      <Button
-        marginY="10px"
-        colorScheme="primary"
-        onPress={() => navigation.navigate('Snap Shot')}>
-        Take Photo
-      </Button>
     </Box>
   );
 };
