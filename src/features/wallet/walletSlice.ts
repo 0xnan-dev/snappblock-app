@@ -2,6 +2,7 @@ import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {DirectSecp256k1HdWallet} from '@cosmjs/proto-signing';
 import * as SecureStore from 'expo-secure-store';
 import {RootState} from 'src/store';
+import { InfoOutlineIcon } from 'native-base';
 
 export const DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY =
   'DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY';
@@ -10,10 +11,11 @@ export interface WalletState {
   serialization?: null | string;
   firstAccountAddress?: string;
   status: 'idle' | 'loading' | 'failed';
+  loading: boolean;
 }
 
 const initialState: WalletState = {
-  status: 'idle',
+  status: 'idle'
 };
 
 export const generateNewWalletAsync = createAsyncThunk(
@@ -58,7 +60,9 @@ const walletsSlice = createSlice({
   initialState,
   reducers: {
     restoreSerialization: (state) => {
-      state.serialization;
+      console.debug("restoreSerialization", state)
+      state.serialization = state.serialization;
+      state.status = 'idle';
     },
   },
   extraReducers: (builder) => {
