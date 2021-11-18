@@ -41,17 +41,17 @@ function AppStackNavigator() {
       screenOptions={{gestureEnabled: false}}>
       {walletSerialization ? (
         <>
+          <Stack.Screen name="HK SnapShot" component={HomeTab} />
+          <Stack.Screen name="PhotoStack" component={PhotoStack} />
+        </>
+      ) : (
+        <>
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
           <Stack.Screen name="Seed Phrase" component={NewWalletScreen} />
           <Stack.Screen
             name="Import Seed Phrase"
             component={ImportSeedPhraseScreen}
           />
-        </>
-      ) : (
-        <>
-          <Stack.Screen name="HK SnapShot" component={HomeTab} />
-          <Stack.Screen name="PhotoStack" component={PhotoStack} />
         </>
       )}
     </Stack.Navigator>
