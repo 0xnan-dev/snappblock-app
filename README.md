@@ -1,18 +1,21 @@
-# HKSnapshot
+# SnappBlock
 
 ## Getting started
 
-### start local IPFS Daemon 
+### start local IPFS Daemon
+
 ```
 ipfs daemon
 ```
 
-### start react native 
+### start react native
+
 ```
 npx react-native start
 ```
 
-### start ios simulator 
+### start ios simulator
+
 ```
 npx react-native run-ios
 ```

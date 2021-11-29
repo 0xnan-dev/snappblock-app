@@ -4,13 +4,13 @@ require File.join(File.dirname(`node --print "require.resolve('react-native-unim
 
 platform :ios, '11.0'
 
-target 'hksnapshot' do
+target 'snappblock' do
   use_unimodules!
   config = use_native_modules!
 
   use_react_native!(:path => config["reactNativePath"])
 
-  target 'hksnapshotTests' do
+  target 'snappblockTests' do
     inherit! :complete
     # Pods for testing
   end
