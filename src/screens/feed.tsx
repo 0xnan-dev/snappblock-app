@@ -1,8 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useRef, useState} from 'react';
-import IpfsHttpClient from 'ipfs-http-client';
-
 import {
   Text,
   View,
@@ -22,8 +20,11 @@ import PostList, {Post} from '../components/PostList';
 import CommentInputPopup from '../components/CommentInputPopup';
 import HomeNavigationBar from '../components/HomeNavigationBar';
 import {SCREEN_HEIGHT, STATUS_BAR_HEIGHT} from '../lib/constants';
+import {selectFirstAccountAddress} from '../features/wallet/walletSlice';
+import {useAppSelector} from '../hooks';
 
 const FeedScreen = ({navigation}: any) => {
+  const firstAccountAddress = useAppSelector(selectFirstAccountAddress);
   const client = new ISCNQueryClient();
   const _loadingDeg = new Animated.Value(0);
   const _scrollRef = useRef<ScrollView>(null);
@@ -80,8 +81,7 @@ const FeedScreen = ({navigation}: any) => {
   const _onFetchIscn = React.useCallback(async () => {
     // Query ISCN by owner
     await client.connect(Config.LIKECOIN_RPC);
-    const address = 'cosmos12zu5qe7mdkh45e3qhq768tpzwd90q8rjgp88cu'; //hard-code for development purpose`
-    const res: any = await client.queryRecordsByOwner(address);
+    const res: any = await client.queryRecordsByOwner(firstAccountAddress);
     console.log('res', res);
     const posts: Post = res!.records
       .filter((f: any) => f.data.contentMetadata.imageUrls)
