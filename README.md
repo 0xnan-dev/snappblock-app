@@ -41,17 +41,32 @@ Gained more understanding of IPFS, Cosmos wallet implement.
 ### start local IPFS Daemon
 
 ```
-ipfs daemon
+$ npm install -g ipfs
+$ jsipfs daemon
 ```
 
-### start react native
+### .env sample
 
 ```
-npx react-native start
+RPC=https://mainnet-node.like.co/
+MAPBOX_ACCESS_TOKEN=
+MNEMONIC=
+```
+
+### install packages
+
+```
+$ npm run reset
+```
+
+### start react-native
+
+```
+$ npm run start
 ```
 
 ### start ios simulator
 
 ```
-npx react-native run-ios
+$ npm run ios
 ```
