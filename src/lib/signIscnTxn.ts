@@ -1,8 +1,12 @@
-import {ISCNQueryClient, ISCNSigningClient} from '@likecoin/iscn-js';
+import {
+  ISCNQueryClient,
+  ISCNSigningClient,
+  ISCNSignPayload,
+} from '@likecoin/iscn-js';
 import {DirectSecp256k1HdWallet} from '@cosmjs/proto-signing';
 import Config from 'react-native-config';
 
-export async function signISCNTxn(payload: any) {
+export async function signISCNTxn(payload: ISCNSignPayload) {
   try {
     // digital ocean node testnet mnemonic
     const signer = await DirectSecp256k1HdWallet.fromMnemonic(Config.MNEMONIC);

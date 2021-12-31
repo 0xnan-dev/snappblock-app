@@ -130,7 +130,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.snappblock"
+        applicationId "org.team0xnan.snappblock"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

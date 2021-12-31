@@ -9,7 +9,7 @@ import ImportSeedPhraseScreen from '../screens/import-seed-phrase';
 import HomeTab, {PhotoStack} from './homeTab';
 
 // import {selectOptionalWalletSerialization} from '../features/wallet/walletSlice';
-import {useAppDispatch} from '../hooks';
+import {useAppDispatch} from '../hooks/store.hook';
 
 const Stack = createStackNavigator();
 
@@ -17,7 +17,9 @@ function AppStackNavigator() {
   const dispatch = useAppDispatch();
   const [restoringWalletSeriazation, setRestoringWalletSeriazation] =
     useState(false);
-  const [walletSerialization, setWalletSerialization] = useState(null);
+  const [walletSerialization, setWalletSerialization] = useState<string | null>(
+    null,
+  );
 
   React.useEffect(() => {
     // Fetch the token from storage then navigate to our appropriate place
@@ -33,7 +35,11 @@ function AppStackNavigator() {
         dispatch({type: 'restoreSerliazationFailed', serialization: null});
         console.debug(e);
       }
-      setWalletSerialization(serialization);
+
+      if (serialization) {
+        setWalletSerialization(serialization);
+      }
+
       dispatch({type: 'restoreSerialization', serialization: serialization});
       setRestoringWalletSeriazation(false);
     };
@@ -49,15 +55,18 @@ function AppStackNavigator() {
         <Stack.Navigator screenOptions={{gestureEnabled: false}}>
           {walletSerialization ? (
             <>
-              <Stack.Screen name="HK SnapShot" component={HomeTab} />
+              <Stack.Screen name="HomeTab" component={HomeTab} />
               <Stack.Screen name="PhotoStack" component={PhotoStack} />
             </>
           ) : (
             <>
-              <Stack.Screen name="Welcome" component={WelcomeScreen} />
-              <Stack.Screen name="Seed Phrase" component={NewWalletScreen} />
+              <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
               <Stack.Screen
-                name="Import Seed Phrase"
+                name="NewWalletScreen"
+                component={NewWalletScreen}
+              />
+              <Stack.Screen
+                name="ImportSeedPhraseScreen"
                 component={ImportSeedPhraseScreen}
               />
             </>

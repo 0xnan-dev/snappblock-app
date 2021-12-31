@@ -57,7 +57,7 @@ const HomeStack = () => {
         headerShown: false,
         gestureEnabled: false,
       }}>
-      <Stack.Screen name="HK SnapShot" component={HomeScreen} />
+      <Stack.Screen name="Snappblock" component={HomeScreen} />
       <Stack.Screen name="Snap Shot" component={SnapshotScreen} />
       <Stack.Screen name="GalleryChooser" component={GalleryChooserScreen} />
       <Stack.Screen name="LocationChooser" component={LocationChooserScreen} />

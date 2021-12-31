@@ -1,0 +1,33 @@
+{
+  "root": true,
+  "extends": [
+    "@react-native-community",
+    "eslint:recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:react/recommended",
+    "plugin:prettier",
+    "airbnb-typescript",
+    "airbnb/hooks"
+  ],
+  "plugins": [
+    "prettier",
+    "@typescript-eslint",
+    "import",
+    "promise"
+  ],
+  "settings": {
+    "react": {
+      "pragma": "React",
+      "fragment": "Fragment",
+      "version": "detect"
+    },
+    "globals": {
+      "TextEncoder": true,
+      "TextDecoder": true,
+      "Blob": true,
+      "ReadableStream": true,
+      "Buffer": true
+    }
+  }
+}

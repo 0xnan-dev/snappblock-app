@@ -1,4 +1,4 @@
-package com.snappblock;
+package org.team0xnan.snappblock;
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;
 

@@ -1,53 +1,26 @@
-/* eslint-disable no-shadow */
-/* eslint-disable react-native/no-inline-styles */
-import React, {useRef} from 'react';
+import React, {RefObject, useRef} from 'react';
 import {Box, Button} from 'native-base';
 import {RNCamera} from 'react-native-camera';
-import {useIpfs} from '../navigation/ipfs-http-client';
+import {useIPFS} from '../hooks';
 import {signISCNTxn} from '../lib/signIscnTxn';
 
 const SnapshotScreen = () => {
-  const cameraRef: any = useRef(null);
-  const {client} = useIpfs();
+  const cameraRef = useRef() as RefObject<RNCamera>;
+  const {upload} = useIPFS();
 
   const takePicture = async () => {
-    try {
-      if (cameraRef) {
-        const options = {quality: 0.5, base64: true};
-        const data = await cameraRef!.current.takePictureAsync(options);
-        await fetchPhoto(data, client);
-      }
-    } catch (error) {
-      console.error(error);
+    if (!cameraRef.current) {
+      return;
     }
-  };
 
-  const fetchPhoto = async (photo: any, client: any) => {
-    // console.debug('photo', photo);
     try {
-      const response = await fetch(photo.uri);
-      const blob = await response.blob();
-      const file = {
-        path: photo.filename,
-        content: blob,
-      };
-      const options = {
-        wrapWithDirectory: true,
-      };
-      // console.debug('Demo App .add photo', {
-      //   result: inspect(await client.add(file)),
-      // });
-      const result = await client.add(file, options);
-      console.debug(
-        `result --> ${result}`,
-        result?.[0],
-        result?.cid,
-        result?.cid?.toString(),
-      );
-      const url = `https://ipfs.io/ipfs/${result?.cid?.toString()}`;
-      console.debug(`Url --> ${url}`);
+      const options = {quality: 0.5, base64: true};
+      const data = await cameraRef.current?.takePictureAsync(options);
 
-      await signIscn(result?.cid?.toString());
+      if (data) {
+        const ipfsPath = await upload(data.uri);
+        await signIscn(ipfsPath);
+      }
     } catch (error) {
       console.error('Demo App .add photo', {error});
     }
@@ -64,16 +37,16 @@ const SnapshotScreen = () => {
           {
             entity: {
               '@id': 'did:cosmos:12zu5qe7mdkh45e3qhq768tpzwd90q8rjgp88cu',
-              name: '0xNan',
+              name: '0xNaN',
             },
             rewardProportion: 95,
             contributionType: 'http://schema.org/author',
           },
         ],
         type: 'Snapshot',
-        name: '0xNan Demo',
+        name: '0xNaN Demo',
         usageInfo: 'https://creativecommons.org/licenses/by/4.0',
-        keywords: ['0xNan', 'snapshot'],
+        keywords: ['0xNaN', 'snapshot'],
         description: 'This is a description',
       };
 

@@ -18,7 +18,7 @@ import Config from 'react-native-config';
 import {ISCNQueryClient} from '@likecoin/iscn-js';
 import PostList, {Post} from '../components/PostList';
 import CommentInputPopup from '../components/CommentInputPopup';
-import HomeNavigationBar from '../components/HomeNavigationBar';
+import {HomeNavigationBar} from '../components/HomeNavigationBar';
 import {SCREEN_HEIGHT, STATUS_BAR_HEIGHT} from '../lib/constants';
 
 const HomeScreen = ({navigation}: any) => {

@@ -2,7 +2,6 @@ import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {DirectSecp256k1HdWallet} from '@cosmjs/proto-signing';
 import * as SecureStore from 'expo-secure-store';
 import {RootState} from 'src/store';
-import { InfoOutlineIcon } from 'native-base';
 
 export const DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY =
   'DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY';
@@ -15,7 +14,8 @@ export interface WalletState {
 }
 
 const initialState: WalletState = {
-  status: 'idle'
+  status: 'idle',
+  loading: false,
 };
 
 export const generateNewWalletAsync = createAsyncThunk(
@@ -50,7 +50,7 @@ export const saveNewWalletAsync = createAsyncThunk(
       DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY,
       directSecp256k1HdWalletSerialization,
     );
-  
+
     return directSecp256k1HdWalletSerialization;
   },
 );
@@ -60,7 +60,7 @@ const walletsSlice = createSlice({
   initialState,
   reducers: {
     restoreSerialization: (state) => {
-      console.debug("restoreSerialization", state)
+      console.debug('restoreSerialization', state);
       state.serialization = state.serialization;
       state.status = 'idle';
     },
@@ -84,7 +84,7 @@ const walletsSlice = createSlice({
         console.debug('importWalletAsync pending');
         state.status = 'loading';
       })
-      .addCase(importWalletAsync.rejected, (state, action) => {
+      .addCase(importWalletAsync.rejected, (state) => {
         console.debug('importWalletAsync rejected');
         state.status = 'failed';
       })

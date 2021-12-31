@@ -775,7 +775,7 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
 
     await _signIscn(imageUrls);
 
-    return navigation.navigate('HK SnapShot');
+    return navigation.navigate('Snappblock');
   };
 
   const _addToIpfs = async (uri: string): Promise<string | undefined> => {
@@ -815,7 +815,7 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
           {
             entity: {
               '@id': 'did:cosmos:12zu5qe7mdkh45e3qhq768tpzwd90q8rjgp88cu',
-              name: '0xNan',
+              name: '0xNaN',
             },
             rewardProportion: 95,
             contributionType: 'http://schema.org/author',
@@ -823,7 +823,7 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
         ],
         type: 'Snapshot',
         usageInfo: 'https://creativecommons.org/licenses/by/4.0',
-        keywords: ['0xNan', 'snapshot'],
+        keywords: ['0xNaN', 'snapshot'],
       };
 
       await signISCNTxn(payload);

@@ -9,9 +9,9 @@ import {
   Input,
   FormControl,
 } from 'native-base';
+import {Alert} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
-import * as SecureStore from 'expo-secure-store';
-import {useAppSelector, useAppDispatch} from '../hooks';
+import {useAppSelector, useAppDispatch} from '../hooks/store.hook';
 
 import {
   generateNewWalletAsync,
@@ -84,11 +84,7 @@ const NewWalletScreen = () => {
                   <Controller
                     control={control}
                     name="password"
-                    render={({
-                      field: {onChange, value},
-                      fieldState: {invalid, isTouched, isDirty, error},
-                      formState,
-                    }) => (
+                    render={({field: {onChange, value}}) => (
                       <Input
                         mt={4}
                         ref={initalShowConfirmSeedPhraseModalRef}

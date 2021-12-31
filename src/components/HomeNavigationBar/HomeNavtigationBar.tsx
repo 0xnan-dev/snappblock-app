@@ -1,22 +1,31 @@
-import React from 'react';
+import React, {FC} from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {SCREEN_WIDTH} from '../../lib/constants';
-// import {navigation} from '../../navigation/rootNavigation';
 
-const index = ({navigation}: any) => {
+export interface HomeNavigationBarProps {
+  onClickCamera?: () => void;
+  onClickSend?: () => void;
+}
+
+export const HomeNavigationBar: FC<HomeNavigationBarProps> = ({
+  onClickCamera,
+  onClickSend,
+}) => {
   return (
     <TouchableOpacity activeOpacity={1} style={styles.navigationBar}>
       <TouchableOpacity
-        onPress={() => navigation.navigate('PhotoStack', {navigation})}
+        onPress={() => onClickCamera && onClickCamera()}
         style={styles.btnBack}>
         <Icon name="camera" size={24} />
       </TouchableOpacity>
+
       <View style={styles.centerBar}>
         {/* <Icon name="instagram" size={20} /> */}
       </View>
+
       <TouchableOpacity
-        onPress={() => navigation.navigate('Direct')}
+        onPress={() => onClickSend && onClickSend()}
         style={styles.btnMessenger}>
         <View>
           <Icon name="send" size={20} />
@@ -25,8 +34,6 @@ const index = ({navigation}: any) => {
     </TouchableOpacity>
   );
 };
-
-export default index;
 
 const styles = StyleSheet.create({
   navigationBar: {

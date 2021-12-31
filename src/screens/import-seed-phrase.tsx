@@ -1,17 +1,12 @@
 import React, {useState, useRef} from 'react';
 import {Alert} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
-import * as SecureStore from 'expo-secure-store';
+import {VStack, Button, TextArea, Modal, Input, FormControl} from 'native-base';
+import {useAppDispatch} from '../hooks/store.hook';
 import {
-  VStack,
-  Button,
-  TextArea,
-  Modal,
-  Input,
-  FormControl,
-} from 'native-base';
-import {useAppDispatch} from '../hooks';
-import {importWalletAsync, saveNewWalletAsync} from '../features/wallet/walletSlice';
+  importWalletAsync,
+  saveNewWalletAsync,
+} from '../features/wallet/walletSlice';
 
 const ImportSeedPhraseScreen = () => {
   const dispatch = useAppDispatch();

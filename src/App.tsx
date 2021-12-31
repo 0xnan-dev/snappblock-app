@@ -12,20 +12,20 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {NativeBaseProvider} from 'native-base';
 import AppStackNavigator from './navigation/app-stack-navigator';
-import {IpfsProvider} from './navigation/ipfs-http-client';
+import {IPFSProvider} from './hooks';
 import {Provider} from 'react-redux';
 import {store} from './store';
 
 const App = () => {
   return (
     <Provider store={store}>
-      <IpfsProvider>
+      <IPFSProvider>
         <NativeBaseProvider>
           <NavigationContainer>
             <AppStackNavigator />
           </NavigationContainer>
         </NativeBaseProvider>
-      </IpfsProvider>
+      </IPFSProvider>
     </Provider>
   );
 };
