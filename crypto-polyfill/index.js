@@ -1,5 +1,5 @@
-import getRandomValues from "./get-random-values";
-import { Buffer } from "buffer";
+const getRandomValues = require("./get-random-values");
+const Buffer = require("buffer").Buffer;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const createHash = require("create-hash");

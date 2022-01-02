@@ -9,6 +9,7 @@ import React, {
   Reducer,
   useEffect,
 } from 'react';
+import { useAlert } from '../components';
 
 export const DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY =
   'DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY';
@@ -18,6 +19,7 @@ export interface StateContextProps {
   isLoading: boolean;
   alert: {
     title: string;
+    message?: string;
     status: IAlertProps['status'];
   } | null;
   hasStoredWallet: boolean;
@@ -34,14 +36,12 @@ const initialState: StateContextProps = {
   alert: null,
   isLoading: false,
   hasStoredWallet: false,
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  createWallet: null as any,
-  storeWallet: null as any,
-  restoreWallet: null as any,
-  fetchGallery: null as any,
-  upload: null as any,
-  decryptWallet: null as any,
-  /* eslint-enable @typescript-eslint/no-explicit-any */
+  createWallet: null as never,
+  storeWallet: null as never,
+  restoreWallet: null as never,
+  fetchGallery: null as never,
+  upload: null as never,
+  decryptWallet: null as never,
 };
 
 type Action =
@@ -70,6 +70,7 @@ type Action =
 export const StateContext = createContext<StateContextProps>(initialState);
 
 export const StateProvider: FC = ({ children }) => {
+  const { show: showAlert } = useAlert();
   const reducer: Reducer<StateContextProps, Action> = (state, action) => {
     console.debug(action);
 
@@ -253,6 +254,12 @@ export const StateProvider: FC = ({ children }) => {
 
     init();
   }, []);
+
+  useEffect(() => {
+    if (state.alert) {
+      showAlert(state.alert);
+    }
+  }, [showAlert, state.alert]);
 
   return (
     <StateContext.Provider

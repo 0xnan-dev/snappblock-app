@@ -1,6 +1,7 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import * as React from 'react';
+import React, { FC } from 'react';
+import { Icon, IIconProps } from 'native-base';
 import { Pressable } from 'react-native';
 
 import { Colors } from '../constants';
@@ -8,20 +9,15 @@ import { useColorScheme } from '../hooks/useColorScheme.hook';
 import { TabOneScreen, TabTwoScreen } from '../screens';
 import { MainTabParamList, MainTabScreenProps } from '../types';
 
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
-}
+const TabBarIcon: FC<
+  IIconProps & {
+    name: React.ComponentProps<typeof FontAwesome>['name'];
+    color: string;
+  }
+> = props => {
+  return <Icon as={<FontAwesome />} size={30} marginBottom={-3} {...props} />;
+};
 
-/**
- * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
- * https://reactnavigation.org/docs/bottom-tab-navigator
- */
 export const BottomTab = createBottomTabNavigator<MainTabParamList>();
 
 export function BottomTabNavigator() {
@@ -47,11 +43,11 @@ export function BottomTabNavigator() {
                 opacity: pressed ? 0.5 : 1,
               })}
             >
-              <FontAwesome
-                name="info-circle"
+              <Icon
+                as={<FontAwesome name="info-circle" />}
+                marginRight={15}
                 size={25}
                 color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
               />
             </Pressable>
           ),

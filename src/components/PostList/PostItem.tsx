@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Animated,
   Image,
@@ -14,12 +14,12 @@ import {
   default as Icon,
   default as Icons,
 } from 'react-native-vector-icons/MaterialCommunityIcons';
-import {SCREEN_WIDTH} from '../../lib/constants';
-import {timestampToString} from '../../lib/utils';
+import { SCREEN_WIDTH } from '../../lib/constants';
+import { timestampToString } from '../../lib/utils';
 import CirclePagination from '../CirclePagination';
 import PhotoShower from './PhotoShower';
 import SVG from '../Avatar';
-import {Post} from './index';
+import { Post } from './index';
 
 export interface PostItemProps {
   item: Post;
@@ -41,7 +41,7 @@ const PostItem = ({
   const user: any = {}; //useSelector((state) => state.user.user);
   const _animBookmarkNotification = React.useMemo(
     () => new Animated.Value(0),
-    [],
+    []
   );
   const isLiked =
     item?.likes && item?.likes?.indexOf(user?.userInfo?.username || '') > -1;
@@ -55,15 +55,15 @@ const PostItem = ({
 
   const _toggleLikePost = () => {};
 
-  let diffTime: string = timestampToString(
+  const diffTime: string = timestampToString(
     new Date(item?.recordTimestamp)?.getTime() || 0,
-    true,
+    true
   );
 
   const _onViewAllComments = () => {
     navigation.navigate('Comment', {
       postId: item.iscnId,
-      ...(setPost ? {postData: {...item}} : {}),
+      ...(setPost ? { postData: { ...item } } : {}),
     });
   };
 
@@ -100,7 +100,8 @@ const PostItem = ({
                     username: item.walletAddress,
                   })
             }
-            style={styles.infoWrapper}>
+            style={styles.infoWrapper}
+          >
             {/* <FastImage
               style={styles.avatar}
               source={{uri: item.walletAddress}}
@@ -110,7 +111,8 @@ const PostItem = ({
             <Text
               style={{
                 fontWeight: '600',
-              }}>
+              }}
+            >
               {item.walletAddress?.slice(0, 20)}
             </Text>
           </TouchableOpacity>
@@ -123,7 +125,8 @@ const PostItem = ({
                   height: 30,
                   justifyContent: 'center',
                   alignItems: 'center',
-                }}>
+                }}
+              >
                 <Icon name="map-marker" color="#318bfb" size={20} />
               </View>
             )}
@@ -133,7 +136,8 @@ const PostItem = ({
                 fontSize: 16,
                 color: (item.location || '').length > 0 ? '#318bfb' : '#000',
                 width: SCREEN_WIDTH - 30 - 30 - 30,
-              }}>
+              }}
+            >
               {(item.location || '').length > 20
                 ? item.location.slice(0, 20) + '...'
                 : item.location.slice}
@@ -146,7 +150,8 @@ const PostItem = ({
               item,
               setPost,
             })
-          }>
+          }
+        >
           <Icons name="dots-vertical" size={24} />
         </TouchableOpacity>
       </View>
@@ -164,12 +169,14 @@ const PostItem = ({
                 translateY: _animBookmarkNotification,
               },
             ],
-          }}>
+          }}
+        >
           <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-            }}>
+            }}
+          >
             <FastImage
               source={{
                 uri: (item.imageUrls || [])[0],
@@ -181,7 +188,8 @@ const PostItem = ({
                 fontSize: 16,
                 fontWeight: '600',
                 marginHorizontal: 10,
-              }}>
+              }}
+            >
               Saved
             </Text>
           </View>
@@ -189,13 +197,15 @@ const PostItem = ({
             onPress={() => {
               navigation.navigate('Saved');
             }}
-            style={styles.btnGoToSaved}>
+            style={styles.btnGoToSaved}
+          >
             <Text
               style={{
                 fontSize: 16,
                 fontWeight: '500',
                 color: '#318bfb',
-              }}>
+              }}
+            >
               See All
             </Text>
           </TouchableOpacity>
@@ -217,9 +227,10 @@ const PostItem = ({
             <TouchableOpacity
               onPress={() =>
                 navigation.navigate('ShareToDirect', {
-                  item: {...item},
+                  item: { ...item },
                 })
-              }>
+              }
+            >
               <Image
                 style={{
                   height: 20,
@@ -254,7 +265,8 @@ const PostItem = ({
             style={{
               fontWeight: 'bold',
               marginVertical: 5,
-            }}>
+            }}
+          >
             {item?.likes.length >= 1000
               ? Math.round(item?.likes.length / 1000) + 'k'
               : item?.likes.length}{' '}
@@ -267,12 +279,14 @@ const PostItem = ({
             flexWrap: 'wrap',
             flexDirection: 'row',
             alignItems: 'center',
-          }}>
+          }}
+        >
           <Text
             style={{
               fontWeight: '600',
               marginVertical: 5,
-            }}>
+            }}
+          >
             {item.name}
           </Text>
         </View>
@@ -282,8 +296,9 @@ const PostItem = ({
             flexWrap: 'wrap',
             flexDirection: 'row',
             alignItems: 'center',
-          }}>
-          {content.map((Jsx) => Jsx)}
+          }}
+        >
+          {content.map(Jsx => Jsx)}
         </View>
 
         {item?.comments && item?.comments.length > 0 && (
@@ -293,23 +308,27 @@ const PostItem = ({
                 style={{
                   fontWeight: '600',
                   marginVertical: 5,
-                }}>
+                }}
+              >
                 {item.comments[0].userId}{' '}
                 <Text
                   style={{
                     fontWeight: '400',
-                  }}>
+                  }}
+                >
                   {item.comments[0].content}
                 </Text>
               </Text>
             </View>
             <TouchableOpacity
               onPress={_onViewAllComments}
-              style={styles.btnViewCmt}>
+              style={styles.btnViewCmt}
+            >
               <Text
                 style={{
                   color: '#666',
-                }}>
+                }}
+              >
                 View all {item.comments.length} comments
               </Text>
             </TouchableOpacity>
@@ -323,8 +342,9 @@ const PostItem = ({
             }
           }}
           activeOpacity={1}
-          style={styles.commentInputWrapper}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          style={styles.commentInputWrapper}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <FastImage
               source={{
                 uri: user.userInfo?.avatarURL,
@@ -336,7 +356,8 @@ const PostItem = ({
               style={{
                 color: '#666',
                 marginHorizontal: 10,
-              }}>
+              }}
+            >
               Add a comment...
             </Text>
           </View>
@@ -346,11 +367,13 @@ const PostItem = ({
                 if (showCommentInput) {
                   showCommentInput(item.iscnId || '0', '❤');
                 }
-              }}>
+              }}
+            >
               <Text
                 style={{
                   fontSize: 10,
-                }}>
+                }}
+              >
                 ❤
               </Text>
             </TouchableOpacity>
@@ -359,11 +382,13 @@ const PostItem = ({
                 if (showCommentInput) {
                   showCommentInput(item.iscnId || '0', '🙌');
                 }
-              }}>
+              }}
+            >
               <Text
                 style={{
                   fontSize: 10,
-                }}>
+                }}
+              >
                 🙌
               </Text>
             </TouchableOpacity>
@@ -375,19 +400,22 @@ const PostItem = ({
             flexDirection: 'row',
             alignItems: 'center',
             marginVertical: 5,
-          }}>
+          }}
+        >
           <Text
             style={{
               fontSize: 12,
               color: '#666',
-            }}>
+            }}
+          >
             {diffTime}
           </Text>
           <Text
             style={{
               fontSize: 12,
               color: '#666',
-            }}>
+            }}
+          >
             {' '}
             •{' '}
           </Text>
@@ -397,7 +425,8 @@ const PostItem = ({
                 fontSize: 12,
                 color: '#318bfb',
                 fontWeight: '500',
-              }}>
+              }}
+            >
               See Translation
             </Text>
           </TouchableOpacity>
@@ -500,14 +529,14 @@ export function createFilterContent(content: string, navigation: any) {
     index: number;
   }[] = [];
   content?.replace(/\B\#\w\w+\b/g, (match, index) => {
-    matchedGroups.push({match, index});
+    matchedGroups.push({ match, index });
     return match;
   });
-  let splitedContent: JSX.Element[] = (content?.split('') || []).map((c, i) => (
-    <Text key={i}>{c}</Text>
-  ));
+  const splitedContent: JSX.Element[] = (content?.split('') || []).map(
+    (c, i) => <Text key={i}>{c}</Text>
+  );
   let i = 0;
-  matchedGroups.map((match) => {
+  matchedGroups.map(match => {
     splitedContent.splice(match.index - i + 1, match.match.length - 1);
     splitedContent[match.index - i] = (
       <TouchableOpacity
@@ -527,12 +556,14 @@ export function createFilterContent(content: string, navigation: any) {
             });
           }
         }}
-        key={`${match.match}${match.index}`}>
+        key={`${match.match}${match.index}`}
+      >
         <Text
           style={{
             color: '#318bfb',
             fontWeight: '500',
-          }}>
+          }}
+        >
           {match.match}
         </Text>
       </TouchableOpacity>

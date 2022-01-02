@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import {
   Alert as BaseAlert,
   Collapse,
@@ -10,16 +10,14 @@ import {
   Text,
   IAlertProps,
 } from 'native-base';
+import { UseAlertProps } from './useAlert.context';
 
-export const Alert: FC<IAlertProps> = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsOpen(true);
-    }, 200);
-  }, []);
-
+export const Alert: FC<UseAlertProps & IAlertProps> = ({
+  title,
+  close,
+  isOpen,
+  message,
+}) => {
   return (
     <Collapse isOpen={isOpen}>
       <BaseAlert w="100%" status="error">
@@ -39,25 +37,27 @@ export const Alert: FC<IAlertProps> = ({ children }) => {
                   color: 'coolGray.800',
                 }}
               >
-                Please try again later!
+                {title}
               </Text>
             </HStack>
             <IconButton
               variant="unstyled"
               icon={<CloseIcon size="3" color="coolGray.600" />}
-              onPress={() => setIsOpen(false)}
+              onPress={() => close()}
             />
           </HStack>
-          <Box
-            pl="6"
-            _dark={{
-              _text: {
-                color: 'coolGray.600',
-              },
-            }}
-          >
-            {children}
-          </Box>
+          {message && (
+            <Box
+              pl="6"
+              _dark={{
+                _text: {
+                  color: 'coolGray.600',
+                },
+              }}
+            >
+              {message}
+            </Box>
+          )}
         </VStack>
       </BaseAlert>
     </Collapse>

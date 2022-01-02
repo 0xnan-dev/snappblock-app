@@ -1,39 +1,12 @@
-import React, {FC} from 'react';
-import {StyleSheet, View, TouchableOpacity} from 'react-native';
+import React, { FC } from 'react';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {SCREEN_WIDTH} from '../../lib/constants';
+import { Layout } from '../../constants';
 
 export interface HomeNavigationBarProps {
   onClickCamera?: () => void;
   onClickSend?: () => void;
 }
-
-export const HomeNavigationBar: FC<HomeNavigationBarProps> = ({
-  onClickCamera,
-  onClickSend,
-}) => {
-  return (
-    <TouchableOpacity activeOpacity={1} style={styles.navigationBar}>
-      <TouchableOpacity
-        onPress={() => onClickCamera && onClickCamera()}
-        style={styles.btnBack}>
-        <Icon name="camera" size={24} />
-      </TouchableOpacity>
-
-      <View style={styles.centerBar}>
-        {/* <Icon name="instagram" size={20} /> */}
-      </View>
-
-      <TouchableOpacity
-        onPress={() => onClickSend && onClickSend()}
-        style={styles.btnMessenger}>
-        <View>
-          <Icon name="send" size={20} />
-        </View>
-      </TouchableOpacity>
-    </TouchableOpacity>
-  );
-};
 
 const styles = StyleSheet.create({
   navigationBar: {
@@ -46,7 +19,7 @@ const styles = StyleSheet.create({
   },
   centerBar: {
     height: 44,
-    width: SCREEN_WIDTH - 44 * 2,
+    width: Layout.window.width - 44 * 2,
     justifyContent: 'center',
     alignItems: 'flex-start',
   },
@@ -79,3 +52,32 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
 });
+
+export const HomeNavigationBar: FC<HomeNavigationBarProps> = ({
+  onClickCamera,
+  onClickSend,
+}) => {
+  return (
+    <TouchableOpacity activeOpacity={1} style={styles.navigationBar}>
+      <TouchableOpacity
+        onPress={() => onClickCamera && onClickCamera()}
+        style={styles.btnBack}
+      >
+        <Icon name="camera" size={24} />
+      </TouchableOpacity>
+
+      <View style={styles.centerBar}>
+        {/* <Icon name="instagram" size={20} /> */}
+      </View>
+
+      <TouchableOpacity
+        onPress={() => onClickSend && onClickSend()}
+        style={styles.btnMessenger}
+      >
+        <View>
+          <Icon name="send" size={20} />
+        </View>
+      </TouchableOpacity>
+    </TouchableOpacity>
+  );
+};

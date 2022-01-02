@@ -1,11 +1,10 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-// import {PostList} from '../../reducers/postReducer';
+import { StyleSheet, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import PostItem from './PostItem';
 
 export interface PostListProps {
   data: Post[];
-  navigation: any;
   showCommentInput: (id: string, prefix?: string) => void;
 }
 
@@ -65,20 +64,18 @@ export interface Comment {
   create_at?: string;
 }
 
-const Post = ({data, showCommentInput, navigation}: PostListProps) => {
-  return (
-    <View style={styles.container}>
-      {data.map((post: Post, index: number) => (
-        <PostItem
-          showCommentInput={showCommentInput}
-          navigation={navigation}
-          key={index}
-          item={post}
-        />
-      ))}
-    </View>
-  );
-};
+const Post = ({ data, showCommentInput }) => (
+  <View style={styles.container}>
+    {data.map((post: Post, index: number) => (
+      <PostItem
+        showCommentInput={showCommentInput}
+        navigation={navigation}
+        key={index}
+        item={post}
+      />
+    ))}
+  </View>
+);
 
 export default React.memo(Post);
 

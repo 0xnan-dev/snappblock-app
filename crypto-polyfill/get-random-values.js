@@ -1,4 +1,4 @@
-import { getRandomBytes } from "expo-random";
+const getRandomBytes = require("expo-random").getRandomBytes;
 const MAX_RANDOM_BYTES = 65536;
 /**
  * An implementation of Crypto.getRandomValues that uses expo-random's secure random generator if
