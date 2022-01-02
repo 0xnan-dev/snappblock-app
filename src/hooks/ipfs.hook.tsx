@@ -1,4 +1,4 @@
-import React, {FC, createContext, useContext} from 'react';
+import React, { FC, createContext, useContext } from 'react';
 import Config from 'react-native-config';
 import axios from 'axios';
 
@@ -12,7 +12,7 @@ export const IPFSContext = createContext<IPFSContextProps>({
   download: async () => Buffer.from(''),
 });
 
-export const IPFSProvider: FC = ({children}) => {
+export const IPFSProvider: FC = ({ children }) => {
   const IPFS_API = Config.IPFS_API;
 
   const upload = async (fileUri: string) => {
@@ -46,7 +46,8 @@ export const IPFSProvider: FC = ({children}) => {
       value={{
         upload,
         download,
-      }}>
+      }}
+    >
       {children}
     </IPFSContext.Provider>
   );

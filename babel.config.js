@@ -1,14 +1,7 @@
-'use strict';
-
 module.exports = function (api) {
-  const babelConfig = {
-    presets: ['module:metro-react-native-babel-preset'],
-    plugins: ['@babel/plugin-proposal-async-generator-functions'],
+  api.cache(true);
+  return {
+    presets: ['babel-preset-expo'],
+    plugins: ['inline-dotenv'],
   };
-
-  if (api.env('production')) {
-    babelConfig.plugins.push('react-native-paper/babel');
-  }
-
-  return babelConfig;
 };

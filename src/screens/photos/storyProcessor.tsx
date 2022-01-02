@@ -3,9 +3,9 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
-import {BlurView} from '@react-native-community/blur';
-import {RouteProp} from '@react-navigation/native';
-import React, {useEffect, useRef, useState} from 'react';
+import { BlurView } from '@react-native-community/blur';
+import { RouteProp } from '@react-navigation/native';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Image,
@@ -20,8 +20,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useIpfs} from '../../navigation/ipfs-http-client';
-import {signISCNTxn} from '../../lib/signIscnTxn';
+import { useIpfs } from '../../navigation/ipfs-http-client';
+import { signISCNTxn } from '../../lib/signIscnTxn';
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
@@ -202,12 +202,12 @@ export const emojiList = [
   '🤓',
   '🤪',
 ];
-const StoryProcessor = ({route}: StoryProcessorProps) => {
-  const {client} = useIpfs();
+const StoryProcessor = ({ route }: StoryProcessorProps) => {
+  const { client } = useIpfs();
   const user: any = {}; //useSelector((state) => state.user.user.userInfo);
   //   const myUsername = ''; //user?.username || '';
   //   const dispatch = useDispatch();
-  const {images, sendToDirect, username, navigation} = route.params!;
+  const { images, sendToDirect, username, navigation } = route.params!;
   const keyboard = true; //useKeyboardStatus();
   const [state, setState] = useState<object>({});
   const [currentImageIndex, setCurrentIndex] = useState<number>(0);
@@ -221,11 +221,11 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
   const [textBg, setTextBg] = useState<boolean>(false);
   const _animRatioTrashCan = React.useMemo(() => new Animated.Value(1), []);
   const _hScrollRef = useRef<ScrollView>(null);
-  const _rotationRefList = [...images].map((img) =>
-    useRef<RotationGestureHandler>(null),
+  const _rotationRefList = [...images].map(img =>
+    useRef<RotationGestureHandler>(null)
   );
-  const _pinchRefList = [...images].map((img) =>
-    useRef<PinchGestureHandler>(null),
+  const _pinchRefList = [...images].map(img =>
+    useRef<PinchGestureHandler>(null)
   );
   /**
    * mode
@@ -236,20 +236,20 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
    */
   const [mode, setMode] = useState<1 | 2 | 3 | 4>(1);
   //Init animated value
-  const _scaleAnimList = [...images].map((img) =>
+  const _scaleAnimList = [...images].map(img =>
     React.useMemo(
       () => new Animated.Value(SCREEN_WIDTH / img.width),
-      [img.width],
-    ),
+      [img.width]
+    )
   );
-  const _rotateAnimList = [...images].map((img) =>
-    React.useMemo(() => new Animated.Value(0), []),
+  const _rotateAnimList = [...images].map(img =>
+    React.useMemo(() => new Animated.Value(0), [])
   );
-  const _translateXAnimList = [...images].map((img) =>
-    React.useMemo(() => new Animated.Value(0), []),
+  const _translateXAnimList = [...images].map(img =>
+    React.useMemo(() => new Animated.Value(0), [])
   );
-  const _translateYAnimList = [...images].map((img) =>
-    React.useMemo(() => new Animated.Value(0), []),
+  const _translateYAnimList = [...images].map(img =>
+    React.useMemo(() => new Animated.Value(0), [])
   );
   const _labeLWrapperYAnim = React.useMemo(() => new Animated.Value(0), []);
   const [enableGesture, setEnableGesture] = useState<boolean>(true);
@@ -262,7 +262,7 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
     zoomTrashCan: boolean;
     labelContainerY: number;
   }>({
-    processImages: [...images].map((img) => {
+    processImages: [...images].map(img => {
       return {
         base64: img.base64,
         extension: img.extension,
@@ -298,7 +298,7 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
   }, [keyboard]);
   const _onEndDrag = ({
     nativeEvent: {
-      contentOffset: {x},
+      contentOffset: { x },
     },
   }: NativeSyntheticEvent<NativeScrollEvent>) => {
     const tabIndex = Math.floor(x / SCREEN_WIDTH);
@@ -318,17 +318,17 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
   };
   //Translate processor
   const _onTranslateHandler = ({
-    nativeEvent: {translationX, translationY},
+    nativeEvent: { translationX, translationY },
   }: PanGestureHandlerGestureEvent) => {
     _translateXAnimList[currentImageIndex].setValue(
-      ref.current.processImages[currentImageIndex].translateX + translationX,
+      ref.current.processImages[currentImageIndex].translateX + translationX
     );
     _translateYAnimList[currentImageIndex].setValue(
-      ref.current.processImages[currentImageIndex].translateY + translationY,
+      ref.current.processImages[currentImageIndex].translateY + translationY
     );
   };
   const _onTranslateStateChange = ({
-    nativeEvent: {translationX, translationY, state},
+    nativeEvent: { translationX, translationY, state },
   }: PanGestureHandlerGestureEvent) => {
     if (state === State.END) {
       ref.current.processImages[currentImageIndex].translateX += translationX;
@@ -337,14 +337,14 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
   };
   //Zoom processor
   const _onZoomHandler = ({
-    nativeEvent: {scale},
+    nativeEvent: { scale },
   }: PinchGestureHandlerGestureEvent) => {
     _scaleAnimList[currentImageIndex].setValue(
-      ref.current.processImages[currentImageIndex].ratio * scale,
+      ref.current.processImages[currentImageIndex].ratio * scale
     );
   };
   const _onZoomStateChange = ({
-    nativeEvent: {scale, state},
+    nativeEvent: { scale, state },
   }: PinchGestureHandlerGestureEvent) => {
     if (state === State.END) {
       ref.current.processImages[currentImageIndex].ratio *= scale;
@@ -352,14 +352,14 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
   };
   //Rotation processor
   const _onRotateHandler = ({
-    nativeEvent: {rotation},
+    nativeEvent: { rotation },
   }: RotationGestureHandlerGestureEvent) => {
     _rotateAnimList[currentImageIndex].setValue(
-      ref.current.processImages[currentImageIndex].rotateDeg + rotation,
+      ref.current.processImages[currentImageIndex].rotateDeg + rotation
     );
   };
   const _onRotateStateChange = ({
-    nativeEvent: {rotation, state},
+    nativeEvent: { rotation, state },
   }: RotationGestureHandlerGestureEvent) => {
     if (state === State.END) {
       ref.current.processImages[currentImageIndex].rotateDeg += rotation;
@@ -395,10 +395,10 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
           : SCREEN_WIDTH - ref.current.textWidth - 15;
       const textZindexList = ref.current.processImages[
         currentImageIndex
-      ].texts.map((x) => x.zIndex);
+      ].texts.map(x => x.zIndex);
       const labelZindexList = ref.current.processImages[
         currentImageIndex
-      ].labels.map((x) => x.zIndex);
+      ].labels.map(x => x.zIndex);
       let maxlabelZindex = Math.max(...textZindexList.concat(labelZindexList));
       maxlabelZindex = maxlabelZindex !== -Infinity ? maxlabelZindex : 0;
       const storyText: StoryText = {
@@ -424,7 +424,9 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
   //Label translate processor
   const _onTextLabelTranslateHandler = (
     index: number,
-    {nativeEvent: {translationX, translationY}}: PanGestureHandlerGestureEvent,
+    {
+      nativeEvent: { translationX, translationY },
+    }: PanGestureHandlerGestureEvent
   ) => {
     if (!draggingLabel) {
       setDraggingLabel(true);
@@ -434,7 +436,7 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
     if (
       Math.abs(
         (label.y + translationY + label.height) * label.ratio -
-          ref.current.trashCanY,
+          ref.current.trashCanY
       ) < 50
     ) {
       if (!ref.current.zoomTrashCan) {
@@ -457,8 +459,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
   const _onTextLabelTranslateChangeState = (
     index: number,
     {
-      nativeEvent: {translationX, translationY, state},
-    }: PanGestureHandlerGestureEvent,
+      nativeEvent: { translationX, translationY, state },
+    }: PanGestureHandlerGestureEvent
   ) => {
     setDraggingLabel(false);
     if (state === State.END) {
@@ -467,7 +469,7 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
       label.y += translationY;
       if (
         Math.abs(
-          (label.y + label.height) * label.ratio - ref.current.trashCanY,
+          (label.y + label.height) * label.ratio - ref.current.trashCanY
         ) < 50
       ) {
         ref.current.processImages[currentImageIndex].texts.splice(index, 1);
@@ -479,14 +481,14 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
   //Label zoom processor
   const _onTextLabelZoomHandler = (
     index: number,
-    {nativeEvent: {scale}}: PinchGestureHandlerGestureEvent,
+    { nativeEvent: { scale } }: PinchGestureHandlerGestureEvent
   ) => {
     const label = ref.current.processImages[currentImageIndex].texts[index];
     label.animRatio.setValue(label.ratio * scale);
   };
   const _onTextLabelZoomChangeState = (
     index: number,
-    {nativeEvent: {scale, state}}: PinchGestureHandlerGestureEvent,
+    { nativeEvent: { scale, state } }: PinchGestureHandlerGestureEvent
   ) => {
     if (state === State.END) {
       const label = ref.current.processImages[currentImageIndex].texts[index];
@@ -496,7 +498,7 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
   //Label Options Wrapper Translate processor
 
   const _onLabelOptionsContainerTranslate = ({
-    nativeEvent: {translationY},
+    nativeEvent: { translationY },
   }: PanGestureHandlerGestureEvent) => {
     if (mode !== 1) {
       return;
@@ -514,7 +516,7 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
     _labeLWrapperYAnim.setValue(ref.current.labelContainerY + translationY);
   };
   const _onLabelOptionsContainerTranslateChangeState = ({
-    nativeEvent: {translationY, state},
+    nativeEvent: { translationY, state },
   }: PanGestureHandlerGestureEvent) => {
     if (state === State.END) {
       if (
@@ -559,7 +561,9 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
   //Label processor
   const _onLabelTranslateHandler = (
     index: number,
-    {nativeEvent: {translationX, translationY}}: PanGestureHandlerGestureEvent,
+    {
+      nativeEvent: { translationX, translationY },
+    }: PanGestureHandlerGestureEvent
   ) => {
     if (!draggingLabel) {
       setDraggingLabel(true);
@@ -569,7 +573,7 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
     if (
       Math.abs(
         (label.y + translationY + label.height) * label.ratio -
-          ref.current.trashCanY,
+          ref.current.trashCanY
       ) < 50
     ) {
       if (!ref.current.zoomTrashCan) {
@@ -592,8 +596,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
   const _onLabelTranslateChangeState = (
     index: number,
     {
-      nativeEvent: {translationX, translationY, state},
-    }: PanGestureHandlerGestureEvent,
+      nativeEvent: { translationX, translationY, state },
+    }: PanGestureHandlerGestureEvent
   ) => {
     setDraggingLabel(false);
     if (state === State.END) {
@@ -602,7 +606,7 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
       label.y += translationY;
       if (
         Math.abs(
-          (label.y + label.height) * label.ratio - ref.current.trashCanY,
+          (label.y + label.height) * label.ratio - ref.current.trashCanY
         ) < 50
       ) {
         ref.current.processImages[currentImageIndex].labels.splice(index, 1);
@@ -614,14 +618,14 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
   //Label zoom processor
   const _onLabelZoomHandler = (
     index: number,
-    {nativeEvent: {scale}}: PinchGestureHandlerGestureEvent,
+    { nativeEvent: { scale } }: PinchGestureHandlerGestureEvent
   ) => {
     const label = ref.current.processImages[currentImageIndex].labels[index];
     label.animRatio.setValue(label.ratio * scale);
   };
   const _onLabelZoomChangeState = (
     index: number,
-    {nativeEvent: {scale, state}}: PinchGestureHandlerGestureEvent,
+    { nativeEvent: { scale, state } }: PinchGestureHandlerGestureEvent
   ) => {
     if (state === State.END) {
       const label = ref.current.processImages[currentImageIndex].labels[index];
@@ -631,10 +635,10 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
   const _onSelectedAddressLabel = (address: any) => {
     const textZindexList = ref.current.processImages[
       currentImageIndex
-    ].texts.map((x) => x.zIndex);
+    ].texts.map(x => x.zIndex);
     const labelZindexList = ref.current.processImages[
       currentImageIndex
-    ].labels.map((x) => x.zIndex);
+    ].labels.map(x => x.zIndex);
     let maxlabelZindex =
       Math.max(...textZindexList.concat(labelZindexList)) || 0;
     maxlabelZindex = maxlabelZindex !== -Infinity ? maxlabelZindex : 0;
@@ -659,10 +663,10 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
   const _onSelectedEmoji = (emoji: string) => {
     const textZindexList = ref.current.processImages[
       currentImageIndex
-    ].texts.map((x) => x.zIndex);
+    ].texts.map(x => x.zIndex);
     const labelZindexList = ref.current.processImages[
       currentImageIndex
-    ].labels.map((x) => x.zIndex);
+    ].labels.map(x => x.zIndex);
     let maxlabelZindex =
       Math.max(...textZindexList.concat(labelZindexList)) || 0;
     maxlabelZindex = maxlabelZindex !== -Infinity ? maxlabelZindex : 0;
@@ -689,10 +693,10 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
     }
     const textZindexList = ref.current.processImages[
       currentImageIndex
-    ].texts.map((x) => x.zIndex);
+    ].texts.map(x => x.zIndex);
     const labelZindexList = ref.current.processImages[
       currentImageIndex
-    ].labels.map((x) => x.zIndex);
+    ].labels.map(x => x.zIndex);
     let maxlabelZindex =
       Math.max(...textZindexList.concat(labelZindexList)) || 0;
     maxlabelZindex = maxlabelZindex !== -Infinity ? maxlabelZindex : 0;
@@ -700,7 +704,7 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
       zIndex: maxlabelZindex + 1,
       animRatio: new Animated.Value(1),
       animX: new Animated.Value(
-        (SCREEN_WIDTH - (ref.current.textWidth + 10)) / 2,
+        (SCREEN_WIDTH - (ref.current.textWidth + 10)) / 2
       ),
       animY: new Animated.Value((SCREEN_HEIGHT - 64) / 2),
       x: (SCREEN_WIDTH - (ref.current.textWidth + 10)) / 2,
@@ -720,7 +724,7 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
   };
   const _onSelectLabel = (
     type: 'address' | 'people' | 'hashtag' | 'emoji',
-    value?: string,
+    value?: string
   ) => {
     switch (type) {
       case 'address':
@@ -796,13 +800,13 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
         `result --> ${result}`,
         result?.[0],
         result?.cid,
-        result?.cid?.toString(),
+        result?.cid?.toString()
       );
       const url = `https://ipfs.io/ipfs/${result?.cid?.toString()}`;
       console.debug(`Url --> ${url}`);
       return url;
     } catch (error) {
-      console.error('Demo App .add photo', {error});
+      console.error('Demo App .add photo', { error });
     }
   };
 
@@ -835,24 +839,28 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
   return (
     <PanGestureHandler
       onHandlerStateChange={_onLabelOptionsContainerTranslateChangeState}
-      onGestureEvent={_onLabelOptionsContainerTranslate}>
+      onGestureEvent={_onLabelOptionsContainerTranslate}
+    >
       <View>
         {mode === 1 && !draggingLabel && !showLabelOptions && (
           <View style={styles.topOptionsWrapper}>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
-              style={styles.btnTopOption}>
+              style={styles.btnTopOption}
+            >
               <Text
                 style={{
                   fontSize: 30,
                   color: '#fff',
-                }}>
+                }}
+              >
                 ✕
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={_showLabelOptionsContainer}
-              style={styles.btnTopOption}>
+              style={styles.btnTopOption}
+            >
               <Icon name="sticker-emoji" size={30} color="#fff" />
             </TouchableOpacity>
             <TouchableOpacity onPress={_onText} style={styles.btnTopOption}>
@@ -863,11 +871,13 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
         {mode === 2 && (
           <KeyboardAvoidingView
             behavior="height"
-            style={styles.textToolWrapper}>
+            style={styles.textToolWrapper}
+          >
             <View style={styles.textTopOptions}>
               <TouchableOpacity
                 onPress={_onChangeTextAlign}
-                style={styles.btnTopOption}>
+                style={styles.btnTopOption}
+              >
                 <Icon
                   name={
                     textAlign === 'center'
@@ -882,7 +892,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={setTextBg.bind(null, !textBg)}
-                style={styles.btnTopOption}>
+                style={styles.btnTopOption}
+              >
                 <Icon
                   name={textBg ? 'alpha-a-box' : 'alpha-a'}
                   size={30}
@@ -894,13 +905,15 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
                 style={{
                   ...styles.btnTopOption,
                   width: 60,
-                }}>
+                }}
+              >
                 <Text
                   style={{
                     fontWeight: 'bold',
                     color: '#fff',
                     fontSize: 18,
-                  }}>
+                  }}
+                >
                   Done
                 </Text>
               </TouchableOpacity>
@@ -909,16 +922,18 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
               style={{
                 ...styles.textWrapper,
                 justifyContent: textAlign,
-              }}>
+              }}
+            >
               <TouchableOpacity
                 style={{
                   backgroundColor:
                     textBg === true ? textColor : 'rgba(0,0,0,0)',
                   padding: 5,
                   borderRadius: 5,
-                }}>
+                }}
+              >
                 <TextInput
-                  onContentSizeChange={(e) => {
+                  onContentSizeChange={e => {
                     ref.current.textHeight = e.nativeEvent.contentSize.height;
                     ref.current.textWidth = e.nativeEvent.contentSize.width;
                   }}
@@ -947,7 +962,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
                 style={{
                   ...styles.circleSelectedColor,
                   backgroundColor: textColor,
-                }}>
+                }}
+              >
                 <Icon
                   name="eyedropper-variant"
                   size={20}
@@ -960,7 +976,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
                   width: SCREEN_WIDTH - 50,
                 }}
                 keyboardShouldPersistTaps="always"
-                horizontal={true}>
+                horizontal={true}
+              >
                 {textColors.map((tColor, index) => (
                   <TouchableOpacity
                     key={index}
@@ -980,24 +997,28 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
             behavior="height"
             style={{
               ...styles.textToolWrapper,
-            }}>
+            }}
+          >
             <View
               style={{
                 ...styles.textTopOptions,
                 justifyContent: 'flex-end',
-              }}>
+              }}
+            >
               <TouchableOpacity
                 onPress={_onDoneLabel}
                 style={{
                   ...styles.btnTopOption,
                   width: 60,
-                }}>
+                }}
+              >
                 <Text
                   style={{
                     fontWeight: 'bold',
                     color: '#fff',
                     fontSize: 18,
-                  }}>
+                  }}
+                >
                   Done
                 </Text>
               </TouchableOpacity>
@@ -1006,7 +1027,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
               style={{
                 ...styles.textWrapper,
                 justifyContent: 'center',
-              }}>
+              }}
+            >
               <View
                 style={{
                   backgroundColor: '#fff',
@@ -1015,17 +1037,18 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
                   justifyContent: 'center',
                   alignItems: 'center',
                   height: 64,
-                }}>
+                }}
+              >
                 <TextInput
                   onSubmitEditing={_onDoneLabel}
-                  onContentSizeChange={(e) => {
+                  onContentSizeChange={e => {
                     ref.current.textHeight = e.nativeEvent.contentSize.height;
                     ref.current.textWidth = e.nativeEvent.contentSize.width;
                   }}
                   autoFocus={true}
                   autoCapitalize="none"
                   value={text}
-                  onChangeText={(txt) => {
+                  onChangeText={txt => {
                     _validateLabelText(txt);
                   }}
                   style={{
@@ -1044,7 +1067,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
                     height: '100%',
                     zIndex: -1,
                     alignItems: 'center',
-                  }}>
+                  }}
+                >
                   <TextGradient
                     text={text}
                     style={{
@@ -1064,7 +1088,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
           ref={_hScrollRef}
           bounces={false}
           horizontal={true}
-          style={styles.scrollView}>
+          style={styles.scrollView}
+        >
           {ref.current.processImages.map((photo, index) => (
             <ImageBackground
               key={index}
@@ -1072,23 +1097,26 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
               source={{
                 uri: photo.uri,
               }}
-              blurRadius={10}>
+              blurRadius={10}
+            >
               {photo.texts.map((txtLabel, labelIndex) => (
                 <PanGestureHandler
                   key={labelIndex}
-                  onGestureEvent={(e) => {
+                  onGestureEvent={e => {
                     _onTextLabelTranslateHandler(labelIndex, e);
                   }}
-                  onHandlerStateChange={(e) => {
+                  onHandlerStateChange={e => {
                     _onTextLabelTranslateChangeState(labelIndex, e);
-                  }}>
+                  }}
+                >
                   <PinchGestureHandler
-                    onGestureEvent={(e) => {
+                    onGestureEvent={e => {
                       _onTextLabelZoomHandler(labelIndex, e);
                     }}
-                    onHandlerStateChange={(e) => {
+                    onHandlerStateChange={e => {
                       _onTextLabelZoomChangeState(labelIndex, e);
-                    }}>
+                    }}
+                  >
                     <Animated.View
                       style={{
                         zIndex: txtLabel.zIndex,
@@ -1111,7 +1139,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
                             scale: txtLabel.animRatio,
                           },
                         ],
-                      }}>
+                      }}
+                    >
                       <Text
                         style={{
                           width: txtLabel.width,
@@ -1125,7 +1154,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
                           fontSize: 40,
                           fontWeight: '800',
                           color: txtLabel.textBg ? '#000' : txtLabel.color,
-                        }}>
+                        }}
+                      >
                         {txtLabel.text}
                       </Text>
                     </Animated.View>
@@ -1135,19 +1165,21 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
               {photo.labels.map((label, labelIndex) => (
                 <PanGestureHandler
                   key={labelIndex}
-                  onGestureEvent={(e) => {
+                  onGestureEvent={e => {
                     _onLabelTranslateHandler(labelIndex, e);
                   }}
-                  onHandlerStateChange={(e) => {
+                  onHandlerStateChange={e => {
                     _onLabelTranslateChangeState(labelIndex, e);
-                  }}>
+                  }}
+                >
                   <PinchGestureHandler
-                    onGestureEvent={(e) => {
+                    onGestureEvent={e => {
                       _onLabelZoomHandler(labelIndex, e);
                     }}
-                    onHandlerStateChange={(e) => {
+                    onHandlerStateChange={e => {
                       _onLabelZoomChangeState(labelIndex, e);
-                    }}>
+                    }}
+                  >
                     <Animated.View
                       style={{
                         zIndex: label.zIndex,
@@ -1172,12 +1204,14 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
                             scale: label.animRatio,
                           },
                         ],
-                      }}>
+                      }}
+                    >
                       {label.type === 'emoji' ? (
                         <Text
                           style={{
                             fontSize: label.fontSize,
-                          }}>
+                          }}
+                        >
                           {label.text}
                         </Text>
                       ) : (
@@ -1200,19 +1234,22 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
                 enabled={enableGesture}
                 minPointers={2}
                 onHandlerStateChange={_onTranslateStateChange}
-                onGestureEvent={_onTranslateHandler}>
+                onGestureEvent={_onTranslateHandler}
+              >
                 <RotationGestureHandler
                   enabled={enableGesture}
                   onHandlerStateChange={_onRotateStateChange}
                   ref={_rotationRefList[index]}
                   simultaneousHandlers={_pinchRefList[index]}
-                  onGestureEvent={_onRotateHandler}>
+                  onGestureEvent={_onRotateHandler}
+                >
                   <PinchGestureHandler
                     enabled={enableGesture}
                     onHandlerStateChange={_onZoomStateChange}
                     ref={_pinchRefList[index]}
                     simultaneousHandlers={_rotationRefList[index]}
-                    onGestureEvent={_onZoomHandler}>
+                    onGestureEvent={_onZoomHandler}
+                  >
                     <Animated.View
                       style={{
                         width: photo.width,
@@ -1231,7 +1268,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
                             translateY: _translateYAnimList[index],
                           },
                         ],
-                      }}>
+                      }}
+                    >
                       <Image
                         resizeMode="contain"
                         style={{
@@ -1255,13 +1293,15 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
             <View
               style={{
                 ...styles.selectedImageWrapper,
-              }}>
+              }}
+            >
               <ScrollView
                 style={{
                   maxWidth: SCREEN_WIDTH - 100,
                 }}
                 bounces={false}
-                horizontal={true}>
+                horizontal={true}
+              >
                 {ref.current.processImages.map((photo, index) => (
                   <TouchableOpacity
                     onPress={setCurrentIndex.bind(null, index)}
@@ -1269,7 +1309,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
                     style={{
                       ...styles.previewImageWrapper,
                       padding: index === currentImageIndex ? 3 : 0,
-                    }}>
+                    }}
+                  >
                     <Image
                       source={{
                         uri: photo.uri,
@@ -1284,11 +1325,13 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
               <TouchableOpacity
                 onPress={_onNext}
                 activeOpacity={0.8}
-                style={styles.btnNext}>
+                style={styles.btnNext}
+              >
                 <Text
                   style={{
                     fontWeight: '600',
-                  }}>
+                  }}
+                >
                   Next
                 </Text>
                 <Icon name="chevron-right" size={20} />
@@ -1328,16 +1371,19 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
                   ...styles.btnNext,
                   width: sendToDirect && username ? 200 : 100,
                   marginRight: 0,
-                }}>
+                }}
+              >
                 <Text
                   style={{
                     fontWeight: '600',
-                  }}>
+                  }}
+                >
                   Publish
                   <Text
                     style={{
                       color: '#318bfb',
-                    }}>
+                    }}
+                  >
                     {' '}
                     {username}
                   </Text>
@@ -1357,7 +1403,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
               alignItems: 'center',
               height: 80,
               backgroundColor: 'rgba(0,0,0,0.3)',
-            }}>
+            }}
+          >
             <Animated.View
               style={{
                 height: 44,
@@ -1372,7 +1419,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
                     scale: _animRatioTrashCan,
                   },
                 ],
-              }}>
+              }}
+            >
               <Icon name="trash-can-outline" size={30} color="#fff" />
             </Animated.View>
           </View>
@@ -1385,7 +1433,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
                 translateY: _labeLWrapperYAnim,
               },
             ],
-          }}>
+          }}
+        >
           <BlurView
             style={{
               width: '100%',
@@ -1393,7 +1442,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
             }}
             blurType="dark"
             blurAmount={5}
-            reducedTransparencyFallbackColor="white">
+            reducedTransparencyFallbackColor="white"
+          >
             <View style={styles.labelOptionsTitleWrapper}>
               <View style={styles.dragBar} />
               <View style={styles.labelOptionsSearchWrapper}>
@@ -1413,10 +1463,12 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
                 flexWrap: 'wrap',
               }}
               bounces={false}
-              showsVerticalScrollIndicator={true}>
+              showsVerticalScrollIndicator={true}
+            >
               <TouchableOpacity
                 onPress={() => _onSelectLabel('address')}
-                style={styles.labelItemWrapper}>
+                style={styles.labelItemWrapper}
+              >
                 <View style={styles.mainLabel}>
                   <TextGradient
                     icon={{
@@ -1432,7 +1484,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => _onSelectLabel('people')}
-                style={styles.labelItemWrapper}>
+                style={styles.labelItemWrapper}
+              >
                 <View style={styles.mainLabel}>
                   <TextGradient
                     text="@MENTION"
@@ -1444,7 +1497,8 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => _onSelectLabel('hashtag')}
-                style={styles.labelItemWrapper}>
+                style={styles.labelItemWrapper}
+              >
                 <View style={styles.mainLabel}>
                   <TextGradient
                     text="#HASHTAG"
@@ -1458,11 +1512,13 @@ const StoryProcessor = ({route}: StoryProcessorProps) => {
                 <TouchableOpacity
                   key={index}
                   onPress={() => _onSelectLabel('emoji', emoji)}
-                  style={styles.labelItemWrapper}>
+                  style={styles.labelItemWrapper}
+                >
                   <Text
                     style={{
                       fontSize: 40,
-                    }}>
+                    }}
+                  >
                     {emoji}
                   </Text>
                 </TouchableOpacity>

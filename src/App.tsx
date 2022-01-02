@@ -1,32 +1,37 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-import 'react-native-gesture-handler';
-import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {NativeBaseProvider} from 'native-base';
-import AppStackNavigator from './navigation/app-stack-navigator';
-import {IPFSProvider} from './hooks';
-import {Provider} from 'react-redux';
-import {store} from './store';
+import React, { useEffect, useState } from 'react';
+import { NativeBaseProvider } from 'native-base';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-const App = () => {
-  return (
-    <Provider store={store}>
-      <IPFSProvider>
-        <NativeBaseProvider>
-          <NavigationContainer>
-            <AppStackNavigator />
-          </NavigationContainer>
+import {
+  useCachedResources,
+  useColorScheme,
+  useColorModeManager,
+  StateProvider,
+  useStateValue,
+} from './hooks';
+import { Alert } from './components';
+import Navigation from './navigation';
+
+export default function App() {
+  const isLoadingComplete = useCachedResources();
+  const colorScheme = useColorScheme();
+  const colorModeManger = useColorModeManager();
+  const { alert } = useStateValue();
+
+  if (!isLoadingComplete) {
+    return null;
+  } else {
+    return (
+      <SafeAreaProvider>
+        <NativeBaseProvider colorModeManager={colorModeManger}>
+          <StateProvider>
+            <Navigation colorScheme={colorScheme} />
+            <StatusBar style="auto" />
+            {alert && <Alert {...alert} />}
+          </StateProvider>
         </NativeBaseProvider>
-      </IPFSProvider>
-    </Provider>
-  );
-};
-export default App;
+      </SafeAreaProvider>
+    );
+  }
+}

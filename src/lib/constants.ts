@@ -1,5 +1,4 @@
 import {Dimensions} from 'react-native';
-// import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 export const STATUS_BAR_HEIGHT: number = 0; //getStatusBarHeight();
 export const SCREEN_HEIGHT: number = Math.round(

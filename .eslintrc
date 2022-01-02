@@ -1,20 +1,29 @@
 {
   "root": true,
+  "parserOptions": {
+    "project": [
+      "./tsconfig.json"
+    ]
+  },
   "extends": [
+    "airbnb-typescript",
+    "prettier",
     "@react-native-community",
     "eslint:recommended",
-    "plugin:import/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
     "plugin:import/typescript",
-    "plugin:react/recommended",
-    "plugin:prettier",
-    "airbnb-typescript",
-    "airbnb/hooks"
+    "plugin:prettier/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/eslint-recommended"
   ],
   "plugins": [
     "prettier",
     "@typescript-eslint",
+    "jest",
     "import",
-    "promise"
+    "react",
+    "react-hooks"
   ],
   "settings": {
     "react": {
@@ -28,6 +37,15 @@
       "Blob": true,
       "ReadableStream": true,
       "Buffer": true
-    }
+    },
+    "import/ignore": [
+      "node_modules/react-native/index\\.js$"
+    ]
+  },
+  "rules": {
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ]
   }
 }
