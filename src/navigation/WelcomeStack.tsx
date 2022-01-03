@@ -12,12 +12,12 @@ const WelcomeStack = createNativeStackNavigator<WelcomeStackParamList>();
 
 export function WelcomeNavigator() {
   return (
-    <WelcomeStack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <WelcomeStack.Screen name="Welcome" component={WelcomeScreen} />
+    <WelcomeStack.Navigator>
+      <WelcomeStack.Screen
+        name="Welcome"
+        component={WelcomeScreen}
+        options={{ headerShown: false }}
+      />
       <WelcomeStack.Screen
         name="CreateWallet"
         component={CreateWalletScreen}

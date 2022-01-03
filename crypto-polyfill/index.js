@@ -11,6 +11,7 @@ const aes = require("browserify-cipher");
 class Crypto {
   getRandomValues = getRandomValues;
   randomBytes = (size, callback) => {
+    console.log('randomBytes', size, callback);
     const buf = Buffer.from(getRandomValues(new Uint8Array(size)));
     if (callback) {
       callback(undefined, buf);
@@ -34,7 +35,9 @@ class Crypto {
   getCiphers = aes["getCiphers"];
   listCiphers = aes["listCiphers"];
 }
+
 const webCrypto = typeof crypto !== "undefined" ? crypto : new Crypto();
+
 module.exports = {
   ...webCrypto,
   polyfillWebCrypto: () => {

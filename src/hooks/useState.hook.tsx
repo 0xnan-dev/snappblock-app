@@ -69,73 +69,74 @@ type Action =
 
 export const StateContext = createContext<StateContextProps>(initialState);
 
+const reducer: Reducer<StateContextProps, Action> = (state, action) => {
+  console.debug('reducer: ', JSON.stringify(action, null, 2));
+
+  const defaultState = {
+    ...state,
+    error: null,
+    alert: null,
+    hasStoredWallet: false,
+    isLoading: false,
+  };
+
+  switch (action.type) {
+    case 'reset':
+      return defaultState;
+    case 'initalized':
+      return {
+        ...defaultState,
+        hasStoredWallet: true,
+      };
+    case 'setWallet':
+      return {
+        ...defaultState,
+        wallet: action.wallet,
+      };
+    case 'setError':
+      return {
+        ...defaultState,
+        status: 'failed',
+        alert: {
+          status: 'error',
+          title: action.error,
+        },
+      };
+    case 'storedWallet':
+      return {
+        ...defaultState,
+        hasStoredWallet: true,
+        alert: {
+          status: 'success',
+          title: action.message,
+        },
+      };
+    case 'createdWallet':
+    case 'restoredWallet':
+    case 'decryptedWallet':
+      return {
+        ...defaultState,
+        alert: {
+          status: 'success',
+          title: action.message,
+        },
+      };
+    case 'initalizing':
+    case 'creatingWallet':
+    case 'storingWallet':
+    case 'restoringWallet':
+    case 'decryptingWallet':
+      return {
+        ...defaultState,
+        isLoading: true,
+      };
+    default:
+      return state;
+  }
+};
+
 export const StateProvider: FC = ({ children }) => {
   const { show: showAlert } = useAlert();
-  const reducer: Reducer<StateContextProps, Action> = (state, action) => {
-    console.debug(action);
-
-    const defaultState = {
-      ...state,
-      error: null,
-      alert: null,
-      hasStoredWallet: false,
-      isLoading: false,
-    };
-
-    switch (action.type) {
-      case 'reset':
-        return defaultState;
-      case 'initalized':
-        return {
-          ...defaultState,
-          hasStoredWallet: true,
-        };
-      case 'setWallet':
-        return {
-          ...defaultState,
-          wallet: action.wallet,
-        };
-      case 'setError':
-        return {
-          ...defaultState,
-          status: 'failed',
-          alert: {
-            status: 'error',
-            title: action.error,
-          },
-        };
-      case 'storedWallet':
-        return {
-          ...defaultState,
-          hasStoredWallet: true,
-          alert: {
-            status: 'success',
-            title: action.message,
-          },
-        };
-      case 'createdWallet':
-      case 'restoredWallet':
-      case 'decryptedWallet':
-        return {
-          ...defaultState,
-          alert: {
-            status: 'success',
-            title: action.message,
-          },
-        };
-      case 'initalizing':
-      case 'creatingWallet':
-      case 'storingWallet':
-      case 'restoringWallet':
-      case 'decryptingWallet':
-        return {
-          ...defaultState,
-          isLoading: true,
-        };
-      default:
-        return state;
-    }
-  };
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const createWallet = async () => {
