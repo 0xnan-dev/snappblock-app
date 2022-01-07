@@ -1,8 +1,8 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {View} from 'react-native';
+import { View } from 'react-native';
 
-const ImageChooserMask = ({
+export const ImageChooserMask = ({
   width,
   height,
   maskColor,
@@ -20,7 +20,8 @@ const ImageChooserMask = ({
         flexWrap: 'wrap',
         borderColor: maskColor,
         borderWidth: 1,
-      }}>
+      }}
+    >
       {[0, 0, 0, 0, 0, 0, 0, 0, 0].map((x, index) => (
         <View
           key={index}
@@ -35,5 +36,3 @@ const ImageChooserMask = ({
     </View>
   );
 };
-
-export default ImageChooserMask;

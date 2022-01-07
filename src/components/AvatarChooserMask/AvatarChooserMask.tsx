@@ -1,7 +1,7 @@
 import React from 'react';
-import Svg, {Mask, Rect, Circle} from 'react-native-svg';
+import Svg, { Mask, Rect, Circle } from 'react-native-svg';
 
-const AvatarChooserMask = ({
+export const AvatarChooserMask = ({
   width,
   height,
   maskColor,
@@ -20,5 +20,3 @@ const AvatarChooserMask = ({
     </Svg>
   );
 };
-
-export default AvatarChooserMask;

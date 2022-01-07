@@ -1,5 +1,6 @@
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
-import * as SecureStore from 'expo-secure-store';
+import { useAlert } from '../components';
+import { SecureStore } from '../lib';
 import { IAlertProps } from 'native-base';
 import React, {
   FC,
@@ -9,7 +10,6 @@ import React, {
   Reducer,
   useEffect,
 } from 'react';
-import { useAlert } from '../components';
 
 export const DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY =
   'DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY';
@@ -188,7 +188,7 @@ export const StateProvider: FC = ({ children }) => {
       const serializedWallet = await state.wallet.serialize(password);
 
       // store to secure store
-      await SecureStore.setItemAsync(
+      await SecureStore.setItem(
         DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY,
         serializedWallet
       );
@@ -209,7 +209,7 @@ export const StateProvider: FC = ({ children }) => {
     dispatch({ type: 'decryptingWallet' });
 
     try {
-      const serializedWallet = await SecureStore.getItemAsync(
+      const serializedWallet = await SecureStore.getItem(
         DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY
       );
 
@@ -239,7 +239,7 @@ export const StateProvider: FC = ({ children }) => {
   const init = async () => {
     console.debug('init()');
 
-    const storedWallet = await SecureStore.getItemAsync(
+    const storedWallet = await SecureStore.getItem(
       DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY
     );
 
@@ -279,4 +279,4 @@ export const StateProvider: FC = ({ children }) => {
   );
 };
 
-export const useStateValue = () => useContext(StateContext);
+export const useAppState = () => useContext(StateContext);

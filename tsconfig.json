@@ -15,7 +15,14 @@
     "typeRoots": [
       "./node_modules/@types",
       "types/*.d.ts"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "*.web",
+        "*"
+      ]
+    }
   },
   "include": [
     "**/*.ts",

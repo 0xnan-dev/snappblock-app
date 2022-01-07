@@ -1,25 +1,28 @@
-import React, {useState, useEffect} from 'react';
-import {Image} from 'react-native';
-import FastImage, {FastImageProps} from 'react-native-fast-image';
-import {SCREEN_WIDTH} from '../../lib/constants';
-export interface ScaleImageProps extends FastImageProps {
+import React, { useState, useEffect } from 'react';
+import { Image } from 'react-native';
+import { CachedImage, CachedImageProps } from '../CachedImage';
+import { Layout } from '../../constants';
+export interface ScaleImageProps extends CachedImageProps {
   width?: number;
   height?: number;
   source: {
     uri: string;
   };
 }
-const ScaleImage = (props: ScaleImageProps) => {
+
+const SCREEN_WIDTH = Layout.window.width;
+
+export const ScaleImage = React.memo((props: ScaleImageProps) => {
   const [rwidth, setRwidth] = useState<number>(0);
   const [rheight, setRheight] = useState<number>(0);
-  let filteredProps = {...props};
+
   useEffect(() => {
     if (props.width && props.height) {
       setRwidth(props.width);
       setRheight(props.height);
     } else {
       Image.getSize(
-        filteredProps.source.uri,
+        props.source.uri,
         (xwidth, xheight) => {
           if (props.width) {
             setRheight((xheight * props.width) / xwidth);
@@ -29,19 +32,19 @@ const ScaleImage = (props: ScaleImageProps) => {
             setRheight(props.height);
           }
         },
-        Function,
+        Function
       );
     }
-  }, [props, filteredProps]);
+  }, [props]);
+
   return (
-    <FastImage
-      {...filteredProps}
+    <CachedImage
+      {...props}
       source={{
-        uri: filteredProps.source.uri,
-        priority: FastImage.priority.high,
+        uri: props.source.uri,
       }}
       style={[
-        filteredProps.style,
+        props.style,
         {
           width: rwidth > 0 ? rwidth : props.width || SCREEN_WIDTH,
           height: rheight,
@@ -49,6 +52,4 @@ const ScaleImage = (props: ScaleImageProps) => {
       ]}
     />
   );
-};
-
-export default React.memo(ScaleImage);
+});

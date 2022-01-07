@@ -46,6 +46,44 @@
     "object-curly-spacing": [
       "error",
       "always"
+    ],
+    "newline-after-var": [
+      "error",
+      "always"
+    ],
+    "newline-before-return": [
+      "error"
+    ],
+    "padding-line-between-statements": [
+      "error",
+      {
+        "blankLine": "always",
+        "prev": [
+          "block",
+          "block-like",
+          "cjs-export",
+          "class",
+          "export",
+          "import"
+        ],
+        "next": "*"
+      },
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "return"
+      },
+      {
+        "blankLine": "any",
+        "prev": [
+          "export",
+          "import"
+        ],
+        "next": [
+          "export",
+          "import"
+        ]
+      }
     ]
   }
 }

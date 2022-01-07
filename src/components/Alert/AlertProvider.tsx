@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Alert } from './Alert';
-import { UseAlertContext } from './useAlert.context';
+import { UseAlertContext } from './UseAlertContext';
 
 export const AlertProvider: FC = ({ children }) => {
   const [title, setTitle] = useState('');

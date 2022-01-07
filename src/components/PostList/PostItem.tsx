@@ -9,16 +9,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import { CachedImage } from '../CachedImage';
 import {
   default as Icon,
   default as Icons,
 } from 'react-native-vector-icons/MaterialCommunityIcons';
-import { SCREEN_WIDTH } from '../../lib/constants';
+import { Layout } from '../../constants';
 import { timestampToString } from '../../lib/utils';
-import CirclePagination from '../CirclePagination';
-import PhotoShower from './PhotoShower';
-import SVG from '../Avatar';
+import { CirclePagination } from '../CirclePagination/CirclePagination';
+import { PhotoShower } from './PhotoShower';
+import { Avatar } from '../Avatar';
 import { Post } from './index';
 
 export interface PostItemProps {
@@ -26,6 +26,148 @@ export interface PostItemProps {
   navigation: any;
   showCommentInput?: (id: string, prefix?: string) => void;
   setPost?: React.Dispatch<React.SetStateAction<any>>;
+}
+
+const styles = StyleSheet.create({
+  container: {},
+  postHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+    borderTopColor: '#ddd',
+    borderTopWidth: 0.5,
+    borderBottomColor: '#ddd',
+    borderBottomWidth: 0.5,
+  },
+  postSubHeader: {
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    padding: 10,
+  },
+  infoWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  body: {
+    overflow: 'hidden',
+  },
+  bookmarkAddionNotification: {
+    position: 'absolute',
+    backgroundColor: '#fff',
+    paddingHorizontal: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 44,
+    width: '100%',
+    borderBottomColor: '#ddd',
+    borderBottomWidth: 1,
+    bottom: -44,
+    left: 0,
+  },
+  btnGoToSaved: {
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bookmarkPreviewImage: {
+    height: 30,
+    width: 30,
+    borderRadius: 5,
+  },
+  reactionsWrapper: {
+    padding: 10,
+  },
+  reactions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  lReactions: {
+    flexDirection: 'row',
+    width: 24.3 * 3 + 15,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  btnViewCmt: {
+    marginVertical: 5,
+  },
+  commentInputWrapper: {
+    height: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 5,
+  },
+  commentIconsWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: 14.3 * 3 + 15,
+  },
+  commentAvatar: {
+    width: 24,
+    height: 24,
+    borderRadius: 24,
+  },
+});
+
+export function createFilterContent(content: string, navigation: any) {
+  const myUsername = ''; //store.getState().user.user.userInfo?.username || '';
+  const matchedGroups: {
+    match: string;
+    index: number;
+  }[] = [];
+
+  content?.replace(/\B\#\w\w+\b/g, (match, index) => {
+    matchedGroups.push({ match, index });
+
+    return match;
+  });
+  const splitedContent: JSX.Element[] = (content?.split('') || []).map(
+    (c, i) => <Text key={i}>{c}</Text>
+  );
+  let i = 0;
+
+  matchedGroups.map(match => {
+    splitedContent.splice(match.index - i + 1, match.match.length - 1);
+    splitedContent[match.index - i] = (
+      <TouchableOpacity
+        onPress={() => {
+          const targetName = match.match.slice(-(match.match.length - 1));
+
+          if (match.match[0] === '@') {
+            if (myUsername !== targetName) {
+              navigation.navigate('ProfileX', {
+                username: targetName,
+              });
+            } else {
+              navigation.navigate('Account');
+            }
+          } else if (match.match[0] === '#') {
+            navigation.navigate('Hashtag', {
+              hashtag: match.match,
+            });
+          }
+        }}
+        key={`${match.match}${match.index}`}
+      >
+        <Text
+          style={{
+            color: '#318bfb',
+            fontWeight: '500',
+          }}
+        >
+          {match.match}
+        </Text>
+      </TouchableOpacity>
+    );
+    i += match.match.length - 1;
+  });
+  console.log('matchedGroups', matchedGroups);
+
+  return splitedContent;
 }
 
 const PostItem = ({
@@ -39,13 +181,13 @@ const PostItem = ({
   const bookmarks: any = [];
   const [content, setContent] = useState<JSX.Element[]>([]);
   const user: any = {}; //useSelector((state) => state.user.user);
-  const _animBookmarkNotification = React.useMemo(
+  const animBookmarkNotification = React.useMemo(
     () => new Animated.Value(0),
     []
   );
   const isLiked =
     item?.likes && item?.likes?.indexOf(user?.userInfo?.username || '') > -1;
-  const _onChangePageHandler = (page: number) => {
+  const handleOnChangePageHandler = (page: number) => {
     setCurrentPage(page);
   };
 
@@ -53,31 +195,32 @@ const PostItem = ({
     setContent(createFilterContent(item.caption || '', navigation));
   }, [item, navigation]);
 
-  const _toggleLikePost = () => {};
+  const toggleLikePost = () => {};
 
   const diffTime: string = timestampToString(
     new Date(item?.recordTimestamp)?.getTime() || 0,
     true
   );
 
-  const _onViewAllComments = () => {
+  const handleOnViewAllComments = () => {
     navigation.navigate('Comment', {
       postId: item.iscnId,
       ...(setPost ? { postData: { ...item } } : {}),
     });
   };
 
-  const _onToggleBookmark = () => {
+  const handleOnToggleBookmark = () => {
     const isBookmarked = !!bookmarks.find((x: any) => x.postId === item.iscnId);
+
     if (!isBookmarked) {
       Animated.sequence([
-        Animated.timing(_animBookmarkNotification, {
+        Animated.timing(animBookmarkNotification, {
           toValue: -44,
           duration: 500,
           useNativeDriver: true,
         }),
         Animated.delay(3000),
-        Animated.timing(_animBookmarkNotification, {
+        Animated.timing(animBookmarkNotification, {
           toValue: 0,
           duration: 500,
           useNativeDriver: true,
@@ -102,11 +245,11 @@ const PostItem = ({
             }
             style={styles.infoWrapper}
           >
-            {/* <FastImage
+            {/* <CachedImage
               style={styles.avatar}
               source={{uri: item.walletAddress}}
             /> */}
-            <SVG />
+            <Avatar />
 
             <Text
               style={{
@@ -135,7 +278,7 @@ const PostItem = ({
               style={{
                 fontSize: 16,
                 color: (item.location || '').length > 0 ? '#318bfb' : '#000',
-                width: SCREEN_WIDTH - 30 - 30 - 30,
+                width: Layout.window.width - 30 - 30 - 30,
               }}
             >
               {(item.location || '').length > 20
@@ -157,7 +300,7 @@ const PostItem = ({
       </View>
       <View style={styles.body}>
         <PhotoShower
-          onChangePage={_onChangePageHandler}
+          onChangePage={handleOnChangePageHandler}
           sources={item.imageUrls || []}
           navigation={navigation}
         />
@@ -166,7 +309,7 @@ const PostItem = ({
             ...styles.bookmarkAddionNotification,
             transform: [
               {
-                translateY: _animBookmarkNotification,
+                translateY: animBookmarkNotification,
               },
             ],
           }}
@@ -177,7 +320,7 @@ const PostItem = ({
               alignItems: 'center',
             }}
           >
-            <FastImage
+            <CachedImage
               source={{
                 uri: (item.imageUrls || [])[0],
               }}
@@ -214,14 +357,14 @@ const PostItem = ({
       <View style={styles.reactionsWrapper}>
         <View style={styles.reactions}>
           <View style={styles.lReactions}>
-            <TouchableOpacity onPress={_toggleLikePost}>
+            <TouchableOpacity onPress={toggleLikePost}>
               <Icons
                 name={isLiked ? 'heart' : 'heart-outline'}
                 size={24}
                 color={isLiked ? 'red' : '#000'}
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={_onViewAllComments}>
+            <TouchableOpacity onPress={handleOnViewAllComments}>
               <Icon name="comment-outline" size={22} />
             </TouchableOpacity>
             <TouchableOpacity
@@ -236,7 +379,7 @@ const PostItem = ({
                   height: 20,
                   width: 20,
                 }}
-                source={require('../../assets/icons/send.png')}
+                source={require('../../../assets/icons/send.png')}
               />
             </TouchableOpacity>
           </View>
@@ -246,7 +389,10 @@ const PostItem = ({
               currentPage={currentPage}
             />
           )}
-          <TouchableOpacity activeOpacity={0.7} onPress={_onToggleBookmark}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={handleOnToggleBookmark}
+          >
             <Image
               style={{
                 height: 24,
@@ -254,8 +400,8 @@ const PostItem = ({
               }}
               source={
                 isBookmarked
-                  ? require('../../assets/icons/bookmarked.png')
-                  : require('../../assets/icons/bookmark.png')
+                  ? require('../../../assets/icons/bookmarked.png')
+                  : require('../../../assets/icons/bookmark.png')
               }
             />
           </TouchableOpacity>
@@ -321,7 +467,7 @@ const PostItem = ({
               </Text>
             </View>
             <TouchableOpacity
-              onPress={_onViewAllComments}
+              onPress={handleOnViewAllComments}
               style={styles.btnViewCmt}
             >
               <Text
@@ -345,10 +491,9 @@ const PostItem = ({
           style={styles.commentInputWrapper}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FastImage
+            <CachedImage
               source={{
                 uri: user.userInfo?.avatarURL,
-                priority: FastImage.priority.high,
               }}
               style={styles.commentAvatar}
             />
@@ -437,139 +582,3 @@ const PostItem = ({
 };
 
 export default React.memo(PostItem);
-
-const styles = StyleSheet.create({
-  container: {},
-  postHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 10,
-    borderTopColor: '#ddd',
-    borderTopWidth: 0.5,
-    borderBottomColor: '#ddd',
-    borderBottomWidth: 0.5,
-  },
-  postSubHeader: {
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    padding: 10,
-  },
-  infoWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  body: {
-    overflow: 'hidden',
-  },
-  bookmarkAddionNotification: {
-    position: 'absolute',
-    backgroundColor: '#fff',
-    paddingHorizontal: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: 44,
-    width: '100%',
-    borderBottomColor: '#ddd',
-    borderBottomWidth: 1,
-    bottom: -44,
-    left: 0,
-  },
-  btnGoToSaved: {
-    height: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  bookmarkPreviewImage: {
-    height: 30,
-    width: 30,
-    borderRadius: 5,
-  },
-  reactionsWrapper: {
-    padding: 10,
-  },
-  reactions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  lReactions: {
-    flexDirection: 'row',
-    width: 24.3 * 3 + 15,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  btnViewCmt: {
-    marginVertical: 5,
-  },
-  commentInputWrapper: {
-    height: 24,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginVertical: 5,
-  },
-  commentIconsWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: 14.3 * 3 + 15,
-  },
-  commentAvatar: {
-    width: 24,
-    height: 24,
-    borderRadius: 24,
-  },
-});
-export function createFilterContent(content: string, navigation: any) {
-  const myUsername = ''; //store.getState().user.user.userInfo?.username || '';
-  const matchedGroups: {
-    match: string;
-    index: number;
-  }[] = [];
-  content?.replace(/\B\#\w\w+\b/g, (match, index) => {
-    matchedGroups.push({ match, index });
-    return match;
-  });
-  const splitedContent: JSX.Element[] = (content?.split('') || []).map(
-    (c, i) => <Text key={i}>{c}</Text>
-  );
-  let i = 0;
-  matchedGroups.map(match => {
-    splitedContent.splice(match.index - i + 1, match.match.length - 1);
-    splitedContent[match.index - i] = (
-      <TouchableOpacity
-        onPress={() => {
-          const targetName = match.match.slice(-(match.match.length - 1));
-          if (match.match[0] === '@') {
-            if (myUsername !== targetName) {
-              navigation.navigate('ProfileX', {
-                username: targetName,
-              });
-            } else {
-              navigation.navigate('Account');
-            }
-          } else if (match.match[0] === '#') {
-            navigation.navigate('Hashtag', {
-              hashtag: match.match,
-            });
-          }
-        }}
-        key={`${match.match}${match.index}`}
-      >
-        <Text
-          style={{
-            color: '#318bfb',
-            fontWeight: '500',
-          }}
-        >
-          {match.match}
-        </Text>
-      </TouchableOpacity>
-    );
-    i += match.match.length - 1;
-  });
-  console.log('matchedGroups', matchedGroups);
-  return splitedContent;
-}

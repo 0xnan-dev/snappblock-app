@@ -4,3 +4,5 @@ import { polyfillWebCrypto } from 'react-native-crypto-polyfill';
 polyfillWebCrypto();
 
 global.Buffer = global.Buffer || require('buffer').Buffer;
+
+global.process = require('process');

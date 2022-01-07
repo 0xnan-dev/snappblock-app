@@ -3,13 +3,13 @@
   "transformIgnorePatterns": [
     "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry/.*)"
   ],
+  "moduleNameMapper": {
+    "\\.svg": "<rootDir>/src/__mocks__/svgMock.js"
+  },
   "moduleFileExtensions": [
     "tsx",
     "ts",
     "js"
   ],
-  "automock": false,
-  "setupFiles": [
-    "./__test__/global-mock-fetch.js"
-  ]
+  "automock": false
 }

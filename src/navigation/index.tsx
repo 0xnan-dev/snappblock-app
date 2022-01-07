@@ -10,7 +10,7 @@ import {
 } from '@react-navigation/native';
 import * as React from 'react';
 import { ColorSchemeName } from 'react-native';
-import { useStateValue } from '../hooks';
+import { useAppState } from '../hooks';
 
 import LinkingConfiguration from './LinkingConfiguration';
 import { MainNavigator } from './MainStack';
@@ -21,7 +21,7 @@ export default function Navigation({
 }: {
   colorScheme: ColorSchemeName;
 }) {
-  const { hasStoredWallet, wallet } = useStateValue();
+  const { hasStoredWallet, wallet } = useAppState();
 
   return (
     <NavigationContainer

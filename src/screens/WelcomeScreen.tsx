@@ -1,31 +1,42 @@
 import React, { FC } from 'react';
-import { Box, Button, Text } from 'native-base';
+import { Box, View, Button, Text } from 'native-base';
 import { WelcomeStackParamList } from '../types';
 import { StackScreenProps } from '@react-navigation/stack';
-import LogoIcon from '../../assets/images/icon.svg';
+import { AppIcon, Modal, useModal, ModalProps } from '../components';
+import { useAppState } from '../hooks';
+
+const UnlockModal: FC<ModalProps> = props => <Modal {...props} />;
 
 export const WelcomeScreen: FC<
   StackScreenProps<WelcomeStackParamList, 'Welcome'>
 > = ({ navigation }) => {
+  const { hasStoredWallet } = useAppState();
+  const unlockModalProps = useModal();
+
   return (
-    <Box flex={1} bg="#fff" alignItems="center" paddingTop={16}>
-      <LogoIcon height="40%" width="80%" />
+    <View flex={1} bg="#fff" alignItems="center" paddingTop={16}>
+      <Box w="140pt" mb={4}>
+        <AppIcon height="100%" width="100%" />
+      </Box>
       <Text fontSize="5xl">Welcome</Text>
       <Text>Let's start with generating a wallet.</Text>
       <Button
-        marginY="10px"
+        mb={4}
         colorScheme="success"
         onPress={() => navigation.navigate('CreateWallet')}
       >
         New Wallet
       </Button>
-      <Button
-        marginY="10px"
-        colorScheme="info"
-        onPress={() => navigation.navigate('RestoreWallet')}
-      >
+      {hasStoredWallet && (
+        <Button onPress={() => unlockModalProps.show()} colorScheme="success">
+          Unlock Wallet
+        </Button>
+      )}
+      <Button onPress={() => navigation.navigate('RestoreWallet')}>
         Import
       </Button>
-    </Box>
+
+      <UnlockModal {...unlockModalProps} />
+    </View>
   );
 };

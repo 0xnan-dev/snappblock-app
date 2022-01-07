@@ -10,7 +10,7 @@ import {
   Text,
   IAlertProps,
 } from 'native-base';
-import { UseAlertProps } from './useAlert.context';
+import { UseAlertProps } from './UseAlertContext';
 
 export const Alert: FC<UseAlertProps & IAlertProps> = ({
   title,

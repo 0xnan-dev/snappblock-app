@@ -1,17 +1,31 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
-import Svg, {Polygon, Line, Circle, Rect} from 'react-native-svg';
+import { View, StyleSheet } from 'react-native';
+import Svg, { Polygon, Line, Circle, Rect } from 'react-native-svg';
+
+const styles = StyleSheet.create({
+  avatar: {
+    backgroundColor: '#f7efb7',
+    borderColor: '#ddd',
+    borderWidth: 0.3,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 36,
+    width: 36,
+    borderRadius: 36,
+    marginRight: 10,
+  },
+});
 
 function getRandomColor() {
-  var letters = '0123456789ABCDEF';
-  var color = '#';
-  for (var i = 0; i < 6; i++) {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
     color += letters[Math.floor(Math.random() * 16)];
   }
   return color;
 }
 
-const SVG = () => {
+export const Avatar = React.memo(() => {
   const circleList = [];
   const rectList = [];
   const lineList = [];
@@ -36,7 +50,7 @@ const SVG = () => {
         strokeWidth="2.5"
         fill={getRandomColor()}
         opacity={options.opacity}
-      />,
+      />
     );
   }
 
@@ -52,7 +66,7 @@ const SVG = () => {
         strokeWidth="2"
         fill={getRandomColor()}
         opacity={options.opacity}
-      />,
+      />
     );
   }
 
@@ -66,7 +80,7 @@ const SVG = () => {
         y2={Math.round(Math.random() * 100)}
         stroke={getRandomColor()}
         strokeWidth="2"
-      />,
+      />
     );
   }
 
@@ -75,14 +89,14 @@ const SVG = () => {
       <Polygon
         key={Math.random()}
         points={`${Math.round(Math.random() * 50)},${Math.round(
-          Math.random() * 50,
+          Math.random() * 50
         )} ${Math.round(Math.random() * 50)},${Math.round(
-          Math.random() * 50,
+          Math.random() * 50
         )} ${Math.round(Math.random() * 50)},${Math.round(Math.random() * 50)}`}
         fill="lime"
         stroke={getRandomColor()}
         strokeWidth="1"
-      />,
+      />
     );
   }
 
@@ -95,20 +109,4 @@ const SVG = () => {
       </Svg>
     </View>
   );
-};
-
-const styles = StyleSheet.create({
-  avatar: {
-    backgroundColor: '#f7efb7',
-    borderColor: '#ddd',
-    borderWidth: 0.3,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 36,
-    width: 36,
-    borderRadius: 36,
-    marginRight: 10,
-  },
 });
-
-export default React.memo(SVG);
