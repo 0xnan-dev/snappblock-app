@@ -19,7 +19,6 @@ export const AlertProvider: FC = ({ children }) => {
 
   return (
     <UseAlertContext.Provider value={{ message, isOpen, title, show, close }}>
-      {children}
       <Alert
         isOpen={isOpen}
         message={message}
@@ -27,6 +26,7 @@ export const AlertProvider: FC = ({ children }) => {
         show={show}
         close={close}
       />
+      {children}
     </UseAlertContext.Provider>
   );
 };

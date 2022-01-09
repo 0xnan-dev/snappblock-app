@@ -14,27 +14,37 @@ export const WelcomeScreen: FC<
   const unlockModalProps = useModal();
 
   return (
-    <View flex={1} bg="#fff" alignItems="center" paddingTop={16}>
-      <Box w="140pt" mb={4}>
+    <View alignItems="center" paddingTop={16}>
+      <Box w="180pt" mb={4}>
         <AppIcon height="100%" width="100%" />
       </Box>
-      <Text fontSize="5xl">Welcome</Text>
-      <Text>Let's start with generating a wallet.</Text>
-      <Button
-        mb={4}
-        colorScheme="success"
-        onPress={() => navigation.navigate('CreateWallet')}
-      >
-        New Wallet
-      </Button>
-      {hasStoredWallet && (
-        <Button onPress={() => unlockModalProps.show()} colorScheme="success">
-          Unlock Wallet
+      <Box mb={4}>
+        <Text fontSize="5xl">Welcome</Text>
+        <Text>Let's start with generating a wallet.</Text>
+      </Box>
+
+      <Box w="100%" mt="auto">
+        <Button
+          w="100%"
+          mb={4}
+          colorScheme="primary"
+          onPress={() => navigation.navigate('CreateWallet')}
+        >
+          New Wallet
         </Button>
-      )}
-      <Button onPress={() => navigation.navigate('RestoreWallet')}>
-        Import
-      </Button>
+        {hasStoredWallet && (
+          <Button colorScheme="primary" onPress={() => unlockModalProps.show()}>
+            Unlock Wallet
+          </Button>
+        )}
+        <Button
+          colorScheme="gray"
+          w="100%"
+          onPress={() => navigation.navigate('RestoreWallet')}
+        >
+          Import
+        </Button>
+      </Box>
 
       <UnlockModal {...unlockModalProps} />
     </View>

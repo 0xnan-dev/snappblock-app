@@ -23,8 +23,11 @@ export interface StateContextProps {
     status: IAlertProps['status'];
   } | null;
   hasStoredWallet: boolean;
-  createWallet: () => Promise<void>;
-  storeWallet: (password: string) => Promise<void>;
+  createWallet: () => Promise<DirectSecp256k1HdWallet | null>;
+  storeWallet: (
+    wallet: DirectSecp256k1HdWallet,
+    password: string
+  ) => Promise<void>;
   restoreWallet: (mnemonic: string) => Promise<void>;
   decryptWallet: (password: string) => Promise<void>;
   fetchGallery: () => Promise<void>;
@@ -48,18 +51,16 @@ type Action =
   | { type: 'initalizing' }
   | { type: 'reset' }
   | { type: 'initalized'; hasStoredWallet: boolean }
-  | {
-      type: 'setWallet';
-      wallet: DirectSecp256k1HdWallet;
-    }
-  | { type: 'creatingWallet' }
-  | { type: 'createdWallet'; message: string }
   | { type: 'storingWallet' }
-  | { type: 'storedWallet'; message: string }
+  | { type: 'storedWallet'; message: string; wallet: DirectSecp256k1HdWallet }
   | { type: 'restoringWallet' }
   | { type: 'restoredWallet'; message: string }
   | { type: 'decryptingWallet' }
-  | { type: 'decryptedWallet'; message: string }
+  | {
+      type: 'decryptedWallet';
+      message: string;
+      wallet: DirectSecp256k1HdWallet;
+    }
   | { type: 'fetchingGallery' }
   | { type: 'setGallery' }
   | {
@@ -88,11 +89,6 @@ const reducer: Reducer<StateContextProps, Action> = (state, action) => {
         ...defaultState,
         hasStoredWallet: true,
       };
-    case 'setWallet':
-      return {
-        ...defaultState,
-        wallet: action.wallet,
-      };
     case 'setError':
       return {
         ...defaultState,
@@ -111,7 +107,6 @@ const reducer: Reducer<StateContextProps, Action> = (state, action) => {
           title: action.message,
         },
       };
-    case 'createdWallet':
     case 'restoredWallet':
     case 'decryptedWallet':
       return {
@@ -122,7 +117,6 @@ const reducer: Reducer<StateContextProps, Action> = (state, action) => {
         },
       };
     case 'initalizing':
-    case 'creatingWallet':
     case 'storingWallet':
     case 'restoringWallet':
     case 'decryptingWallet':
@@ -140,17 +134,17 @@ export const StateProvider: FC = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const createWallet = async () => {
-    dispatch({ type: 'creatingWallet' });
-
     try {
       const wallet = await DirectSecp256k1HdWallet.generate(24);
 
-      dispatch({ type: 'setWallet', wallet });
+      return wallet;
     } catch (ex) {
       console.error(ex);
 
       dispatch({ type: 'setError', error: 'Failed to create wallet!' });
     }
+
+    return null;
   };
 
   const restoreWallet = async (mnemonic: string) => {
@@ -159,10 +153,9 @@ export const StateProvider: FC = ({ children }) => {
     try {
       const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic);
 
-      dispatch({ type: 'setWallet', wallet });
-
       dispatch({
         type: 'decryptedWallet',
+        wallet,
         message: 'Your wallet has been restored!',
       });
     } catch (ex) {
@@ -175,17 +168,14 @@ export const StateProvider: FC = ({ children }) => {
     }
   };
 
-  const storeWallet = async (password: string) => {
+  const storeWallet = async (
+    wallet: DirectSecp256k1HdWallet,
+    password: string
+  ) => {
     dispatch({ type: 'storingWallet' });
 
-    if (!state.wallet) {
-      dispatch({ type: 'reset' });
-
-      return;
-    }
-
     try {
-      const serializedWallet = await state.wallet.serialize(password);
+      const serializedWallet = await wallet.serialize(password);
 
       // store to secure store
       await SecureStore.setItem(
@@ -195,6 +185,7 @@ export const StateProvider: FC = ({ children }) => {
 
       dispatch({
         type: 'storedWallet',
+        wallet,
         message: 'Your wallet has been encrypted and stored!',
       });
     } catch (ex) {
@@ -219,10 +210,14 @@ export const StateProvider: FC = ({ children }) => {
         return;
       }
 
-      await DirectSecp256k1HdWallet.deserialize(serializedWallet, password);
+      const wallet = await DirectSecp256k1HdWallet.deserialize(
+        serializedWallet,
+        password
+      );
 
       dispatch({
         type: 'decryptedWallet',
+        wallet,
         message: 'Your wallet has been restored!',
       });
     } catch (ex) {

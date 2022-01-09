@@ -12,7 +12,7 @@ const WelcomeStack = createNativeStackNavigator<WelcomeStackParamList>();
 
 export function WelcomeNavigator() {
   return (
-    <WelcomeStack.Navigator>
+    <WelcomeStack.Navigator initialRouteName="Welcome">
       <WelcomeStack.Screen
         name="Welcome"
         component={WelcomeScreen}

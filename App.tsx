@@ -2,10 +2,11 @@ import React from 'react';
 import { NativeBaseProvider } from 'native-base';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { theme } from './src/theme';
 
 import {
+  // useColorScheme, support dark mode later?
   useCachedResources,
-  useColorScheme,
   useColorModeManager,
   StateProvider,
 } from './src/hooks';
@@ -14,7 +15,6 @@ import Navigation from './src/navigation';
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
-  const colorScheme = useColorScheme();
   const colorModeManger = useColorModeManager();
 
   if (!isLoadingComplete) {
@@ -22,10 +22,10 @@ export default function App() {
   } else {
     return (
       <SafeAreaProvider>
-        <NativeBaseProvider colorModeManager={colorModeManger}>
+        <NativeBaseProvider theme={theme} colorModeManager={colorModeManger}>
           <AlertProvider>
             <StateProvider>
-              <Navigation colorScheme={colorScheme} />
+              <Navigation />
               <StatusBar style="auto" />
             </StateProvider>
           </AlertProvider>

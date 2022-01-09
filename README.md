@@ -38,20 +38,10 @@ Gained more understanding of IPFS, Cosmos wallet implement.
 
 ## Development
 
-### start local IPFS Daemon
+### Web
+
+Although this app launch on mobile platforms, but we development in web is would be more efficient, thanks for Expo web, we can do most of our implementation with web first then fine tune with IOS device / simulator
 
 ```
-ipfs daemon
-```
-
-### start react native
-
-```
-npx react-native start
-```
-
-### start ios simulator
-
-```
-npx react-native run-ios
+$ yarn web
 ```
