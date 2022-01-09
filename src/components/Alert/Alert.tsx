@@ -12,15 +12,22 @@ import {
 } from 'native-base';
 import { UseAlertProps } from './UseAlertContext';
 
-export const Alert: FC<UseAlertProps & IAlertProps> = ({
+export interface AlertProps extends UseAlertProps, IAlertProps {
+  title: string;
+  message?: string;
+  status?: IAlertProps['status'];
+}
+
+export const Alert: FC<AlertProps> = ({
   title,
   close,
   isOpen,
   message,
+  status = 'info',
 }) => {
   return (
     <Collapse isOpen={isOpen}>
-      <BaseAlert w="100%" status="error">
+      <BaseAlert w="100%" status={status}>
         <VStack space={1} flexShrink={1} w="100%">
           <HStack
             flexShrink={1}

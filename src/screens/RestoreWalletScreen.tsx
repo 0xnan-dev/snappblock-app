@@ -12,7 +12,7 @@ import {
 import { useAppState } from '../hooks';
 
 export const RestoreWalletScreen = () => {
-  const { decryptWallet, storeWallet } = useAppState();
+  const { wallet, decryptWallet, storeWallet } = useAppState();
   const [showEncryptWalletModal, setShowEncryptWalletModal] = useState(false);
   const initalShowEncryptWalletModalRef = useRef();
   const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +35,9 @@ export const RestoreWalletScreen = () => {
   };
 
   const handleStoreWallet = async (data: { password: string }) => {
-    await storeWallet(data.password);
+    if (wallet) {
+      await storeWallet(wallet, data.password);
+    }
   };
 
   return (

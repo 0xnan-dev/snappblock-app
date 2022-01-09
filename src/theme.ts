@@ -1,7 +1,7 @@
 import { extendTheme } from 'native-base';
 import { DefaultTheme } from '@react-navigation/native';
 
-const PRIMARY_COLOR = '#524df3';
+export const PRIMARY_COLOR = '#524df3';
 
 export const theme = extendTheme({
   colors: {
