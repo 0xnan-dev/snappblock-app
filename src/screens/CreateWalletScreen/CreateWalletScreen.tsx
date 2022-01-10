@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, FC } from 'react';
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
-
 import { useAppState } from '../../hooks';
 import { GenerateWalletView } from './GenerateWalletView';
-import { SaveMneonicFormType, ShowMnemoicView } from './ShowMnemoicView';
+import { ShowMnemonicView } from './ShowMnemonicView';
+import { StackScreenProps } from '@react-navigation/stack';
+import { WelcomeStackParamList } from '../../types';
+import { SaveMneonicFormType } from './EncryptWalletModal';
 
-export const CreateWalletScreen = () => {
+export const CreateWalletScreen: FC<
+  StackScreenProps<WelcomeStackParamList, 'CreateWallet'>
+> = () => {
   const { storeWallet, createWallet } = useAppState();
   const [wallet, setWallet] = useState<DirectSecp256k1HdWallet | null>(null);
 
@@ -26,7 +30,7 @@ export const CreateWalletScreen = () => {
   }, []);
 
   return wallet && wallet.mnemonic ? (
-    <ShowMnemoicView wallet={wallet} onSubmit={handleOnSubmit} />
+    <ShowMnemonicView wallet={wallet} onSubmit={handleOnSubmit} />
   ) : (
     <GenerateWalletView onSubmit={handleOnGenerateWallet} />
   );

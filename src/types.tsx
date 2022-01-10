@@ -20,16 +20,15 @@ declare global {
 
 export type MainStackParamList = {
   Main: NavigatorScreenParams<MainTabParamList> | undefined;
-  Modal: undefined;
-  NotFound: undefined;
 };
 
 export type MainStackScreenProps<Screen extends keyof MainStackParamList> =
   NativeStackScreenProps<MainStackParamList, Screen>;
 
 export type MainTabParamList = {
-  TabOne: undefined;
-  TabTwo: undefined;
+  Gallery: undefined;
+  Camera: undefined;
+  Profile: undefined;
 };
 
 export type MainTabScreenProps<Screen extends keyof MainTabParamList> =

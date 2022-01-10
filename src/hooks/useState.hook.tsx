@@ -14,14 +14,15 @@ import React, {
 export const DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY =
   'DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY';
 
+type AlertPayloadType = {
+  title: string;
+  message?: string;
+  status: IAlertProps['status'];
+} | null;
 export interface StateContextProps {
   wallet: DirectSecp256k1HdWallet | null;
   isLoading: boolean;
-  alert: {
-    title: string;
-    message?: string;
-    status: IAlertProps['status'];
-  } | null;
+  alert: AlertPayloadType;
   hasStoredWallet: boolean;
   createWallet: () => Promise<DirectSecp256k1HdWallet | null>;
   storeWallet: (
@@ -66,6 +67,10 @@ type Action =
   | {
       type: 'setError';
       error: string;
+    }
+  | {
+      type: 'setAlert';
+      alert: AlertPayloadType;
     };
 
 export const StateContext = createContext<StateContextProps>(initialState);
@@ -91,17 +96,23 @@ const reducer: Reducer<StateContextProps, Action> = (state, action) => {
       };
     case 'setError':
       return {
-        ...defaultState,
+        ...state,
         status: 'failed',
         alert: {
           status: 'error',
           title: action.error,
         },
       };
+    case 'setAlert':
+      return {
+        ...state,
+        alert: action.alert,
+      };
     case 'storedWallet':
       return {
         ...defaultState,
         hasStoredWallet: true,
+        wallet: action.wallet,
         alert: {
           status: 'success',
           title: action.message,
@@ -132,6 +143,13 @@ const reducer: Reducer<StateContextProps, Action> = (state, action) => {
 export const StateProvider: FC = ({ children }) => {
   const { show: showAlert } = useAlert();
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  const setAlert = (alert: AlertPayloadType) => {
+    dispatch({
+      type: 'setAlert',
+      alert,
+    });
+  };
 
   const createWallet = async () => {
     try {
@@ -253,7 +271,7 @@ export const StateProvider: FC = ({ children }) => {
 
   useEffect(() => {
     if (state.alert) {
-      showAlert(state.alert);
+      showAlert(state.alert, () => setAlert(null));
     }
   }, [showAlert, state.alert]);
 

@@ -5,12 +5,11 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { theme } from './src/theme';
 
 import {
-  // useColorScheme, support dark mode later?
   useCachedResources,
   useColorModeManager,
   StateProvider,
 } from './src/hooks';
-import { AlertProvider } from './src/components';
+import { AlertProvider, ModalProvider } from './src/components';
 import Navigation from './src/navigation';
 
 export default function App() {
@@ -24,10 +23,12 @@ export default function App() {
       <SafeAreaProvider>
         <NativeBaseProvider theme={theme} colorModeManager={colorModeManger}>
           <AlertProvider>
-            <StateProvider>
-              <Navigation />
-              <StatusBar style="auto" />
-            </StateProvider>
+            <ModalProvider>
+              <StateProvider>
+                <Navigation />
+                <StatusBar style="auto" />
+              </StateProvider>
+            </ModalProvider>
           </AlertProvider>
         </NativeBaseProvider>
       </SafeAreaProvider>

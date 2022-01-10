@@ -1,5 +1,5 @@
 import { IAlertProps } from 'native-base';
-import React, { FC, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import { Alert } from './Alert';
 import { UseAlertContext } from './UseAlertContext';
 
@@ -8,19 +8,32 @@ export const AlertProvider: FC = ({ children }) => {
   const [title, setTitle] = useState<string>('Alert');
   const [status, setStatus] = useState<IAlertProps['status']>('info');
   const [isOpen, setIsOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  const onCloseCallback = useRef<Function>();
 
-  const show = (alert: {
-    title: string;
-    message?: string;
-    status?: string;
-  }) => {
+  const show = (
+    alert: {
+      title: string;
+      message?: string;
+      status?: string;
+    },
+    onClose?: () => void
+  ) => {
     setIsOpen(true);
     setTitle(alert.title);
     setStatus(alert.status || 'info');
     setMessage(alert.message);
+
+    if (typeof onClose === 'function') {
+      onCloseCallback.current = onClose;
+    }
   };
 
   const close = () => {
+    if (onCloseCallback.current) {
+      onCloseCallback.current();
+    }
+
     setIsOpen(false);
   };
 

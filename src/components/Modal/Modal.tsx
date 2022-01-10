@@ -11,12 +11,18 @@ export interface ModalProps extends UserModalContextProps {
   title?: string;
 }
 
+export const ModalBody = BaseModal.Body;
+export const ModalCloseButton = BaseModal.CloseButton;
+export const ModalContent = BaseModal.Content;
+export const ModalFooter = BaseModal.Footer;
+export const ModalHeader = BaseModal.Header;
+
 export const Modal: FC<ModalProps> = ({
   children,
   close,
   isOpen,
-  okText,
-  cancelText,
+  okText = 'OK',
+  cancelText = 'Cancel',
   onClickCancel,
   onClickOk,
   title,
@@ -30,14 +36,12 @@ export const Modal: FC<ModalProps> = ({
       {hasFooter && (
         <BaseModal.Footer>
           <Button.Group space={2}>
-            <Button
-              variant="ghost"
-              colorScheme="blueGray"
-              onPress={onClickCancel}
-            >
+            <Button variant="ghost" onPress={onClickCancel}>
               {cancelText}
             </Button>
-            <Button onPress={onClickOk}>{okText}</Button>
+            <Button colorScheme="primary" onPress={onClickOk}>
+              {okText}
+            </Button>
           </Button.Group>
         </BaseModal.Footer>
       )}

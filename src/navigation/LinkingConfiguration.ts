@@ -15,20 +15,23 @@ const linking: LinkingOptions<MainStackParamList> = {
     screens: {
       Main: {
         screens: {
-          TabOne: {
+          Gallery: {
             screens: {
-              TabOneScreen: 'one',
+              GalleryScreen: 'gallery',
             },
           },
-          TabTwo: {
+          Camera: {
             screens: {
-              TabTwoScreen: 'two',
+              CameraScreen: 'camera',
+            },
+          },
+          Profile: {
+            screens: {
+              ProfileScreen: 'profile',
             },
           },
         },
       },
-      Modal: 'modal',
-      NotFound: '*',
     },
   },
 };

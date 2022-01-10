@@ -3,7 +3,10 @@ import { createContext } from 'react';
 
 export interface UseAlertProps {
   isOpen: boolean;
-  show: (alert: { title: string; message?: string } & IAlertProps) => void;
+  show: (
+    alert: { title: string; message?: string } & IAlertProps,
+    onClose?: () => void
+  ) => void;
   close: () => void;
 }
 

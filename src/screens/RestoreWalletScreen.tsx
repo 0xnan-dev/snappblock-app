@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, FC } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import {
   VStack,
@@ -10,8 +10,12 @@ import {
   FormControl,
 } from 'native-base';
 import { useAppState } from '../hooks';
+import { StackScreenProps } from '@react-navigation/stack';
+import { WelcomeStackParamList } from '../types';
 
-export const RestoreWalletScreen = () => {
+export const RestoreWalletScreen: FC<
+  StackScreenProps<WelcomeStackParamList, 'RestoreWallet'>
+> = () => {
   const { wallet, decryptWallet, storeWallet } = useAppState();
   const [showEncryptWalletModal, setShowEncryptWalletModal] = useState(false);
   const initalShowEncryptWalletModalRef = useRef();
@@ -42,7 +46,7 @@ export const RestoreWalletScreen = () => {
 
   return (
     <View>
-      <VStack paddingX={6} space={4}>
+      <VStack space={4}>
         <FormControl isRequired>
           <FormControl.Label>Enter a 24-word seed phrase</FormControl.Label>
           <Controller
@@ -63,7 +67,7 @@ export const RestoreWalletScreen = () => {
 
         <Button
           onPress={handleSubmit(handleImportSeedSubmit)}
-          colorScheme="pink"
+          colorScheme="primary"
         >
           Submit
         </Button>

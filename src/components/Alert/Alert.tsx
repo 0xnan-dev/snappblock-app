@@ -50,7 +50,9 @@ export const Alert: FC<AlertProps> = ({
             <IconButton
               variant="unstyled"
               icon={<CloseIcon size="3" color="coolGray.600" />}
-              onPress={() => close()}
+              onPress={() => {
+                close();
+              }}
             />
           </HStack>
           {message && (
