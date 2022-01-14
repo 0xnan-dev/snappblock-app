@@ -18,7 +18,7 @@ export const useColorModeManager = () => {
       try {
         await AsyncStorage.setItem('@color-mode', value);
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     },
   };

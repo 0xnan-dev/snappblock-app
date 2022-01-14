@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 
-import { MainStackParamList } from '../types';
+import { MainStackParamList } from '../types/navigation';
 import { BottomTabNavigator } from './BottomTab';
 
 const MainStack = createNativeStackNavigator<MainStackParamList>();
@@ -12,7 +12,9 @@ export function MainNavigator() {
       <MainStack.Screen
         name="Main"
         component={BottomTabNavigator}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+        }}
       />
     </MainStack.Navigator>
   );

@@ -32,10 +32,20 @@ export const theme = extendTheme({
         py: 6,
       },
     },
+    Checkbox: {
+      baseStyle: {
+        _text: {
+          fontSize: 'md',
+        },
+      },
+    },
     Button: {
       baseStyle: {
         paddingTop: 3,
         paddingBottom: 3,
+        _text: {
+          fontWeight: 'bold',
+        },
       },
     },
   },

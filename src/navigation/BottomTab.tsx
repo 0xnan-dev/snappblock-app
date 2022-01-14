@@ -1,11 +1,10 @@
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React, { FC, useEffect, useRef } from 'react';
-import { Factory, Box, Icon, IIconProps, useToken } from 'native-base';
-
-import { GalleryScreen, ProfileScreen, CameraScreen } from '../screens';
-import { MainTabParamList } from '../types';
-import { Animated } from 'react-native';
+import React, { FC } from 'react';
+import { View, Icon, IIconProps, useToken } from 'native-base';
+import { GalleryScreen, ProfileScreen } from '../screens';
+import { MainTabParamList } from '../types/navigation';
+import { TakePictureNavigator } from './TakePictureStack';
 
 const TabBarIcon: FC<
   IIconProps & {
@@ -18,52 +17,11 @@ const TabBarIcon: FC<
 
 export const BottomTab = createBottomTabNavigator<MainTabParamList>();
 
-const CameraIcon: FC<{ focused: boolean }> = ({ focused }) => {
+export function BottomTabNavigator() {
   const [colorPrimary500, colorPrimary200] = useToken('colors', [
     'primary.500',
     'primary.200',
   ]);
-  const slideAnim = useRef(new Animated.Value(8)).current;
-  const anim = Animated.timing(slideAnim, {
-    toValue: 16,
-    duration: 500,
-    useNativeDriver: true,
-  });
-
-  useEffect(() => {
-    if (focused) {
-      anim.start();
-    } else {
-      anim.reset();
-      slideAnim.setValue(8);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [anim, focused]);
-
-  return (
-    <Animated.View
-      // eslint-disable-next-line react-native/no-inline-styles
-      style={{
-        bottom: slideAnim,
-        position: 'absolute',
-        borderColor: focused ? colorPrimary200 : undefined,
-        borderWidth: focused ? 3 : 0,
-        borderStyle: 'solid',
-        height: 64,
-        width: 64,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 64,
-        backgroundColor: colorPrimary500,
-      }}
-    >
-      <TabBarIcon name="camera" color="white" />
-    </Animated.View>
-  );
-};
-
-export function BottomTabNavigator() {
-  const [colorPrimary500] = useToken('colors', ['primary.500']);
 
   return (
     <BottomTab.Navigator
@@ -76,28 +34,41 @@ export function BottomTabNavigator() {
         name="Gallery"
         component={GalleryScreen}
         options={{
-          title: 'Gallery',
+          tabBarLabel: '',
           headerTitleAlign: 'center',
           tabBarIcon: ({ color }) => <TabBarIcon name="layers" color={color} />,
         }}
       />
 
       <BottomTab.Screen
-        name="Camera"
-        component={CameraScreen}
-        options={({ navigation }) => ({
-          title: 'Camera',
+        name="TakePicture"
+        component={TakePictureNavigator}
+        options={() => ({
           tabBarLabel: '',
           headerShown: false,
-          tabBarIcon: () => {
-            const navState = navigation.getState();
-
-            return (
-              <CameraIcon
-                focused={navState.routeNames[navState.index] === 'Camera'}
-              />
-            );
+          tabBarStyle: {
+            display: 'none',
           },
+          tabBarIcon: () => (
+            <View
+              // eslint-disable-next-line react-native/no-inline-styles
+              style={{
+                bottom: 4,
+                position: 'absolute',
+                borderColor: colorPrimary200,
+                borderWidth: 3,
+                borderStyle: 'solid',
+                height: 64,
+                width: 64,
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: 64,
+                backgroundColor: colorPrimary500,
+              }}
+            >
+              <TabBarIcon name="camera" color="white" />
+            </View>
+          ),
         })}
       />
 
@@ -105,7 +76,7 @@ export function BottomTabNavigator() {
         name="Profile"
         component={ProfileScreen}
         options={{
-          title: 'Profile',
+          tabBarLabel: '',
           headerTitleAlign: 'center',
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="settings" color={color} />

@@ -8,6 +8,7 @@ import {
   useCachedResources,
   useColorModeManager,
   StateProvider,
+  IPFSProvider,
 } from './src/hooks';
 import { AlertProvider, ModalProvider } from './src/components';
 import Navigation from './src/navigation';
@@ -23,12 +24,14 @@ export default function App() {
       <SafeAreaProvider>
         <NativeBaseProvider theme={theme} colorModeManager={colorModeManger}>
           <AlertProvider>
-            <ModalProvider>
-              <StateProvider>
-                <Navigation />
-                <StatusBar style="auto" />
-              </StateProvider>
-            </ModalProvider>
+            <IPFSProvider>
+              <ModalProvider>
+                <StateProvider>
+                  <Navigation />
+                  <StatusBar style="auto" />
+                </StateProvider>
+              </ModalProvider>
+            </IPFSProvider>
           </AlertProvider>
         </NativeBaseProvider>
       </SafeAreaProvider>

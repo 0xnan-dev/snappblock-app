@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import {
   Alert as BaseAlert,
   Collapse,
@@ -14,6 +14,7 @@ import { UseAlertProps } from './UseAlertContext';
 
 export interface AlertProps extends UseAlertProps, IAlertProps {
   title: string;
+  autoClose?: number;
   message?: string;
   status?: IAlertProps['status'];
 }
@@ -23,8 +24,19 @@ export const Alert: FC<AlertProps> = ({
   close,
   isOpen,
   message,
+  autoClose = 6000,
   status = 'info',
 }) => {
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      close();
+    }, autoClose);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [autoClose, close]);
+
   return (
     <Collapse isOpen={isOpen}>
       <BaseAlert w="100%" status={status}>

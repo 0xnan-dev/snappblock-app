@@ -1,56 +1,133 @@
-import React, { useState, useRef, FC } from 'react';
+import React, { useState, FC } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 import {
   VStack,
   Button,
   View,
   TextArea,
-  Modal,
   Input,
   FormControl,
+  WarningOutlineIcon,
+  Icon,
 } from 'native-base';
-import { useAppState } from '../hooks';
 import { StackScreenProps } from '@react-navigation/stack';
-import { WelcomeStackParamList } from '../types';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useAppState } from '../hooks';
+import { WelcomeStackParamList } from '../types/navigation';
+
+interface EnterSeedPhraseFormType {
+  walletName: string;
+  seedPhrase: string;
+  password: string;
+}
+
+const HideIcon: FC = () => (
+  <Icon
+    as={<MaterialIcons name="visibility-off" />}
+    size={5}
+    color="muted.400"
+  />
+);
+
+const ShowIcon: FC = () => (
+  <Icon as={<MaterialIcons name="visibility" />} size={5} color="muted.400" />
+);
 
 export const RestoreWalletScreen: FC<
   StackScreenProps<WelcomeStackParamList, 'RestoreWallet'>
 > = () => {
-  const { wallet, decryptWallet, storeWallet } = useAppState();
-  const [showEncryptWalletModal, setShowEncryptWalletModal] = useState(false);
-  const initalShowEncryptWalletModalRef = useRef();
+  const { restoreWallet, storeWallet, isLoading } = useAppState();
   const [showPassword, setShowPassword] = useState(false);
-  const { control: controlImportSeed, handleSubmit } = useForm({
-    defaultValues: {
-      seedPhrase: '',
-    },
+  const formSchema = Yup.object().shape({
+    walletName: Yup.string()
+      .required('Wallet name is required')
+      .min(2, 'Wallet name length should be at leaset 2 characters'),
+    password: Yup.string()
+      .required('Password is required')
+      .min(4, 'Password length should be at least 4 characters'),
+    seedPhrase: Yup.string().required('Seed phrase is required'),
   });
-  const {
-    control: controlEncryptWallet,
-    handleSubmit: handleEncryptWalletSubmit,
-  } = useForm({
-    defaultValues: {
-      password: '',
-    },
-  });
+  const validationOpt = { resolver: yupResolver(formSchema) };
+  const { formState, control, handleSubmit } =
+    useForm<EnterSeedPhraseFormType>(validationOpt);
+  const { errors } = formState;
 
-  const handleImportSeedSubmit = async (data: { seedPhrase: string }) => {
-    await decryptWallet(data.seedPhrase);
-  };
+  const handleImportSeedSubmit = async (data: EnterSeedPhraseFormType) => {
+    if (Object.keys(errors).length) {
+      return;
+    }
 
-  const handleStoreWallet = async (data: { password: string }) => {
+    const wallet = await restoreWallet(data.seedPhrase);
+
     if (wallet) {
-      await storeWallet(wallet, data.password);
+      await storeWallet(data.walletName, wallet, data.password);
     }
   };
 
   return (
     <View>
       <VStack space={4}>
-        <FormControl isRequired>
+        <FormControl isRequired isInvalid={Boolean(errors.walletName)}>
+          <Controller
+            control={control}
+            name="walletName"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                defaultValue={value}
+                type="string"
+                onChangeText={val => onChange(val)}
+                placeholder="Wallet Name"
+              />
+            )}
+          />
+          {errors.password && (
+            <FormControl.ErrorMessage
+              leftIcon={<WarningOutlineIcon size="xs" />}
+            >
+              {errors.password.message}
+            </FormControl.ErrorMessage>
+          )}
+        </FormControl>
+
+        <FormControl isRequired isInvalid={Boolean(errors.password)}>
+          <Controller
+            control={control}
+            name="password"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                defaultValue={value}
+                type={showPassword ? 'text' : 'password'}
+                onChangeText={val => onChange(val)}
+                InputRightElement={
+                  <Button
+                    ml={1}
+                    roundedLeft={0}
+                    roundedRight="sm"
+                    variant="unstyled"
+                    onPress={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <ShowIcon /> : <HideIcon />}
+                  </Button>
+                }
+                placeholder="Password"
+              />
+            )}
+          />
+          {errors.password && (
+            <FormControl.ErrorMessage
+              leftIcon={<WarningOutlineIcon size="xs" />}
+            >
+              {errors.password.message}
+            </FormControl.ErrorMessage>
+          )}
+        </FormControl>
+
+        <FormControl isRequired isInvalid={Boolean(errors.seedPhrase)}>
           <FormControl.Label>Enter a 24-word seed phrase</FormControl.Label>
           <Controller
-            control={controlImportSeed}
+            control={control}
             name="seedPhrase"
             render={({ field: { onChange, value } }) => (
               <TextArea
@@ -63,65 +140,22 @@ export const RestoreWalletScreen: FC<
               />
             )}
           />
+          {errors.seedPhrase && (
+            <FormControl.ErrorMessage
+              leftIcon={<WarningOutlineIcon size="xs" />}
+            >
+              {errors.seedPhrase.message}
+            </FormControl.ErrorMessage>
+          )}
         </FormControl>
 
         <Button
+          isLoading={isLoading}
           onPress={handleSubmit(handleImportSeedSubmit)}
           colorScheme="primary"
         >
           Submit
         </Button>
-        <Modal
-          isOpen={showEncryptWalletModal}
-          onClose={() => setShowEncryptWalletModal(false)}
-        >
-          <Modal.Content maxWidth="400px">
-            <Modal.CloseButton />
-            <Modal.Header>Encrypt Wallet</Modal.Header>
-            <Modal.Body>
-              <FormControl isRequired>
-                <Controller
-                  control={controlEncryptWallet}
-                  name="password"
-                  render={({ field: { onChange, value } }) => (
-                    <Input
-                      mt={4}
-                      ref={initalShowEncryptWalletModalRef}
-                      defaultValue={value}
-                      type={showPassword ? 'text' : 'password'}
-                      onChangeText={val => onChange(val)}
-                      InputRightElement={
-                        <Button
-                          ml={1}
-                          roundedLeft={0}
-                          roundedRight="md"
-                          onPress={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? 'Hide' : 'Show'}
-                        </Button>
-                      }
-                      placeholder="Password"
-                    />
-                  )}
-                />
-              </FormControl>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button.Group variant="ghost" space={2}>
-                <Button onPress={handleEncryptWalletSubmit(handleStoreWallet)}>
-                  Confirm
-                </Button>
-                <Button
-                  onPress={() => {
-                    setShowEncryptWalletModal(false);
-                  }}
-                >
-                  Cancel
-                </Button>
-              </Button.Group>
-            </Modal.Footer>
-          </Modal.Content>
-        </Modal>
       </VStack>
     </View>
   );

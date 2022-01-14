@@ -1,13 +1,16 @@
-import React, { FC } from 'react';
-import { Button, Modal as BaseModal } from 'native-base';
+import React, { ComponentProps, FC } from 'react';
+import { Button, IModalProps, Modal as BaseModal } from 'native-base';
 import { UserModalContextProps } from './UseModalContext';
 
-export interface ModalProps extends UserModalContextProps {
-  hasFooter?: boolean;
+export interface ModalProps extends UserModalContextProps, IModalProps {
+  showFooter?: boolean;
+  isLoading?: boolean;
   onClickCancel?: () => void;
   onClickOk?: () => void;
   okText?: string;
   cancelText?: string;
+  okButtonProps?: ComponentProps<typeof Button>;
+  cancelButtonProps?: ComponentProps<typeof Button>;
   title?: string;
 }
 
@@ -21,25 +24,38 @@ export const Modal: FC<ModalProps> = ({
   children,
   close,
   isOpen,
+  isLoading,
   okText = 'OK',
   cancelText = 'Cancel',
   onClickCancel,
   onClickOk,
   title,
-  hasFooter = true,
+  showFooter = true,
+  okButtonProps,
+  cancelButtonProps,
+  ...props
 }) => (
-  <BaseModal isOpen={isOpen} onClose={() => close()}>
-    <BaseModal.Content maxWidth="400px">
+  <BaseModal isOpen={isOpen} onClose={() => close()} {...props}>
+    <BaseModal.Content maxWidth="420px">
       <BaseModal.CloseButton />
       {title && <BaseModal.Header>{title}</BaseModal.Header>}
       <BaseModal.Body>{children}</BaseModal.Body>
-      {hasFooter && (
+      {showFooter && (
         <BaseModal.Footer>
           <Button.Group space={2}>
-            <Button variant="ghost" onPress={onClickCancel}>
+            <Button
+              variant="ghost"
+              onPress={onClickCancel}
+              {...cancelButtonProps}
+            >
               {cancelText}
             </Button>
-            <Button colorScheme="primary" onPress={onClickOk}>
+            <Button
+              isLoading={isLoading}
+              colorScheme="primary"
+              onPress={onClickOk}
+              {...okButtonProps}
+            >
               {okText}
             </Button>
           </Button.Group>

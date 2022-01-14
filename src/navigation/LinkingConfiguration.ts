@@ -7,27 +7,47 @@
 import { LinkingOptions } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
 
-import { MainStackParamList } from '../types';
+import { MainStackParamList } from '../types/navigation';
 
 const linking: LinkingOptions<MainStackParamList> = {
   prefixes: [Linking.createURL('/')],
   config: {
     screens: {
+      Welcome: {
+        screens: {
+          Welcome: {
+            screens: {
+              Welcome: 'welcome',
+            },
+          },
+          CreateWallet: {
+            screens: {
+              CreateWallet: 'welcome/createWallet',
+            },
+          },
+          RestoreWallet: {
+            screens: {
+              RestoreWallet: 'welcome/restoreWallet',
+            },
+          },
+        },
+      },
       Main: {
         screens: {
           Gallery: {
             screens: {
-              GalleryScreen: 'gallery',
+              Gallery: 'gallery',
             },
           },
-          Camera: {
+          TakePicture: {
             screens: {
-              CameraScreen: 'camera',
+              Camera: 'takePicture/camera',
+              Editing: 'takePicture/editing',
             },
           },
           Profile: {
             screens: {
-              ProfileScreen: 'profile',
+              Profile: 'profile',
             },
           },
         },

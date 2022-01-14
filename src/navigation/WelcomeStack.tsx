@@ -6,7 +6,7 @@ import {
   WelcomeScreen,
 } from '../screens';
 
-import { WelcomeStackParamList } from '../types';
+import { WelcomeStackParamList } from '../types/navigation';
 
 const WelcomeStack = createNativeStackNavigator<WelcomeStackParamList>();
 
@@ -21,12 +21,12 @@ export function WelcomeNavigator() {
       <WelcomeStack.Screen
         name="CreateWallet"
         component={CreateWalletScreen}
-        options={{ title: 'Create Wallet' }}
+        options={{ title: 'Create Wallet', headerTitleAlign: 'center' }}
       />
       <WelcomeStack.Screen
         name="RestoreWallet"
         component={RestoreWalletScreen}
-        options={{ title: 'Restore Wallet' }}
+        options={{ title: 'Restore Wallet', headerTitleAlign: 'center' }}
       />
     </WelcomeStack.Navigator>
   );

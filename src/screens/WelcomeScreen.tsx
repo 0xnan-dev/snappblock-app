@@ -6,18 +6,25 @@ import {
   PresenceTransition,
   View,
   Button,
+  VStack,
 } from 'native-base';
-import { WelcomeStackParamList } from '../types';
 import { StackScreenProps } from '@react-navigation/stack';
-import { AppIcon, Modal, useModal, ModalProps } from '../components';
-
-const UnlockModal: FC<ModalProps> = props => <Modal {...props} />;
+import { WelcomeStackParamList } from '../types/navigation';
+import { AppIcon, UnlockModal, useModal } from '../components';
+import { useAppState } from '../hooks';
 
 export const WelcomeScreen: FC<
   StackScreenProps<WelcomeStackParamList, 'Welcome'>
 > = ({ navigation }) => {
   const unlockModalProps = useModal();
+  const { decryptWallet, hasStoredWallet, storedWalletName } = useAppState();
   const [showLogo, setShowLogo] = useState(false);
+
+  const handleOnUnlock = async ({ password }: { password: string }) => {
+    await decryptWallet(password);
+
+    unlockModalProps.close();
+  };
 
   useEffect(() => {
     setTimeout(() => {
@@ -25,56 +32,81 @@ export const WelcomeScreen: FC<
     }, 750);
   }, []);
 
-  return (
-    <View alignItems="center" paddingTop={16} justifyContent="space-between">
-      <Flex
-        alignItems="center"
-        justifyContent="center"
-        w="100%"
-        mb={4}
-        height="50%"
-      >
-        <PresenceTransition
-          visible={showLogo}
-          initial={{ opacity: 0, translateY: 100 }}
-          animate={{
-            opacity: 1,
-            translateY: 0,
-            transition: {
-              duration: 750,
-            },
-          }}
-        >
-          <Box flex={1} alignItems="center" justifyContent="center">
-            <AppIcon height="120pt" width="180pt" />
-            <Heading color="primary.500">Snappblock</Heading>
-          </Box>
-        </PresenceTransition>
-      </Flex>
+  useEffect(() => {
+    if (hasStoredWallet && !unlockModalProps.isOpen) {
+      unlockModalProps.show();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasStoredWallet]);
 
-      <Flex height="50%" justifyContent="center" w="100%">
-        <Button
+  return (
+    <View>
+      <VStack flex={1} alignItems="center" justifyContent="space-between">
+        <Flex
+          alignItems="center"
+          justifyContent="center"
           w="100%"
           mb={4}
-          colorScheme="primary.200:alpha.30"
-          _text={{
-            color: 'primary.500',
-          }}
-          onPress={() => navigation.navigate('CreateWallet')}
+          h="50%"
         >
-          Create a new Wallet
-        </Button>
+          <PresenceTransition
+            visible={showLogo}
+            initial={{ opacity: 0, translateY: 25 }}
+            animate={{
+              opacity: 1,
+              translateY: 0,
+              transition: {
+                duration: 750,
+              },
+            }}
+          >
+            <Box flex={1} alignItems="center" justifyContent="center">
+              <AppIcon h="120pt" width="180pt" />
+              <Heading color="primary.500">Snappblock</Heading>
+            </Box>
+          </PresenceTransition>
+        </Flex>
 
-        <Button
-          colorScheme="primary"
-          w="100%"
-          onPress={() => navigation.navigate('RestoreWallet')}
-        >
-          Import existing wallet
-        </Button>
-      </Flex>
+        <VStack space={4} h="50%" justifyContent="center" w="100%">
+          <Button
+            w="100%"
+            colorScheme="primary.200:alpha.30"
+            _text={{
+              color: 'primary.500',
+            }}
+            onPress={() => navigation.navigate('CreateWallet')}
+          >
+            Create a new Wallet
+          </Button>
 
-      <UnlockModal {...unlockModalProps} />
+          <Button
+            colorScheme="primary"
+            w="100%"
+            onPress={() => navigation.navigate('RestoreWallet')}
+          >
+            Import existing wallet
+          </Button>
+
+          {hasStoredWallet ? (
+            <Button
+              variant="unstyled"
+              _text={{
+                color: 'primary',
+              }}
+              w="100%"
+              onPress={() => unlockModalProps.show()}
+            >
+              Unlock Wallet
+            </Button>
+          ) : null}
+        </VStack>
+      </VStack>
+
+      <UnlockModal
+        walletName={storedWalletName || 'Unknown'}
+        onSubmit={handleOnUnlock}
+        {...unlockModalProps}
+      />
     </View>
   );
 };
