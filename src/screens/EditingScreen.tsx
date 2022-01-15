@@ -17,6 +17,8 @@ import { useAppState } from '../hooks';
 import { TakePictureScreenProps } from '../types/navigation';
 import { Modal, useModal } from '../components';
 
+const CHAR_LIMIT = 120;
+
 export interface EditingFormType {
   message: string;
 }
@@ -48,12 +50,10 @@ export function EditingScreen({ navigation }: TakePictureScreenProps) {
 
         await fetchPhotos(0);
 
-        setTimeout(() => {
-          navigation.navigate('Gallery');
-        }, 2000);
+        navigation.navigate('Gallery');
       }
     } catch (ex) {
-      console.debug(ex);
+      console.error(ex);
 
       setAlert({
         title: 'Something went wrong, please try again later',
@@ -131,6 +131,7 @@ export function EditingScreen({ navigation }: TakePictureScreenProps) {
                 render={({ field: { onChange, value } }) => (
                   <TextArea
                     flex={1}
+                    maxLength={CHAR_LIMIT}
                     isDisabled={!isBalanceSufficent || isLoading || isUploading}
                     defaultValue={value}
                     onChangeText={val => onChange(val)}
@@ -147,7 +148,7 @@ export function EditingScreen({ navigation }: TakePictureScreenProps) {
               )}
             </FormControl>
             <Text color="gray.500" textAlign="right" fontSize="xs">
-              {(messageText || '').length} / 200
+              {(messageText || '').length} / {CHAR_LIMIT}
             </Text>
           </Box>
         </VStack>

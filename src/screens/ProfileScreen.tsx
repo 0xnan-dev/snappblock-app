@@ -10,9 +10,9 @@ import {
   Divider,
   IconButton,
   useToast,
+  Pressable,
 } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { TouchableOpacity } from 'react-native';
 import QRCode from 'react-qr-code';
 import { MaterialIcons } from '@expo/vector-icons';
 import Clipboard from '@react-native-clipboard/clipboard';
@@ -58,7 +58,7 @@ export function ProfileScreen() {
         justifyContent="space-between"
       >
         <VStack h="50%" space={2}>
-          <TouchableOpacity onPress={() => qrCodeModalProps.show()}>
+          <Pressable onPress={() => qrCodeModalProps.show()}>
             <HStack alignItems="center" justifyContent="center">
               <Text fontSize="lg" fontWeight="bold" mr={1}>
                 {storedWalletName}
@@ -69,9 +69,9 @@ export function ProfileScreen() {
                 as={<MaterialIcons name="qr-code" />}
               />
             </HStack>
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity onPress={() => copyAddress()}>
+          <Pressable onPress={() => copyAddress()}>
             <HStack
               borderRadius="full"
               px={2}
@@ -90,7 +90,7 @@ export function ProfileScreen() {
                 as={<MaterialIcons name="content-copy" />}
               />
             </HStack>
-          </TouchableOpacity>
+          </Pressable>
 
           <Divider my="2" />
 

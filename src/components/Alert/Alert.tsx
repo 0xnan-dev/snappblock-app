@@ -1,7 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import {
   Alert as BaseAlert,
-  Collapse,
   VStack,
   HStack,
   IconButton,
@@ -9,6 +8,7 @@ import {
   Box,
   Text,
   IAlertProps,
+  Slide,
 } from 'native-base';
 import { UseAlertProps } from './UseAlertContext';
 
@@ -38,7 +38,7 @@ export const Alert: FC<AlertProps> = ({
   }, [autoClose, close]);
 
   return (
-    <Collapse isOpen={isOpen}>
+    <Slide in={isOpen} placement="top">
       <BaseAlert w="100%" status={status}>
         <VStack space={1} flexShrink={1} w="100%">
           <HStack
@@ -81,6 +81,6 @@ export const Alert: FC<AlertProps> = ({
           )}
         </VStack>
       </BaseAlert>
-    </Collapse>
+    </Slide>
   );
 };

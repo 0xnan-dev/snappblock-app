@@ -1,7 +1,12 @@
 import React, { FC } from 'react';
-import { useToast, useToken, Box, Text, Flex, useClipboard } from 'native-base';
-import { TouchableHighlight } from 'react-native';
-import { useAlert } from '../../components';
+import {
+  useToast,
+  Pressable,
+  Box,
+  Text,
+  Flex,
+  useClipboard,
+} from 'native-base';
 
 export interface MnemonicTagsProps extends React.ComponentProps<typeof Box> {
   mnemonic: string;
@@ -9,9 +14,7 @@ export interface MnemonicTagsProps extends React.ComponentProps<typeof Box> {
 
 export const MnemonicTags: FC<MnemonicTagsProps> = ({ mnemonic, ...props }) => {
   const { onCopy } = useClipboard();
-  const { show: showAlert } = useAlert();
   const toast = useToast();
-  const [colorPrimary200] = useToken('colors', ['primary.200']);
 
   const handleOnCopy = () => {
     onCopy(mnemonic);
@@ -23,10 +26,7 @@ export const MnemonicTags: FC<MnemonicTagsProps> = ({ mnemonic, ...props }) => {
 
   return (
     <Box {...props}>
-      <TouchableHighlight
-        underlayColor={colorPrimary200}
-        onPress={handleOnCopy}
-      >
+      <Pressable onPress={handleOnCopy}>
         <Flex flexWrap="wrap" flexDirection="row">
           {mnemonic.split(' ').map((phrase, i) => (
             <Box
@@ -52,7 +52,7 @@ export const MnemonicTags: FC<MnemonicTagsProps> = ({ mnemonic, ...props }) => {
             </Box>
           ))}
         </Flex>
-      </TouchableHighlight>
+      </Pressable>
     </Box>
   );
 };

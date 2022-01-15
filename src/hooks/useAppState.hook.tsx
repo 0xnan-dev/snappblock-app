@@ -1,7 +1,7 @@
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import BigNumber from 'bignumber.js';
 import { BroadcastTxSuccess, StargateClient } from '@cosmjs/stargate';
-import { IAlertProps } from 'native-base';
+import { IAlertProps, useDisclose } from 'native-base';
 import React, {
   FC,
   createContext,
@@ -20,7 +20,7 @@ import {
   createISCNRecord,
   queryRecordsByFingerprint,
 } from '../lib';
-import { useAlert } from '../components';
+import { useAlert, ImagePreviewModal } from '../components';
 import { PhotoItem } from '../interfaces';
 import { useIPFS } from './ipfs.hook';
 
@@ -42,13 +42,23 @@ const isDev = process.env.NODE_ENV !== 'production';
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 const COSMOS_RPC = process.env.COSMOS_RPC!;
 const COSMOS_DENOM = process.env.COSMOS_DENOM!;
+const IPFS_NODE_URL = process.env.IPFS_NODE_URL!;
 /* eslint-enable @typescript-eslint/no-non-null-assertion */
+
+const toIpfsUrl = (url: string) => {
+  if (/ipfs\.io/.test(url)) {
+    return url.replace(/^https:\/\/ipfs\.io/, IPFS_NODE_URL);
+  }
+
+  return url;
+};
 
 export interface AppStateContextProps {
   wallet: DirectSecp256k1HdWallet | null;
   balance: BigNumber | null;
   isLoading: boolean;
   alert: AlertPayloadType;
+  selectedItem: PhotoItem | null;
   picture: CameraCapturedPicture | null;
   photos: PhotoItem[];
   hasStoredWallet: boolean;
@@ -72,15 +82,17 @@ export interface AppStateContextProps {
   setAlert: (alert: AlertPayloadType) => void;
   setBalance: (balance: BigNumber) => void;
   reset: () => void;
+  setSelectedItem: (selectedItem: PhotoItem) => void;
 }
 
 const initialState: AppStateContextProps = {
   wallet: null,
-  picture: null,
+  picture: null, // picture to upload
   balance: null,
   alert: null,
   photos: [],
   storedWalletName: null,
+  selectedItem: null,
   isLoading: false,
   hasStoredWallet: false,
   createWallet: null as never,
@@ -93,6 +105,7 @@ const initialState: AppStateContextProps = {
   setAlert: null as never,
   setBalance: null as never,
   reset: null as never,
+  setSelectedItem: null as never,
 };
 
 // eslint-disable-next-line no-shadow
@@ -112,6 +125,7 @@ enum ActionType {
   SET_ALERT = 'SET_ALERT',
   SET_PICTURE = 'SET_PICTURE',
   SET_BALANCE = 'SET_BALANCE',
+  SET_SELECTED_ITEM = 'SET_SELECTED_ITEM',
   UPLOADING = 'UPLOADING',
   UPLOADED = 'UPLOADED',
 }
@@ -160,7 +174,8 @@ type Action =
       message: string;
       picture: CameraCapturedPicture;
     }
-  | { type: ActionType.UPLOADED };
+  | { type: ActionType.UPLOADED }
+  | { type: ActionType.SET_SELECTED_ITEM; selectedItem: PhotoItem | null };
 
 export const StateContext = createContext<AppStateContextProps>(initialState);
 
@@ -174,6 +189,7 @@ const reducer: Reducer<AppStateContextProps, Action> = (state, action) => {
     wallet: null,
     picture: null,
     storedWalletName: null,
+    selectedItem: null,
     hasStoredWallet: false,
     isLoading: false,
   };
@@ -269,7 +285,13 @@ const reducer: Reducer<AppStateContextProps, Action> = (state, action) => {
     case ActionType.UPLOADED:
       return {
         ...state,
+        picture: null,
         isLoading: false,
+      };
+    case ActionType.SET_SELECTED_ITEM:
+      return {
+        ...state,
+        selectedItem: action.selectedItem,
       };
     default:
       throw new Error('No matched action');
@@ -280,6 +302,7 @@ export const StateProvider: FC = ({ children }) => {
   const { show: showAlert } = useAlert();
   const { upload: ipfsUpload, authorize: ipfsAuthorize } = useIPFS();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const imagePreviewModalProps = useDisclose();
 
   const setAlert = (alert: AlertPayloadType) => {
     dispatch({
@@ -416,6 +439,7 @@ export const StateProvider: FC = ({ children }) => {
     dispatch({ type: ActionType.FETCHING_PHOTOS });
 
     let photos = [] as PhotoItem[];
+
     const queryResponse = await queryRecordsByFingerprint(
       'https://snappblock.app',
       fromSequence
@@ -430,17 +454,27 @@ export const StateProvider: FC = ({ children }) => {
           );
 
           return {
+            iscnId: data['@id'] as string,
             date: new Date(data.contentMetadata.recordTimestamp),
-            photo: data.contentMetadata.url,
+            photo: toIpfsUrl(data.contentMetadata.url),
             description: data.contentMetadata.description,
             fromAddress: author.entity['@id'],
             authorName: author.entity.name,
           };
         })
-        .filter(p => Boolean(p.photo)); // must have photo
+        .filter(p => Boolean(p.photo))
+        .sort((a, b) => b.date.getTime() - a.date.getTime()); // must have photo
+
+      dispatch({ type: ActionType.FETCHED_PHOTOS, photos });
+
+      return {
+        nextSequence: queryResponse.nextSequence.toNumber(),
+        photos,
+      };
     }
 
-    dispatch({ type: ActionType.FETCHED_PHOTOS, photos });
+    // clear state
+    dispatch({ type: ActionType.FETCHED_PHOTOS, photos: [] });
 
     return {
       nextSequence: 0,
@@ -480,14 +514,25 @@ export const StateProvider: FC = ({ children }) => {
       return null;
     }
 
-    const [account] = await state.wallet.getAccounts();
-    const client = await StargateClient.connect(COSMOS_RPC);
+    try {
+      const [account] = await state.wallet.getAccounts();
+      const client = await StargateClient.connect(COSMOS_RPC);
 
-    const balance = await client.getBalance(account.address, COSMOS_DENOM);
+      const balance = await client.getBalance(account.address, COSMOS_DENOM);
 
-    const coinBalance = new BigNumber(balance.amount);
+      const coinBalance = new BigNumber(balance.amount);
 
-    dispatch({ type: ActionType.SET_BALANCE, balance: coinBalance });
+      dispatch({ type: ActionType.SET_BALANCE, balance: coinBalance });
+
+      return;
+    } catch (ex) {
+      console.error(ex);
+    }
+
+    dispatch({
+      type: ActionType.SET_ERROR,
+      error: 'Cannot get account balance, please try again later',
+    });
   };
 
   const reset = () => {
@@ -560,7 +605,7 @@ export const StateProvider: FC = ({ children }) => {
                   '@id': 'https://github.com/0xnan-dev',
                   name: '0xNaN',
                 },
-                contributionType: 'http://schema.org/creator',
+                contributionType: 'http://schema.org/publisher',
                 rewardProportion: 0.1,
               },
             ],
@@ -569,8 +614,14 @@ export const StateProvider: FC = ({ children }) => {
             version: 1,
             url: `https://ipfs.io/ipfs/${ipfsPath}`,
             author: accountName,
+            publisher: 'Snappblock',
             datePublished,
+            usageInfo: 'https://creativecommons.org/licenses/by/4.0',
           };
+
+          for (let i = 0; i < 50; i++) {
+            await createISCNRecord(state.wallet, record);
+          }
 
           const txn = await createISCNRecord(state.wallet, record);
 
@@ -597,6 +648,10 @@ export const StateProvider: FC = ({ children }) => {
     return null;
   };
 
+  const setSelectedItem = (photoItem: PhotoItem | null) => {
+    dispatch({ type: ActionType.SET_SELECTED_ITEM, selectedItem: photoItem });
+  };
+
   // initialize when provider component mounted
   useEffect(() => {
     init();
@@ -608,6 +663,16 @@ export const StateProvider: FC = ({ children }) => {
       showAlert(state.alert, () => setAlert(null));
     }
   }, [showAlert, state.alert]);
+
+  // open model when selected an item
+  useEffect(() => {
+    if (state.selectedItem !== null) {
+      imagePreviewModalProps.onOpen();
+    } else {
+      imagePreviewModalProps.onClose();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.selectedItem]);
 
   useEffect(() => {
     if (state.wallet) {
@@ -629,9 +694,20 @@ export const StateProvider: FC = ({ children }) => {
         setAlert,
         reset,
         upload,
+        setSelectedItem,
       }}
     >
       {children}
+      <ImagePreviewModal
+        source={state.selectedItem?.photo}
+        description={state.selectedItem?.description}
+        fromAddress={state.selectedItem?.fromAddress}
+        publishedDate={state.selectedItem?.date}
+        {...imagePreviewModalProps}
+        onClose={() => {
+          setSelectedItem(null);
+        }}
+      />
     </StateContext.Provider>
   );
 };

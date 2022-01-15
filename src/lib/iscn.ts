@@ -39,6 +39,13 @@ export async function queryRecordsByFingerprint(
   return res;
 }
 
+export async function queryRecordsByOwner(owner: string, fromSequence: number) {
+  await queryClient.connect(COSMOS_RPC);
+  const res = await queryClient.queryRecordsByOwner(owner, fromSequence);
+
+  return res;
+}
+
 export async function queryFeePerByte() {
   await queryClient.connect(COSMOS_RPC);
   const fee = await queryClient.queryFeePerByte();
