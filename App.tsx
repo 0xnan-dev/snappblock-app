@@ -25,7 +25,7 @@ export default function App() {
           <IPFSProvider>
             <StateProvider>
               <Navigation />
-              <StatusBar style="auto" />
+              <StatusBar style="dark" />
             </StateProvider>
           </IPFSProvider>
         </NativeBaseProvider>

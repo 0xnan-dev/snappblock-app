@@ -1,4 +1,4 @@
-import { registerRootComponent } from 'expo';
+import './shim';
 
 import 'text-encoding';
 
@@ -9,6 +9,7 @@ global.Buffer = global.Buffer || require('buffer').Buffer;
 
 global.process = require('process');
 
+import { registerRootComponent } from 'expo';
 import App from './App';
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);

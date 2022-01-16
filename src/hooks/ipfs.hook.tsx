@@ -1,9 +1,10 @@
 import React, { FC, createContext, useContext } from 'react';
+import ExpoConstants from 'expo-constants';
 import axios from 'axios';
 import { signMsg } from '../lib/sign-msg';
 
-const IPFS_API = process.env.IPFS_API;
-const AUTH_MESSAGE = process.env.AUTH_MESSAGE;
+const ipfsApiUrl = ExpoConstants.manifest?.extra?.ipfsApiUrl;
+const authMessage = ExpoConstants.manifest?.extra?.authMessage;
 
 interface IPFSContextProps {
   authorize: (publicKey: string, pirvateKey: string) => Promise<string | null>;
@@ -36,9 +37,9 @@ export const IPFSProvider: FC = ({ children }) => {
   ): Promise<string | null> => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const signature = signMsg(AUTH_MESSAGE!, pirvateKey); // base64 signature
+      const signature = signMsg(authMessage!, pirvateKey); // base64 signature
       const apiRes = await axios.post<AuthenticatonType>(
-        `${IPFS_API}/v1/auth/login`,
+        `${ipfsApiUrl}/v1/auth/login`,
         {
           publicKey,
           signature: signature.toString('base64'),
@@ -57,7 +58,7 @@ export const IPFSProvider: FC = ({ children }) => {
 
     formData.append('file', imageBlob);
 
-    const apiRes = await axios.post<string>(`${IPFS_API}/ipfs`, formData, {
+    const apiRes = await axios.post<string>(`${ipfsApiUrl}/ipfs`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${accessToken}`,
@@ -68,7 +69,7 @@ export const IPFSProvider: FC = ({ children }) => {
   };
 
   const download = async (ipfsPath: string, accessToken: string) => {
-    const apiRes = await axios.get(`${IPFS_API}/ipfs/${ipfsPath}`, {
+    const apiRes = await axios.get(`${ipfsApiUrl}/ipfs/${ipfsPath}`, {
       responseType: 'arraybuffer',
       headers: {
         Authorization: `Bearer ${accessToken}`,

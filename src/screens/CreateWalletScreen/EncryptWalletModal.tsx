@@ -37,7 +37,6 @@ export interface EncryptWalletModalProps extends ModalProps {
 
 export const EncryptWalletModal: FC<EncryptWalletModalProps> = ({
   onSubmit,
-  onClose,
   isLoading,
   ...props
 }) => {
@@ -64,13 +63,14 @@ export const EncryptWalletModal: FC<EncryptWalletModalProps> = ({
       cancelButtonProps={{
         disabled: isLoading,
       }}
+      closeOnOverlayClick={!isLoading}
       okButtonProps={{
         isLoading,
       }}
       okText="Confirm"
       title="Encrypt Wallet"
       onClickCancel={() => {
-        if (onClose) onClose();
+        if (props.onClose) props.onClose();
       }}
       onClickOk={handleSubmit(onSubmit)}
       {...props}

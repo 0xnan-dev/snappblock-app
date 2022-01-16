@@ -76,7 +76,10 @@ export const UnlockModal: FC<UnlockModalProps> = ({
                   roundedLeft={0}
                   roundedRight="sm"
                   variant="unstyled"
-                  onPress={() => setShowPassword(!showPassword)}
+                  onPress={() => {
+                    console.log('d');
+                    setShowPassword(!showPassword);
+                  }}
                 >
                   {showPassword ? <ShowIcon /> : <HideIcon />}
                 </Button>

@@ -1,4 +1,5 @@
-import { IAlertProps, useToast, useDisclose } from 'native-base';
+import { useToast, useDisclose } from 'native-base';
+import ExpoConstants from 'expo-constants';
 import React, {
   FC,
   createContext,
@@ -9,6 +10,7 @@ import React, {
 } from 'react';
 import { CameraCapturedPicture } from 'expo-camera';
 import { ISCNSignPayload } from '@likecoin/iscn-js';
+import CryptoJS from 'crypto-js';
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import BigNumber from 'bignumber.js';
 import { BroadcastTxSuccess, StargateClient } from '@cosmjs/stargate';
@@ -33,15 +35,13 @@ type StoredWalletType = {
 };
 
 const isDev = process.env.NODE_ENV !== 'production';
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-const COSMOS_RPC = process.env.COSMOS_RPC!;
-const COSMOS_DENOM = process.env.COSMOS_DENOM!;
-const IPFS_NODE_URL = process.env.IPFS_NODE_URL!;
-/* eslint-enable @typescript-eslint/no-non-null-assertion */
+const cosmosRpc = ExpoConstants.manifest?.extra?.cosmosRpc;
+const cosmosDenom = ExpoConstants.manifest?.extra?.cosmosDenom;
+const ipfsNodeUrl = ExpoConstants.manifest?.extra?.ipfsNodeUrl;
 
 const toIpfsUrl = (url: string) => {
   if (/ipfs\.io/.test(url)) {
-    return url.replace(/^https:\/\/ipfs\.io/, IPFS_NODE_URL);
+    return url.replace(/^https:\/\/ipfs\.io/, ipfsNodeUrl);
   }
 
   return url;
@@ -320,14 +320,17 @@ export const StateProvider: FC = ({ children }) => {
     dispatch({ type: ActionType.STORING_WALLET });
 
     try {
-      const serializedWallet = await wallet.serialize(password);
+      const encryptedMnemonic = CryptoJS.AES.encrypt(
+        wallet.mnemonic,
+        password
+      ).toString();
 
       // store to secure store
       await SecureStore.setItem(
         DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY,
         JSON.stringify({
           name: walletName,
-          wallet: serializedWallet,
+          mnemonic: encryptedMnemonic,
         })
       );
 
@@ -367,13 +370,18 @@ export const StateProvider: FC = ({ children }) => {
       }
 
       const deserializeWallet = JSON.parse(serializedWallet) as {
-        wallet: string;
+        mnemonic: string;
         name: string;
       };
-
-      const wallet = await DirectSecp256k1HdWallet.deserialize(
-        deserializeWallet.wallet,
+      const decrypedMnemonicBytes = CryptoJS.AES.decrypt(
+        deserializeWallet.mnemonic,
         password
+      );
+      const decryptedMnemonic = decrypedMnemonicBytes.toString(
+        CryptoJS.enc.Utf8
+      );
+      const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
+        decryptedMnemonic
       );
 
       dispatch({
@@ -495,10 +503,8 @@ export const StateProvider: FC = ({ children }) => {
 
     try {
       const [account] = await state.wallet.getAccounts();
-      const client = await StargateClient.connect(COSMOS_RPC);
-
-      const balance = await client.getBalance(account.address, COSMOS_DENOM);
-
+      const client = await StargateClient.connect(cosmosRpc);
+      const balance = await client.getBalance(account.address, cosmosDenom);
       const coinBalance = new BigNumber(balance.amount);
 
       dispatch({ type: ActionType.SET_BALANCE, balance: coinBalance });

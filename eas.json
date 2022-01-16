@@ -13,9 +13,18 @@
       }
     },
     "preview": {
-      "distribution": "internal"
+      "releaseChannel": "staging",
+      "distribution": "internal",
+      "env": {
+        "APP_ENV": "staging"
+      }
     },
-    "production": {}
+    "production": {
+      "releaseChannel": "production",
+      "env": {
+        "APP_ENV": "production"
+      }
+    }
   },
   "submit": {
     "production": {}
