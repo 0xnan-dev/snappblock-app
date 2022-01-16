@@ -12,15 +12,15 @@ import { TakePictureScreenProps } from '../types';
 
 const StyledIconButton: FC<ComponentProps<typeof IconButton>> = props => (
   <IconButton
-    variant="unstyled"
+    _hover={{
+      backgroundColor: 'primary.600:alpha.20',
+    }}
     _icon={{
       color: 'white',
       size: 'sm',
     }}
-    _hover={{
-      bg: 'primary.600:alpha.20',
-    }}
     textAlign="center"
+    variant="unstyled"
     {...props}
   />
 );
@@ -28,11 +28,11 @@ const StyledIconButton: FC<ComponentProps<typeof IconButton>> = props => (
 const ToolBar: FC<ComponentProps<typeof Flex>> = ({ children, ...props }) => {
   return (
     <Flex
-      flex="1 0 100px"
-      flexDirection="row"
-      backgroundColor="black"
-      justifyContent="space-between"
       alignItems="center"
+      backgroundColor="rgba(0,0,0,0.85)"
+      flex={1}
+      flexDirection="row"
+      justifyContent="space-between"
       px={4}
       {...props}
     >
@@ -179,43 +179,44 @@ export const CameraScreen: FC<TakePictureScreenProps> = ({ navigation }) => {
   return (
     <View p={0}>
       <FactoryCamera
-        onCameraReady={handleOnCameraReady}
-        my={imagePadding}
         ref={cameraRef}
-        flex={1}
         flashMode={flashMode}
+        flex={1}
+        h="100%"
+        my={imagePadding}
         ratio={ratio}
-        useCamera2Api={true}
         type={type}
+        useCamera2Api={true}
+        onCameraReady={handleOnCameraReady}
       >
-        <ToolBar flex="1 0 48px">
+        <ToolBar maxHeight="48px">
           <Box>
             <StyledIconButton
-              onPress={() => handleOnFlashModeChange()}
               icon={<Icon as={<MaterialIcons name={flashModeIcon} />} />}
+              onPress={() => handleOnFlashModeChange()}
             />
           </Box>
         </ToolBar>
 
-        <Box flex="1 1 100%" backgroundColor="transparent">
+        <Box backgroundColor="transparent" flex={1}>
           {hasPermission === false ? (
             <View
-              justifyContent="center"
               alignItems="center"
               backgroundColor="rgba(0,0,0,0.75)"
+              justifyContent="center"
             >
               <Text color="white">No access to camera</Text>
             </View>
           ) : null}
         </Box>
 
-        <ToolBar flex="1 0 72px">
+        <ToolBar maxHeight="72px">
           <Box>
             <StyledIconButton
+              icon={<Icon as={<SimpleLineIcons name="picture" />} />}
               onPress={() => {
                 handleBackToGallery();
               }}
-              icon={<Icon as={<SimpleLineIcons name="picture" />} />}
             />
           </Box>
           <Box>
@@ -224,16 +225,16 @@ export const CameraScreen: FC<TakePictureScreenProps> = ({ navigation }) => {
                 size: '64px',
                 color: 'white',
               }}
-              onPress={() => handleTakePicture()}
               icon={
                 <Icon as={<MaterialCommunityIcons name="circle-slice-8" />} />
               }
+              onPress={() => handleTakePicture()}
             />
           </Box>
           <Box>
             <StyledIconButton
-              onPress={() => handleOnTypeChange()}
               icon={<Icon as={<SimpleLineIcons name="refresh" />} />}
+              onPress={() => handleOnTypeChange()}
             />
           </Box>
         </ToolBar>

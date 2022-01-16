@@ -21,21 +21,24 @@ export interface SaveMneonicFormType {
 const HideIcon: FC = () => (
   <Icon
     as={<MaterialIcons name="visibility-off" />}
-    size={5}
     color="muted.400"
+    size={5}
   />
 );
 
 const ShowIcon: FC = () => (
-  <Icon as={<MaterialIcons name="visibility" />} size={5} color="muted.400" />
+  <Icon as={<MaterialIcons name="visibility" />} color="muted.400" size={5} />
 );
 
 export interface EncryptWalletModalProps extends ModalProps {
+  isLoading?: boolean;
   onSubmit: (data: SaveMneonicFormType) => void;
 }
 
 export const EncryptWalletModal: FC<EncryptWalletModalProps> = ({
   onSubmit,
+  onClose,
+  isLoading,
   ...props
 }) => {
   const formSchema = Yup.object().shape({
@@ -58,22 +61,31 @@ export const EncryptWalletModal: FC<EncryptWalletModalProps> = ({
 
   return (
     <Modal
-      title="Encrypt Wallet"
+      cancelButtonProps={{
+        disabled: isLoading,
+      }}
+      okButtonProps={{
+        isLoading,
+      }}
       okText="Confirm"
+      title="Encrypt Wallet"
+      onClickCancel={() => {
+        if (onClose) onClose();
+      }}
       onClickOk={handleSubmit(onSubmit)}
       {...props}
     >
-      <FormControl isRequired isInvalid={Boolean(errors.walletName)}>
+      <FormControl isInvalid={Boolean(errors.walletName)} isRequired>
         <Controller
           control={control}
           name="walletName"
           render={({ field: { onChange, value } }) => (
             <Input
-              mt={4}
               defaultValue={value}
+              mt={4}
+              placeholder="Account Name"
               type="string"
               onChangeText={val => onChange(val)}
-              placeholder="Account Name"
             />
           )}
         />
@@ -84,16 +96,13 @@ export const EncryptWalletModal: FC<EncryptWalletModalProps> = ({
         )}
       </FormControl>
 
-      <FormControl isRequired isInvalid={Boolean(errors.password)}>
+      <FormControl isInvalid={Boolean(errors.password)} isRequired>
         <Controller
           control={control}
           name="password"
           render={({ field: { onChange, value } }) => (
             <Input
-              mt={4}
               defaultValue={value}
-              type={showPassword ? 'text' : 'password'}
-              onChangeText={val => onChange(val)}
               InputRightElement={
                 <Button
                   ml={1}
@@ -105,7 +114,10 @@ export const EncryptWalletModal: FC<EncryptWalletModalProps> = ({
                   {showPassword ? <ShowIcon /> : <HideIcon />}
                 </Button>
               }
+              mt={4}
               placeholder="Password"
+              type={showPassword ? 'text' : 'password'}
+              onChangeText={val => onChange(val)}
             />
           )}
         />
@@ -116,16 +128,13 @@ export const EncryptWalletModal: FC<EncryptWalletModalProps> = ({
         )}
       </FormControl>
 
-      <FormControl isRequired isInvalid={Boolean(errors.passwordConfirm)}>
+      <FormControl isInvalid={Boolean(errors.passwordConfirm)} isRequired>
         <Controller
           control={control}
           name="passwordConfirm"
           render={({ field: { onChange, value } }) => (
             <Input
-              mt={4}
               defaultValue={value}
-              type={showPasswordConfirm ? 'text' : 'password'}
-              onChangeText={val => onChange(val)}
               InputRightElement={
                 <Button
                   ml={1}
@@ -137,7 +146,10 @@ export const EncryptWalletModal: FC<EncryptWalletModalProps> = ({
                   {showPasswordConfirm ? <ShowIcon /> : <HideIcon />}
                 </Button>
               }
+              mt={4}
               placeholder="Confirm Password"
+              type={showPasswordConfirm ? 'text' : 'password'}
+              onChangeText={val => onChange(val)}
             />
           )}
         />

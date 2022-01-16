@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer';
 import createHash from 'create-hash';
 
 export const hashSha256 = (body: string | Buffer): string => {

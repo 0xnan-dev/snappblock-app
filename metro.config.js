@@ -26,7 +26,7 @@ module.exports = {
     extraNodeModules: {
       ...extraNodeModules,
       stream: require.resolve('readable-stream'),
-      crypto: require.resolve('react-native-crypto-polyfill'),
+      crypto: require.resolve('expo-crypto'),
       fs: require.resolve('expo-file-system'),
       http: require.resolve('stream-http'),
       https: require.resolve('https-browserify'),

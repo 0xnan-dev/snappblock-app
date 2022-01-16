@@ -11,18 +11,19 @@ import {
   IconButton,
   useToast,
   Pressable,
+  useDisclose,
 } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { MaterialIcons } from '@expo/vector-icons';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { useAppState } from '../hooks';
-import { LikecoinLogo, Modal, useModal } from '../components';
+import { LikecoinLogo, Modal } from '../components';
 
 export function ProfileScreen() {
   const { reset, wallet, storedWalletName, balance } = useAppState();
   const [address, setAddress] = useState('Unknown address');
-  const qrCodeModalProps = useModal();
+  const qrCodeModalProps = useDisclose();
   const toast = useToast();
   const shortanAddress = `${address.slice(0, 12)}...${address.slice(-4)}`;
   const balanceStr = balance ? balance.shiftedBy(-9).toFixed(0, 0) : '0';
@@ -32,6 +33,7 @@ export function ProfileScreen() {
       Clipboard.setString(address);
 
       toast.show({
+        placement: 'top',
         description: 'Copied!',
       });
     }
@@ -52,81 +54,88 @@ export function ProfileScreen() {
   return (
     <View flex={1}>
       <VStack
-        space={4}
         alignItems="center"
         flex={1}
         justifyContent="space-between"
+        space={4}
       >
         <VStack h="50%" space={2}>
-          <Pressable onPress={() => qrCodeModalProps.show()}>
+          <Pressable onPress={() => qrCodeModalProps.onOpen()}>
             <HStack alignItems="center" justifyContent="center">
               <Text fontSize="lg" fontWeight="bold" mr={1}>
                 {storedWalletName}
               </Text>
               <Icon
-                size="6"
-                color="gray.500"
                 as={<MaterialIcons name="qr-code" />}
+                color="gray.500"
+                size="6"
               />
             </HStack>
           </Pressable>
 
           <Pressable onPress={() => copyAddress()}>
             <HStack
+              alignItems="center"
+              borderColor="gray.300"
               borderRadius="full"
+              borderWidth={1}
+              justifyContent="center"
               px={2}
               py={1}
-              borderWidth={1}
-              borderColor="gray.300"
-              justifyContent="center"
-              alignItems="center"
             >
               <Text color="gray.500" fontSize="sm" mr={1}>
                 {shortanAddress}
               </Text>
               <Icon
-                size="4"
-                color="gray.500"
                 as={<MaterialIcons name="content-copy" />}
+                color="gray.500"
+                size="4"
               />
             </HStack>
           </Pressable>
 
           <Divider my="2" />
 
-          <VStack space={1} alignItems="center" justifyContent="center">
-            <LikecoinLogo width="36px" height="36px" />
+          <VStack alignItems="center" justifyContent="center" space={1}>
+            <LikecoinLogo height="36pt" width="36pt" />
             <Text fontSize="3xl" fontWeight="bold">
               {balanceStr} LIKE
             </Text>
 
             <IconButton
+              borderRadius="full"
+              icon={
+                <Icon as={<MaterialIcons name="file-download" />} size="sm" />
+              }
               mt={4}
               variant="solid"
-              borderRadius="full"
-              onPress={() => qrCodeModalProps.show()}
-              icon={
-                <Icon size="sm" as={<MaterialIcons name="file-download" />} />
-              }
+              onPress={() => qrCodeModalProps.onOpen()}
             />
-            <Text fontSize="sm" color="primary">
+            <Text color="primary" fontSize="sm">
               Receive
             </Text>
           </VStack>
         </VStack>
 
-        <Box h="50%" w="100%">
+        <Box
+          alignItems="center"
+          flex={1}
+          h="50%"
+          justifyContent="center"
+          w="100%"
+        >
           <Button
-            onPress={() => handleOnLogout()}
-            variant="outline"
             colorScheme="red"
+            variant="outline"
+            w="100%"
+            onPress={() => handleOnLogout()}
           >
             Log Out
           </Button>
         </Box>
       </VStack>
 
-      <Modal title="QR Code Preview" showFooter={false} {...qrCodeModalProps}>
+      <Modal showFooter={false} title="QR Code Preview" {...qrCodeModalProps}>
         <Flex alignItems="center" p={4}>
           <QRCode value={address} />
         </Flex>

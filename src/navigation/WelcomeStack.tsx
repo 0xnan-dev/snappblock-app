@@ -14,18 +14,18 @@ export function WelcomeNavigator() {
   return (
     <WelcomeStack.Navigator initialRouteName="Welcome">
       <WelcomeStack.Screen
-        name="Welcome"
         component={WelcomeScreen}
+        name="Welcome"
         options={{ headerShown: false }}
       />
       <WelcomeStack.Screen
-        name="CreateWallet"
         component={CreateWalletScreen}
+        name="CreateWallet"
         options={{ title: 'Create Wallet', headerTitleAlign: 'center' }}
       />
       <WelcomeStack.Screen
-        name="RestoreWallet"
         component={RestoreWalletScreen}
+        name="RestoreWallet"
         options={{ title: 'Restore Wallet', headerTitleAlign: 'center' }}
       />
     </WelcomeStack.Navigator>

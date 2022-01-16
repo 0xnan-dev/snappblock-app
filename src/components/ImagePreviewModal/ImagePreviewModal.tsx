@@ -12,6 +12,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  runOnJS,
 } from 'react-native-reanimated';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -39,7 +40,6 @@ const styles = StyleSheet.create({
     left: 0,
     width: '100%',
     height: '100%',
-    bg: 'black',
     zIndex: 99,
   },
 });
@@ -74,7 +74,7 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
       const delta = ctx.startY + event.translationY;
 
       if (delta > clientHeight / 3 || delta < -clientHeight / 3) {
-        onClose();
+        runOnJS(onClose)();
       }
 
       y.value = withSpring(0);
@@ -115,17 +115,17 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
   }, [source]);
 
   return (
-    <Slide in={isOpen} duration={500}>
+    <Slide duration={500} in={isOpen}>
       <PanGestureHandler onGestureEvent={gestureHandler}>
         <Animated.View style={[animatedStyle, styles.container]}>
           <Center p={4}>
-            <HStack space={2} alignItems="center">
-              <Avatar bg="primary.500" size="xs" />
+            <HStack alignItems="center" space={2}>
+              <Avatar backgroundColor="primary.500" size="xs" />
               <Text color="white" fontSize="sm" fontWeight="bold">
                 {shortenAddress}
               </Text>
             </HStack>
-            <Text fontSize="sm" color="gray.500">
+            <Text color="gray.500" fontSize="sm">
               {dayFrom}
             </Text>
           </Center>
@@ -133,17 +133,17 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
           {/* XXX: added a empty box here to make <Image /> could correctly display */}
           {imageSource ? (
             <Image
-              alt={description}
-              source={{ uri: imageSource }}
+              alt={description || 'No image'}
               flex={1}
               resizeMode="contain"
+              source={{ uri: imageSource }}
             />
           ) : (
             <Box flex={1} />
           )}
           <Box p={4}>
             {description ? (
-              <Text textAlign="center" color="white">
+              <Text color="white" textAlign="center">
                 {description}
               </Text>
             ) : null}

@@ -20,31 +20,33 @@ export const MnemonicTags: FC<MnemonicTagsProps> = ({ mnemonic, ...props }) => {
     onCopy(mnemonic);
 
     toast.show({
+      placement: 'top',
       description: 'Copied!',
+      status: 'success',
     });
   };
 
   return (
     <Box {...props}>
       <Pressable onPress={handleOnCopy}>
-        <Flex flexWrap="wrap" flexDirection="row">
+        <Flex flexDirection="row" flexWrap="wrap">
           {mnemonic.split(' ').map((phrase, i) => (
             <Box
-              mr={2}
-              mb={2}
-              px={1}
-              py={1}
               key={`${i}-${mnemonic}`}
-              borderRadius="md"
               backgroundColor="primary.200:alpha.20"
               borderColor="primary.500"
+              borderRadius="md"
               borderStyle="solid"
-              borderWidth="1pt"
+              borderWidth={1}
+              mb={2}
+              mr={2}
+              px={1}
+              py={1}
             >
               <Text
+                color="primary.500"
                 fontSize="xs"
                 fontWeight="bold"
-                color="primary.500"
                 selectable
               >
                 {i + 1}. {phrase}

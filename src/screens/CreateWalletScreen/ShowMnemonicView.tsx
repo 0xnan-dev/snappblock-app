@@ -1,7 +1,6 @@
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import React, { FC, useState } from 'react';
-import { Box, Button, View, Checkbox } from 'native-base';
-import { useModal } from '../../components';
+import { Box, Button, View, Checkbox, useDisclose } from 'native-base';
 import { MnemonicTags } from './MnemonicTags';
 import { EncryptWalletModal, SaveMneonicFormType } from './EncryptWalletModal';
 
@@ -16,7 +15,7 @@ export const ShowMnemonicView: FC<ShowMnemonicViewProps> = ({
   isLoading,
   onSubmit,
 }) => {
-  const encryptWalletModalProps = useModal();
+  const encryptWalletModalProps = useDisclose();
   const [
     isConfirmSeedPhraseCopyButtonDisabled,
     setIsConfirmSeedPhraseCopyButtonDisabled,
@@ -29,8 +28,8 @@ export const ShowMnemonicView: FC<ShowMnemonicViewProps> = ({
       <Box>
         <Box mb={4}>
           <Checkbox
-            value="checkSeedPhraseCopy"
             accessibilityLabel="I've written down the seed phrase and stored it in a secure place."
+            value="checkSeedPhraseCopy"
             onChange={checkSeedPhraseCopy =>
               setIsConfirmSeedPhraseCopyButtonDisabled(!checkSeedPhraseCopy)
             }
@@ -41,7 +40,7 @@ export const ShowMnemonicView: FC<ShowMnemonicViewProps> = ({
 
         <Button
           isDisabled={isConfirmSeedPhraseCopyButtonDisabled}
-          onPress={() => encryptWalletModalProps.show()}
+          onPress={() => encryptWalletModalProps.onOpen()}
         >
           Next
         </Button>

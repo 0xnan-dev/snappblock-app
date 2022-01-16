@@ -31,18 +31,20 @@ export function BottomTabNavigator() {
       }}
     >
       <BottomTab.Screen
-        name="Gallery"
         component={GalleryScreen}
+        name="Gallery"
         options={{
           tabBarLabel: '',
           headerTitleAlign: 'center',
-          tabBarIcon: ({ color }) => <TabBarIcon name="layers" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon color={color} name="layers" top={2} />
+          ),
         }}
       />
 
       <BottomTab.Screen
-        name="TakePicture"
         component={TakePictureNavigator}
+        name="TakePicture"
         options={() => ({
           tabBarLabel: '',
           headerShown: false,
@@ -53,10 +55,10 @@ export function BottomTabNavigator() {
             <View
               // eslint-disable-next-line react-native/no-inline-styles
               style={{
-                bottom: 4,
+                top: -24,
                 position: 'absolute',
                 borderColor: colorPrimary200,
-                borderWidth: 3,
+                borderWidth: 2,
                 borderStyle: 'solid',
                 height: 64,
                 width: 64,
@@ -66,20 +68,20 @@ export function BottomTabNavigator() {
                 backgroundColor: colorPrimary500,
               }}
             >
-              <TabBarIcon name="camera" color="white" />
+              <TabBarIcon color="white" name="camera" />
             </View>
           ),
         })}
       />
 
       <BottomTab.Screen
-        name="Profile"
         component={ProfileScreen}
+        name="Profile"
         options={{
           tabBarLabel: '',
           headerTitleAlign: 'center',
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="settings" color={color} />
+            <TabBarIcon color={color} name="settings" top={2} />
           ),
         }}
       />

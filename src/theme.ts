@@ -26,7 +26,7 @@ export const theme = extendTheme({
     },
     View: {
       baseStyle: {
-        bg: '#fff',
+        backgroundColor: '#fff',
         flex: 1,
         px: 4,
         py: 6,

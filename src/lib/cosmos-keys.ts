@@ -1,11 +1,9 @@
+import { Buffer } from 'buffer';
 import * as bip39 from 'bip39';
 import { bech32 } from 'bech32';
-import BIP32Factory, { BIP32Interface } from 'bip32';
+import * as bip32 from 'bip32';
 import secp256k1 from 'secp256k1';
-import * as ecc from 'tiny-secp256k1';
 import * as CryptoJS from 'crypto-js';
-
-const bip32 = BIP32Factory(ecc);
 
 const hdPathAtom = `m/44'/118'/0'/0/0`; // key controlling ATOM allocation
 

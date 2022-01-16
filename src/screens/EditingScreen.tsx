@@ -9,13 +9,15 @@ import {
   Icon,
   VStack,
   HStack,
+  useDisclose,
+  useToast,
 } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import BigNumber from 'bignumber.js';
 import { useAppState } from '../hooks';
 import { TakePictureScreenProps } from '../types/navigation';
-import { Modal, useModal } from '../components';
+import { Modal } from '../components';
 
 const CHAR_LIMIT = 120;
 
@@ -24,14 +26,14 @@ export interface EditingFormType {
 }
 
 export function EditingScreen({ navigation }: TakePictureScreenProps) {
-  const { fetchPhotos, balance, setAlert, picture, isLoading, upload } =
-    useAppState();
+  const { fetchPhotos, balance, picture, isLoading, upload } = useAppState();
+  const toast = useToast();
   const [isUploading, setIsUploading] = useState(false);
   const { formState, control, watch, handleSubmit } =
     useForm<EditingFormType>();
   const { errors } = formState;
   const [messageText] = watch(['message']);
-  const uploadModalProps = useModal();
+  const uploadModalProps = useDisclose();
   const isBalanceSufficent =
     balance && balance.isGreaterThan(new BigNumber('10000'));
 
@@ -46,7 +48,7 @@ export function EditingScreen({ navigation }: TakePictureScreenProps) {
       const txn = await upload(picture, data.message);
 
       if (txn) {
-        uploadModalProps.close();
+        uploadModalProps.onClose();
 
         await fetchPhotos(0);
 
@@ -55,7 +57,8 @@ export function EditingScreen({ navigation }: TakePictureScreenProps) {
     } catch (ex) {
       console.error(ex);
 
-      setAlert({
+      toast.show({
+        placement: 'top',
         title: 'Something went wrong, please try again later',
         status: 'error',
       });
@@ -73,7 +76,7 @@ export function EditingScreen({ navigation }: TakePictureScreenProps) {
 
   useEffect(() => {
     setTimeout(() => {
-      uploadModalProps.show();
+      uploadModalProps.onOpen();
     }, 1000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -87,15 +90,10 @@ export function EditingScreen({ navigation }: TakePictureScreenProps) {
       <Image size="full" source={picture} />
 
       <Modal
-        title="New Post"
-        okText="Upload"
-        onClose={() => {
-          navigation.goBack();
+        cancelButtonProps={{
+          disabled: isLoading || isUploading,
         }}
-        onClickOk={handleSubmit(handleUpload)}
-        onClickCancel={() => {
-          navigation.goBack();
-        }}
+        closeOnOverlayClick={false}
         okButtonProps={{
           isLoading: isLoading || isUploading,
           disabled: !isBalanceSufficent,
@@ -103,17 +101,23 @@ export function EditingScreen({ navigation }: TakePictureScreenProps) {
             <Icon as={Ionicons} name="cloud-upload-outline" size="sm" />
           ),
         }}
-        cancelButtonProps={{
-          disabled: isLoading || isUploading,
+        okText="Upload"
+        title="New Post"
+        onClickCancel={() => {
+          navigation.goBack();
         }}
-        closeOnOverlayClick={false}
+        onClickOk={handleSubmit(handleUpload)}
         {...uploadModalProps}
+        onClose={() => {
+          navigation.goBack();
+          uploadModalProps.onClose();
+        }}
       >
         <VStack space={4}>
           {!isBalanceSufficent ? (
             <HStack>
-              <WarningOutlineIcon mt={1} mr={1} size="xs" color="red.500" />
-              <Text fontSize="sm" color="red.500">
+              <WarningOutlineIcon color="red.500" mr={1} mt={1} size="xs" />
+              <Text color="red.500" fontSize="sm">
                 Your account does not have sufficent balance for gas fee!
               </Text>
             </HStack>
@@ -122,20 +126,20 @@ export function EditingScreen({ navigation }: TakePictureScreenProps) {
           <Box>
             <FormControl
               flex={1}
-              isRequired
               isInvalid={Boolean(errors.message)}
+              isRequired
             >
               <Controller
                 control={control}
                 name="message"
                 render={({ field: { onChange, value } }) => (
                   <TextArea
-                    flex={1}
-                    maxLength={CHAR_LIMIT}
-                    isDisabled={!isBalanceSufficent || isLoading || isUploading}
                     defaultValue={value}
-                    onChangeText={val => onChange(val)}
+                    flex={1}
+                    isDisabled={!isBalanceSufficent || isLoading || isUploading}
+                    maxLength={CHAR_LIMIT}
                     placeholder="Message"
+                    onChangeText={val => onChange(val)}
                   />
                 )}
               />
@@ -147,7 +151,7 @@ export function EditingScreen({ navigation }: TakePictureScreenProps) {
                 </FormControl.ErrorMessage>
               )}
             </FormControl>
-            <Text color="gray.500" textAlign="right" fontSize="xs">
+            <Text color="gray.500" fontSize="xs" textAlign="right">
               {(messageText || '').length} / {CHAR_LIMIT}
             </Text>
           </Box>

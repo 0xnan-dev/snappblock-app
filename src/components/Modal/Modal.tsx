@@ -1,8 +1,7 @@
 import React, { ComponentProps, FC } from 'react';
 import { Button, IModalProps, Modal as BaseModal } from 'native-base';
-import { UserModalContextProps } from './UseModalContext';
 
-export interface ModalProps extends UserModalContextProps, IModalProps {
+export interface ModalProps extends IModalProps {
   showFooter?: boolean;
   isLoading?: boolean;
   onClickCancel?: () => void;
@@ -22,7 +21,6 @@ export const ModalHeader = BaseModal.Header;
 
 export const Modal: FC<ModalProps> = ({
   children,
-  close,
   isOpen,
   isLoading,
   okText = 'OK',
@@ -35,7 +33,7 @@ export const Modal: FC<ModalProps> = ({
   cancelButtonProps,
   ...props
 }) => (
-  <BaseModal isOpen={isOpen} onClose={() => close()} {...props}>
+  <BaseModal isOpen={isOpen} {...props}>
     <BaseModal.Content maxWidth="420px">
       <BaseModal.CloseButton />
       {title && <BaseModal.Header>{title}</BaseModal.Header>}
@@ -51,8 +49,8 @@ export const Modal: FC<ModalProps> = ({
               {cancelText}
             </Button>
             <Button
-              isLoading={isLoading}
               colorScheme="primary"
+              isLoading={isLoading}
               onPress={onClickOk}
               {...okButtonProps}
             >

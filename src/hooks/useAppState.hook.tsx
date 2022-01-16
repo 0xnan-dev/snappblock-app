@@ -1,7 +1,4 @@
-import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
-import BigNumber from 'bignumber.js';
-import { BroadcastTxSuccess, StargateClient } from '@cosmjs/stargate';
-import { IAlertProps, useDisclose } from 'native-base';
+import { IAlertProps, useToast, useDisclose } from 'native-base';
 import React, {
   FC,
   createContext,
@@ -12,6 +9,9 @@ import React, {
 } from 'react';
 import { CameraCapturedPicture } from 'expo-camera';
 import { ISCNSignPayload } from '@likecoin/iscn-js';
+import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
+import BigNumber from 'bignumber.js';
+import { BroadcastTxSuccess, StargateClient } from '@cosmjs/stargate';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import {
   hashSha256,
@@ -20,18 +20,12 @@ import {
   createISCNRecord,
   queryRecordsByFingerprint,
 } from '../lib';
-import { useAlert, ImagePreviewModal } from '../components';
+import { ImagePreviewModal } from '../components';
 import { PhotoItem } from '../interfaces';
 import { useIPFS } from './ipfs.hook';
 
 export const DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY =
   'DEFAULT_WALLET_SERIALIZATION_SECURE_STORE_KEY';
-
-type AlertPayloadType = {
-  title: string;
-  message?: string;
-  status: IAlertProps['status'];
-} | null;
 
 type StoredWalletType = {
   name: string;
@@ -57,7 +51,6 @@ export interface AppStateContextProps {
   wallet: DirectSecp256k1HdWallet | null;
   balance: BigNumber | null;
   isLoading: boolean;
-  alert: AlertPayloadType;
   selectedItem: PhotoItem | null;
   picture: CameraCapturedPicture | null;
   photos: PhotoItem[];
@@ -77,9 +70,8 @@ export interface AppStateContextProps {
   upload: (
     picture: CameraCapturedPicture,
     message: string
-  ) => Promise<TxRaw | BroadcastTxSuccess | null>;
+  ) => Promise<BroadcastTxSuccess | TxRaw | null>;
   setPicture: (data: CameraCapturedPicture) => void;
-  setAlert: (alert: AlertPayloadType) => void;
   setBalance: (balance: BigNumber) => void;
   reset: () => void;
   setSelectedItem: (selectedItem: PhotoItem) => void;
@@ -89,7 +81,6 @@ const initialState: AppStateContextProps = {
   wallet: null,
   picture: null, // picture to upload
   balance: null,
-  alert: null,
   photos: [],
   storedWalletName: null,
   selectedItem: null,
@@ -102,7 +93,6 @@ const initialState: AppStateContextProps = {
   upload: null as never,
   decryptWallet: null as never,
   setPicture: null as never,
-  setAlert: null as never,
   setBalance: null as never,
   reset: null as never,
   setSelectedItem: null as never,
@@ -110,9 +100,9 @@ const initialState: AppStateContextProps = {
 
 // eslint-disable-next-line no-shadow
 enum ActionType {
-  INITALIZING = 'INITALIZING',
+  INITIALIZING = 'INITIALIZING',
   RESET = 'RESET',
-  INITALIZED = 'INITALIZED',
+  INITIALIZED = 'INITIALIZED',
   STORING_WALLET = 'STORING_WALLET',
   STORED_WALLET = 'STORED_WALLET',
   RESTORING_WALLET = 'RESTORING_WALLET',
@@ -121,7 +111,6 @@ enum ActionType {
   DECRYPTED_WALLET = 'DECRYPTED_WALLET',
   FETCHING_PHOTOS = 'FETCHING_PHOTOS',
   FETCHED_PHOTOS = 'FETCHED_PHOTOS',
-  SET_ERROR = 'SET_ERROR',
   SET_ALERT = 'SET_ALERT',
   SET_PICTURE = 'SET_PICTURE',
   SET_BALANCE = 'SET_BALANCE',
@@ -131,10 +120,10 @@ enum ActionType {
 }
 
 type Action =
-  | { type: ActionType.INITALIZING }
+  | { type: ActionType.INITIALIZING }
   | { type: ActionType.RESET }
   | {
-      type: ActionType.INITALIZED;
+      type: ActionType.INITIALIZED;
       hasStoredWallet: boolean;
       storedWalletName: string;
     }
@@ -159,14 +148,6 @@ type Action =
     }
   | { type: ActionType.FETCHING_PHOTOS }
   | { type: ActionType.FETCHED_PHOTOS; photos: PhotoItem[] }
-  | {
-      type: ActionType.SET_ERROR;
-      error: string;
-    }
-  | {
-      type: ActionType.SET_ALERT;
-      alert: AlertPayloadType;
-    }
   | { type: ActionType.SET_PICTURE; picture: CameraCapturedPicture }
   | { type: ActionType.SET_BALANCE; balance: BigNumber }
   | {
@@ -197,27 +178,12 @@ const reducer: Reducer<AppStateContextProps, Action> = (state, action) => {
   switch (action.type) {
     case ActionType.RESET:
       return defaultState;
-    case ActionType.INITALIZED:
+    case ActionType.INITIALIZED:
       return {
         ...defaultState,
         hasStoredWallet: action.hasStoredWallet,
         storedWalletName: action.storedWalletName,
         isLoading: false,
-      };
-    case ActionType.SET_ERROR:
-      return {
-        ...state,
-        status: 'failed',
-        isLoading: false,
-        alert: {
-          status: 'error',
-          title: action.error,
-        },
-      };
-    case ActionType.SET_ALERT:
-      return {
-        ...state,
-        alert: action.alert,
       };
     case ActionType.STORED_WALLET:
       return {
@@ -257,7 +223,7 @@ const reducer: Reducer<AppStateContextProps, Action> = (state, action) => {
         isLoading: false,
         photos: action.photos,
       };
-    case ActionType.INITALIZING:
+    case ActionType.INITIALIZING:
     case ActionType.FETCHING_PHOTOS:
     case ActionType.STORING_WALLET:
     case ActionType.RESTORING_WALLET:
@@ -299,18 +265,10 @@ const reducer: Reducer<AppStateContextProps, Action> = (state, action) => {
 };
 
 export const StateProvider: FC = ({ children }) => {
-  const { show: showAlert } = useAlert();
+  const toast = useToast();
   const { upload: ipfsUpload, authorize: ipfsAuthorize } = useIPFS();
   const [state, dispatch] = useReducer(reducer, initialState);
   const imagePreviewModalProps = useDisclose();
-
-  const setAlert = (alert: AlertPayloadType) => {
-    dispatch({
-      type: ActionType.SET_ALERT,
-      alert,
-    });
-  };
-
   const createWallet = async () => {
     try {
       const wallet = await DirectSecp256k1HdWallet.generate(24);
@@ -319,9 +277,10 @@ export const StateProvider: FC = ({ children }) => {
     } catch (ex) {
       console.error(ex);
 
-      dispatch({
-        type: ActionType.SET_ERROR,
-        error: 'Failed to create wallet!',
+      toast.show({
+        placement: 'top',
+        title: 'Failed to create wallet!',
+        status: 'error',
       });
     }
 
@@ -343,9 +302,10 @@ export const StateProvider: FC = ({ children }) => {
     } catch (ex) {
       console.error(ex);
 
-      dispatch({
-        type: ActionType.SET_ERROR,
-        error: 'Failed to restore wallet!',
+      toast.show({
+        placement: 'top',
+        title: 'Failed to restore wallet!',
+        status: 'error',
       });
     }
 
@@ -378,9 +338,12 @@ export const StateProvider: FC = ({ children }) => {
         message: 'Your wallet has been encrypted and stored!',
       });
     } catch (ex) {
-      dispatch({
-        type: ActionType.SET_ERROR,
-        error: 'Failed to store wallet!',
+      console.error(ex);
+
+      toast.show({
+        placement: 'top',
+        status: 'error',
+        title: 'Failed to store wallet!',
       });
     }
   };
@@ -394,7 +357,11 @@ export const StateProvider: FC = ({ children }) => {
       );
 
       if (!serializedWallet) {
-        dispatch({ type: ActionType.SET_ERROR, error: 'No stored wallet!' });
+        toast.show({
+          placement: 'top',
+          status: 'error',
+          title: 'No stored wallet!',
+        });
 
         return;
       }
@@ -420,12 +387,20 @@ export const StateProvider: FC = ({ children }) => {
       console.error(ex);
 
       if (/ciphertext cannot be decrypted using that key/.test(ex.message)) {
-        dispatch({ type: ActionType.SET_ERROR, error: 'Invalid seed phrase!' });
+        toast.show({
+          placement: 'top',
+          status: 'error',
+          title: 'Invalid seed phrase!',
+        });
 
         return;
       }
 
-      dispatch({ type: ActionType.SET_ERROR, error: 'Invalid password!' });
+      toast.show({
+        placement: 'top',
+        status: 'error',
+        title: 'Invalid password!',
+      });
     }
   };
 
@@ -486,7 +461,7 @@ export const StateProvider: FC = ({ children }) => {
   const init = async () => {
     console.debug('init()');
 
-    dispatch({ type: ActionType.INITALIZING });
+    dispatch({ type: ActionType.INITIALIZING });
 
     try {
       const storedWallet = await SecureStore.getItem(
@@ -499,14 +474,18 @@ export const StateProvider: FC = ({ children }) => {
         ) as StoredWalletType;
 
         dispatch({
-          type: ActionType.INITALIZED,
+          type: ActionType.INITIALIZED,
           hasStoredWallet: true,
           storedWalletName: deserializedStoredWallet.name,
         });
+
+        return;
       }
     } catch (ex) {
-      dispatch({ type: ActionType.RESET });
+      console.error(ex);
     }
+
+    dispatch({ type: ActionType.RESET });
   };
 
   const fetchAccount = async () => {
@@ -529,9 +508,10 @@ export const StateProvider: FC = ({ children }) => {
       console.error(ex);
     }
 
-    dispatch({
-      type: ActionType.SET_ERROR,
-      error: 'Cannot get account balance, please try again later',
+    toast.show({
+      placement: 'top',
+      status: 'error',
+      title: 'Cannot get account balance, please try again later',
     });
   };
 
@@ -545,9 +525,10 @@ export const StateProvider: FC = ({ children }) => {
 
   const upload = async (picture: CameraCapturedPicture, message: string) => {
     if (!state.wallet) {
-      dispatch({
-        type: ActionType.SET_ERROR,
-        error: 'Something went wrong, please try again',
+      toast.show({
+        placement: 'top',
+        status: 'error',
+        title: 'Something went wrong, please try again',
       });
 
       return null;
@@ -619,13 +600,10 @@ export const StateProvider: FC = ({ children }) => {
             usageInfo: 'https://creativecommons.org/licenses/by/4.0',
           };
 
-          for (let i = 0; i < 50; i++) {
-            await createISCNRecord(state.wallet, record);
-          }
-
           const txn = await createISCNRecord(state.wallet, record);
 
-          showAlert({
+          toast.show({
+            placement: 'top',
             title: `Uploaded Successfully!`,
             status: 'success',
           });
@@ -640,9 +618,10 @@ export const StateProvider: FC = ({ children }) => {
       console.error(ex);
     }
 
-    dispatch({
-      type: ActionType.SET_ERROR,
-      error: 'Something went wrong, please try again',
+    toast.show({
+      placement: 'top',
+      status: 'error',
+      title: 'Something went wrong, please try again',
     });
 
     return null;
@@ -656,13 +635,6 @@ export const StateProvider: FC = ({ children }) => {
   useEffect(() => {
     init();
   }, []);
-
-  // show alert when alert state not null
-  useEffect(() => {
-    if (state.alert) {
-      showAlert(state.alert, () => setAlert(null));
-    }
-  }, [showAlert, state.alert]);
 
   // open model when selected an item
   useEffect(() => {
@@ -691,7 +663,6 @@ export const StateProvider: FC = ({ children }) => {
         storeWallet,
         decryptWallet,
         setPicture,
-        setAlert,
         reset,
         upload,
         setSelectedItem,
@@ -699,10 +670,10 @@ export const StateProvider: FC = ({ children }) => {
     >
       {children}
       <ImagePreviewModal
-        source={state.selectedItem?.photo}
         description={state.selectedItem?.description}
         fromAddress={state.selectedItem?.fromAddress}
         publishedDate={state.selectedItem?.date}
+        source={state.selectedItem?.photo}
         {...imagePreviewModalProps}
         onClose={() => {
           setSelectedItem(null);

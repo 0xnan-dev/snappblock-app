@@ -7,23 +7,25 @@ import {
   View,
   Button,
   VStack,
+  useDisclose,
+  Icon,
 } from 'native-base';
 import { StackScreenProps } from '@react-navigation/stack';
 import { WelcomeStackParamList } from '../types/navigation';
-import { AppIcon, UnlockModal, useModal } from '../components';
+import { AppIcon, UnlockModal } from '../components';
 import { useAppState } from '../hooks';
 
 export const WelcomeScreen: FC<
   StackScreenProps<WelcomeStackParamList, 'Welcome'>
 > = ({ navigation }) => {
-  const unlockModalProps = useModal();
+  const unlockModalProps = useDisclose();
   const { decryptWallet, hasStoredWallet, storedWalletName } = useAppState();
   const [showLogo, setShowLogo] = useState(false);
 
   const handleOnUnlock = async ({ password }: { password: string }) => {
     await decryptWallet(password);
 
-    unlockModalProps.close();
+    unlockModalProps.onClose();
   };
 
   useEffect(() => {
@@ -34,24 +36,22 @@ export const WelcomeScreen: FC<
 
   useEffect(() => {
     if (hasStoredWallet && !unlockModalProps.isOpen) {
-      unlockModalProps.show();
+      unlockModalProps.onOpen();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasStoredWallet]);
 
   return (
     <View>
-      <VStack flex={1} alignItems="center" justifyContent="space-between">
+      <VStack alignItems="center" flex={1} justifyContent="space-between">
         <Flex
           alignItems="center"
-          justifyContent="center"
-          w="100%"
-          mb={4}
           h="50%"
+          justifyContent="center"
+          mb={4}
+          w="100%"
         >
           <PresenceTransition
-            visible={showLogo}
-            initial={{ opacity: 0, translateY: 25 }}
             animate={{
               opacity: 1,
               translateY: 0,
@@ -59,21 +59,23 @@ export const WelcomeScreen: FC<
                 duration: 750,
               },
             }}
+            initial={{ opacity: 0, translateY: 25 }}
+            visible={showLogo}
           >
-            <Box flex={1} alignItems="center" justifyContent="center">
-              <AppIcon h="120pt" width="180pt" />
+            <Box alignItems="center" flex={1} justifyContent="center">
+              <Icon as={<AppIcon />} size={220} />
               <Heading color="primary.500">Snappblock</Heading>
             </Box>
           </PresenceTransition>
         </Flex>
 
-        <VStack space={4} h="50%" justifyContent="center" w="100%">
+        <VStack h="50%" justifyContent="center" space={4} w="100%">
           <Button
-            w="100%"
-            colorScheme="primary.200:alpha.30"
             _text={{
               color: 'primary.500',
             }}
+            colorScheme="primary.200:alpha.30"
+            w="100%"
             onPress={() => navigation.navigate('CreateWallet')}
           >
             Create a new Wallet
@@ -89,12 +91,12 @@ export const WelcomeScreen: FC<
 
           {hasStoredWallet ? (
             <Button
-              variant="unstyled"
               _text={{
                 color: 'primary',
               }}
+              variant="unstyled"
               w="100%"
-              onPress={() => unlockModalProps.show()}
+              onPress={() => unlockModalProps.onOpen()}
             >
               Unlock Wallet
             </Button>

@@ -20,13 +20,13 @@ export interface UnlockFormType {
 const HideIcon: FC = () => (
   <Icon
     as={<MaterialIcons name="visibility-off" />}
-    size={5}
     color="muted.400"
+    size={5}
   />
 );
 
 const ShowIcon: FC = () => (
-  <Icon as={<MaterialIcons name="visibility" />} size={5} color="muted.400" />
+  <Icon as={<MaterialIcons name="visibility" />} color="muted.400" size={5} />
 );
 
 export interface UnlockModalProps extends ModalProps {
@@ -51,10 +51,10 @@ export const UnlockModal: FC<UnlockModalProps> = ({
 
   return (
     <Modal
-      title="Unlock Wallet"
       okText="Unlock"
+      title="Unlock Wallet"
       onClickCancel={() => {
-        props.close();
+        props.onClose();
       }}
       onClickOk={handleSubmit(onSubmit)}
       {...props}
@@ -63,16 +63,13 @@ export const UnlockModal: FC<UnlockModalProps> = ({
         {walletName}
       </Text>
 
-      <FormControl isRequired isInvalid={Boolean(errors.password)}>
+      <FormControl isInvalid={Boolean(errors.password)} isRequired>
         <Controller
           control={control}
           name="password"
           render={({ field: { onChange, value } }) => (
             <Input
-              mt={4}
               defaultValue={value}
-              type={showPassword ? 'text' : 'password'}
-              onChangeText={val => onChange(val)}
               InputRightElement={
                 <Button
                   ml={1}
@@ -84,7 +81,10 @@ export const UnlockModal: FC<UnlockModalProps> = ({
                   {showPassword ? <ShowIcon /> : <HideIcon />}
                 </Button>
               }
+              mt={4}
               placeholder="Password"
+              type={showPassword ? 'text' : 'password'}
+              onChangeText={val => onChange(val)}
             />
           )}
         />

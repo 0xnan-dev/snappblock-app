@@ -4,6 +4,8 @@ import { PhotoItem } from '../../interfaces';
 import { useAppState } from '../../hooks';
 import { PhotoCard } from './PhotoCard';
 
+const MemorizedPhotoCard = React.memo(PhotoCard);
+
 export function GalleryScreen() {
   const { setSelectedItem, fetchPhotos, isLoading, photos } = useAppState();
   const [sequence, setSequence] = useState(0);
@@ -24,7 +26,7 @@ export function GalleryScreen() {
         data={photos}
         keyExtractor={item => item.iscnId}
         renderItem={({ item }) => (
-          <PhotoCard
+          <MemorizedPhotoCard
             onPress={() => setSelectedItem(item)}
             item={item}
             isLoading={isLoading}

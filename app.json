@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "snappblock-app",
-    "slug": "snappblock-app",
+    "name": "snappblock",
+    "slug": "snappblock",
     "platforms": [
       "web",
       "ios"
@@ -9,7 +9,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "snappblock",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -24,14 +24,23 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "org.team0xnan.snappblock"
+      "bundleIdentifier": "org.team0xnan.snappblock",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to let user put a photo in his profile page."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "org.team0xnan.snappblock"
+      "package": "org.team0xnan.snappblock",
+      "permissions": [
+        "CAMERA",
+        "WRITE_EXTERNAL_STORAGE",
+        "CAMERA_ROLL"
+      ],
+      "versionCode": 36
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
@@ -51,6 +60,8 @@
         "wasm",
         "svg"
       ]
-    }
+    },
+    "description": "Snappblock is a camera app rides on blockchain technology.",
+    "githubUrl": "https://github.com/0xnan-dev/snappblock-app"
   }
 }

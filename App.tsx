@@ -10,7 +10,6 @@ import {
   StateProvider,
   IPFSProvider,
 } from './src/hooks';
-import { AlertProvider, ModalProvider } from './src/components';
 import Navigation from './src/navigation';
 
 export default function App() {
@@ -22,17 +21,13 @@ export default function App() {
   } else {
     return (
       <SafeAreaProvider>
-        <NativeBaseProvider theme={theme} colorModeManager={colorModeManger}>
-          <AlertProvider>
-            <IPFSProvider>
-              <ModalProvider>
-                <StateProvider>
-                  <Navigation />
-                  <StatusBar style="auto" />
-                </StateProvider>
-              </ModalProvider>
-            </IPFSProvider>
-          </AlertProvider>
+        <NativeBaseProvider colorModeManager={colorModeManger} theme={theme}>
+          <IPFSProvider>
+            <StateProvider>
+              <Navigation />
+              <StatusBar style="auto" />
+            </StateProvider>
+          </IPFSProvider>
         </NativeBaseProvider>
       </SafeAreaProvider>
     );
