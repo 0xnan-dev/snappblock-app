@@ -1,3 +1,4 @@
+import './polyfill';
 import React from 'react';
 import { NativeBaseProvider } from 'native-base';
 import { StatusBar } from 'expo-status-bar';

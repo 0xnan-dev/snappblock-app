@@ -24,10 +24,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "org.team0xnan.snappblock",
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to let user put a photo in his profile page."
-      }
+      },
+      "bundleIdentifier": "org.team0xnan.snappblock"
     },
     "android": {
       "adaptiveIcon": {

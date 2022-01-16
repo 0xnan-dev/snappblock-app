@@ -13,7 +13,7 @@ export default function ({ config }: any) {
     authMessage: process.env.AUTH_MESSAGE,
   };
 
-  if (process.env.MY_ENVIRONMENT === 'staging') {
+  if (process.env.APP_ENV === 'staging') {
     extra = {
       cosmosRpc: process.env.STAG_COSMOS_RPC,
       cosmosDenom: process.env.STAG_COSMOS_DENOM,

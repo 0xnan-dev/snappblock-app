@@ -1,8 +1,3 @@
-import { polyfillWebCrypto } from "react-native-crypto-polyfill";
-
-polyfillWebCrypto();
-// crypto is now globally defined
-
 if (typeof __dirname === "undefined") global.__dirname = "/";
 if (typeof __filename === "undefined") global.__filename = "";
 if (typeof process === "undefined") {
@@ -32,3 +27,11 @@ if (!global.atob || !global.btoa) {
     return Buffer.from(data).toString("base64");
   };
 }
+
+if (typeof localStorage !== 'undefined') {
+  localStorage.debug = isDev ? '*' : '';
+}
+
+// If using the crypto shim, uncomment the following line to ensure
+// crypto is loaded first, so it can populate global.crypto
+require('crypto');

@@ -4,11 +4,6 @@ import 'text-encoding';
 
 import 'react-native-gesture-handler';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-global.Buffer = global.Buffer || require('buffer').Buffer;
-
-global.process = require('process');
-
 import { registerRootComponent } from 'expo';
 import App from './App';
 

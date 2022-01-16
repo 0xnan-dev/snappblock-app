@@ -409,6 +409,9 @@ export const StateProvider: FC = ({ children }) => {
         status: 'error',
         title: 'Invalid password!',
       });
+
+      // reset state
+      dispatch({ type: ActionType.RESET });
     }
   };
 
@@ -653,9 +656,21 @@ export const StateProvider: FC = ({ children }) => {
   }, [state.selectedItem]);
 
   useEffect(() => {
+    let interval = -1;
+
     if (state.wallet) {
+      interval = setInterval(() => {
+        fetchAccount();
+      }, 30 * 1000) as unknown as number; // refresh every 30 secs
+
       fetchAccount();
     }
+
+    return () => {
+      if (interval !== -1) {
+        clearInterval(interval);
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.wallet]);
 
