@@ -197,7 +197,7 @@ export const CameraScreen: FC<TakePictureScreenProps> = ({ navigation }) => {
         useCamera2Api={true}
         onCameraReady={handleOnCameraReady}
       >
-        <ToolBar hasStatusBar maxHeight="48px">
+        <ToolBar hasStatusBar maxHeight={`${Constants.statusBarHeight + 48}px`}>
           <Box>
             <StyledIconButton
               icon={<Icon as={<MaterialIcons name={flashModeIcon} />} />}
