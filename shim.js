@@ -28,6 +28,9 @@ if (!global.atob || !global.btoa) {
   };
 }
 
+const NODE_ENV = process.env.NODE_ENV || "development";
+const isDev = NODE_ENV === "development";
+
 if (typeof localStorage !== 'undefined') {
   localStorage.debug = isDev ? '*' : '';
 }
