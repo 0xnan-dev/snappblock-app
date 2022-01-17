@@ -3,7 +3,19 @@ import React from 'react';
 import { NativeBaseProvider } from 'native-base';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import * as Sentry from 'sentry-expo';
+import ExpoConstants from 'expo-constants';
 import { theme } from './src/theme';
+
+const isDev = process.env.NODE_ENV !== 'production';
+const sentryDsn = ExpoConstants.manifest?.extra?.sentryDsn;
+
+Sentry.init({
+  dsn: sentryDsn,
+  environment: process.env.APP_ENV,
+  enableInExpoDevelopment: true,
+  debug: isDev,
+});
 
 import {
   useCachedResources,

@@ -23,9 +23,11 @@
       "**/*"
     ],
     "ios": {
+      "buildNumber": "1.0.2",
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "This app uses the camera to let user put a photo in his profile page."
+        "NSCameraUsageDescription": "This app uses the camera to let user put a photo in his profile page.",
+        "NSPhotoLibraryUsageDescription": "This app uses the camera to let user put a photo in his profile page."
       },
       "bundleIdentifier": "org.team0xnan.snappblock"
     },
@@ -63,5 +65,8 @@
     },
     "description": "Snappblock is a camera app rides on blockchain technology.",
     "githubUrl": "https://github.com/0xnan-dev/snappblock-app"
-  }
+  },
+  "plugins": [
+    "sentry-expo"
+  ]
 }

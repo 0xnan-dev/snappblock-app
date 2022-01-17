@@ -1,4 +1,5 @@
 import { Factory, Icon, Text, View, IconButton, Box, Flex } from 'native-base';
+import Constants from 'expo-constants';
 import { StatusBar } from 'expo-status-bar';
 import {
   SimpleLineIcons,
@@ -26,7 +27,11 @@ const StyledIconButton: FC<ComponentProps<typeof IconButton>> = props => (
   />
 );
 
-const ToolBar: FC<ComponentProps<typeof Flex>> = ({ children, ...props }) => {
+const ToolBar: FC<ComponentProps<typeof Flex> & { hasStatusBar?: boolean }> = ({
+  hasStatusBar,
+  children,
+  ...props
+}) => {
   return (
     <Flex
       alignItems="center"
@@ -34,6 +39,7 @@ const ToolBar: FC<ComponentProps<typeof Flex>> = ({ children, ...props }) => {
       flex={1}
       flexDirection="row"
       justifyContent="space-between"
+      pt={hasStatusBar ? `${Constants.statusBarHeight + 12}px` : 0}
       px={4}
       {...props}
     >
@@ -191,7 +197,7 @@ export const CameraScreen: FC<TakePictureScreenProps> = ({ navigation }) => {
         useCamera2Api={true}
         onCameraReady={handleOnCameraReady}
       >
-        <ToolBar maxHeight="48px">
+        <ToolBar hasStatusBar maxHeight="48px">
           <Box>
             <StyledIconButton
               icon={<Icon as={<MaterialIcons name={flashModeIcon} />} />}

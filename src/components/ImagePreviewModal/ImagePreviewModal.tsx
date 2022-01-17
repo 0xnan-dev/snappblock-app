@@ -1,4 +1,4 @@
-import { Text, Image, Box, Slide, HStack, Avatar, Center } from 'native-base';
+import { Text, Image, Box, HStack, Avatar, Center } from 'native-base';
 import { StyleSheet } from 'react-native';
 import React, { FC, useEffect, useState } from 'react';
 import {
@@ -12,7 +12,9 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  withTiming,
   runOnJS,
+  Easing,
 } from 'react-native-reanimated';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -52,9 +54,9 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const y = useSharedValue(0);
   const [imageSource, setImageSource] = useState<string | undefined>();
   const clientHeight = Layout.window.height;
+  const y = useSharedValue(clientHeight);
   const shortenAddress = fromAddress
     ? `${fromAddress.slice(0, 8)}...${fromAddress.slice(-4)}`
     : '';
@@ -73,7 +75,7 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
     onEnd: (event, ctx) => {
       const delta = ctx.startY + event.translationY;
 
-      if (delta > clientHeight / 3 || delta < -clientHeight / 3) {
+      if (delta > clientHeight / 4 || delta < -clientHeight / 4) {
         runOnJS(onClose)();
       }
 
@@ -114,42 +116,55 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
     };
   }, [source]);
 
-  return (
-    <Slide duration={500} in={isOpen}>
-      <PanGestureHandler onGestureEvent={gestureHandler}>
-        <Animated.View style={[animatedStyle, styles.container]}>
-          <Center p={4}>
-            <HStack alignItems="center" space={2}>
-              <Avatar backgroundColor="primary.500" size="xs" />
-              <Text color="white" fontSize="sm" fontWeight="bold">
-                {shortenAddress}
-              </Text>
-            </HStack>
-            <Text color="gray.500" fontSize="sm">
-              {dayFrom}
-            </Text>
-          </Center>
+  useEffect(() => {
+    if (isOpen) {
+      y.value = withTiming(0, {
+        duration: 500,
+        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+      });
+    } else {
+      y.value = withTiming(clientHeight, {
+        duration: 500,
+        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
-          {/* XXX: added a empty box here to make <Image /> could correctly display */}
-          {imageSource ? (
-            <Image
-              alt={description || 'No image'}
-              flex={1}
-              resizeMode="contain"
-              source={{ uri: imageSource }}
-            />
-          ) : (
-            <Box flex={1} />
-          )}
-          <Box p={4}>
-            {description ? (
-              <Text color="white" textAlign="center">
-                {description}
-              </Text>
-            ) : null}
-          </Box>
-        </Animated.View>
-      </PanGestureHandler>
-    </Slide>
+  return (
+    <PanGestureHandler onGestureEvent={gestureHandler}>
+      <Animated.View style={[animatedStyle, styles.container]}>
+        <Center p={4}>
+          <HStack alignItems="center" space={2}>
+            <Avatar backgroundColor="primary.500" size="xs" />
+            <Text color="white" fontSize="sm" fontWeight="bold">
+              {shortenAddress}
+            </Text>
+          </HStack>
+          <Text color="gray.500" fontSize="sm">
+            {dayFrom}
+          </Text>
+        </Center>
+
+        {/* XXX: added a empty box here to make <Image /> could correctly display */}
+        {imageSource ? (
+          <Image
+            alt={description || 'No image'}
+            flex={1}
+            resizeMode="contain"
+            source={{ uri: imageSource }}
+          />
+        ) : (
+          <Box flex={1} />
+        )}
+        <Box p={4}>
+          {description ? (
+            <Text color="white" textAlign="center">
+              {description}
+            </Text>
+          ) : null}
+        </Box>
+      </Animated.View>
+    </PanGestureHandler>
   );
 };

@@ -9,14 +9,19 @@ PODS:
     - ExpoModulesCore
   - EXConstants (13.0.0):
     - ExpoModulesCore
+  - EXDevice (4.1.0):
+    - ExpoModulesCore
   - EXErrorRecovery (3.0.4):
     - ExpoModulesCore
   - EXFileSystem (13.1.0):
     - ExpoModulesCore
   - EXFont (10.0.4):
     - ExpoModulesCore
+  - EXJSONUtils (0.2.0)
   - EXKeepAwake (10.0.1):
     - ExpoModulesCore
+  - EXManifests (0.2.2):
+    - EXJSONUtils
   - Expo (44.0.5):
     - ExpoModulesCore
   - ExpoModulesCore (0.6.4):
@@ -29,6 +34,14 @@ PODS:
   - EXSplashScreen (0.14.1):
     - ExpoModulesCore
     - React-Core
+  - EXStructuredHeaders (2.1.0)
+  - EXUpdates (0.11.4):
+    - EXManifests
+    - ExpoModulesCore
+    - EXStructuredHeaders
+    - EXUpdatesInterface
+    - React-Core
+  - EXUpdatesInterface (0.5.0)
   - EXWebBrowser (10.1.0):
     - ExpoModulesCore
   - FBLazyVector (0.64.3)
@@ -359,10 +372,16 @@ PODS:
   - RNScreens (3.10.1):
     - React-Core
     - React-RCTImage
+  - RNSentry (3.2.11):
+    - React-Core
+    - Sentry (= 7.7.0)
   - RNSVG (12.1.1):
     - React
   - RNVectorIcons (9.0.0):
     - React-Core
+  - Sentry (7.7.0):
+    - Sentry/Core (= 7.7.0)
+  - Sentry/Core (7.7.0)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -371,15 +390,21 @@ DEPENDENCIES:
   - EXApplication (from `../node_modules/expo-application/ios`)
   - EXCamera (from `../node_modules/expo-camera/ios`)
   - EXConstants (from `../node_modules/expo-constants/ios`)
+  - EXDevice (from `../node_modules/expo-device/ios`)
   - EXErrorRecovery (from `../node_modules/expo-error-recovery/ios`)
   - EXFileSystem (from `../node_modules/expo-file-system/ios`)
   - EXFont (from `../node_modules/expo-font/ios`)
+  - EXJSONUtils (from `../node_modules/expo-json-utils/ios`)
   - EXKeepAwake (from `../node_modules/expo-keep-awake/ios`)
+  - EXManifests (from `../node_modules/expo-manifests/ios`)
   - Expo (from `../node_modules/expo/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core/ios`)
   - EXRandom (from `../node_modules/expo-random/ios`)
   - EXSecureStore (from `../node_modules/expo-secure-store/ios`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
+  - EXStructuredHeaders (from `../node_modules/expo-structured-headers/ios`)
+  - EXUpdates (from `../node_modules/expo-updates/ios`)
+  - EXUpdatesInterface (from `../node_modules/expo-updates-interface/ios`)
   - EXWebBrowser (from `../node_modules/expo-web-browser/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -422,6 +447,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -429,6 +455,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - boost-for-react-native
+    - Sentry
 
 EXTERNAL SOURCES:
   BVLinearGradient:
@@ -441,14 +468,20 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-camera/ios"
   EXConstants:
     :path: "../node_modules/expo-constants/ios"
+  EXDevice:
+    :path: "../node_modules/expo-device/ios"
   EXErrorRecovery:
     :path: "../node_modules/expo-error-recovery/ios"
   EXFileSystem:
     :path: "../node_modules/expo-file-system/ios"
   EXFont:
     :path: "../node_modules/expo-font/ios"
+  EXJSONUtils:
+    :path: "../node_modules/expo-json-utils/ios"
   EXKeepAwake:
     :path: "../node_modules/expo-keep-awake/ios"
+  EXManifests:
+    :path: "../node_modules/expo-manifests/ios"
   Expo:
     :path: "../node_modules/expo/ios"
   ExpoModulesCore:
@@ -459,6 +492,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-secure-store/ios"
   EXSplashScreen:
     :path: "../node_modules/expo-splash-screen/ios"
+  EXStructuredHeaders:
+    :path: "../node_modules/expo-structured-headers/ios"
+  EXUpdates:
+    :path: "../node_modules/expo-updates/ios"
+  EXUpdatesInterface:
+    :path: "../node_modules/expo-updates-interface/ios"
   EXWebBrowser:
     :path: "../node_modules/expo-web-browser/ios"
   FBLazyVector:
@@ -539,6 +578,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSentry:
+    :path: "../node_modules/@sentry/react-native"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
@@ -553,15 +594,21 @@ SPEC CHECKSUMS:
   EXApplication: bdc8dc27713235565da1029a34385229f31b8e08
   EXCamera: 5c2fa5410d094c352bf27f2e0ff55ec3afa426d4
   EXConstants: 5d18484e38e8eacef7695a82214b6ac90133dedf
+  EXDevice: 7de98d8f97088fad9c01e9a68abad07e501208b2
   EXErrorRecovery: deea88a01d38f8b1c1181b4e1d179b0ba0e4bb5b
   EXFileSystem: 7d1309ba6b38b82ef7fc9e80174de3f9184ac8b4
   EXFont: 1fb13af43dc517c01c0ff21a6e32f9f9bf2ea602
+  EXJSONUtils: f515cf71710855d7ba5bfc6752af3b9a6f6aad01
   EXKeepAwake: b571c2ad8323b2fced6e907766e2549f75119471
+  EXManifests: 50e42e01335df4e54109dee7be5a91bfd37347db
   Expo: 337c72b7e9314e93023af79c875930db8e008275
   ExpoModulesCore: 64abda7af7cf659d2fa092934e29c6f4ea7e849f
   EXRandom: 06978dcf45075f3c9e17ae5e726b887316ee9877
   EXSecureStore: fa0fdde1c81ceee2a3cb0519e649feae42767969
   EXSplashScreen: 7872675b95bb07c25f922b3d3dfae70c76fb5a00
+  EXStructuredHeaders: 2ce79a3770bd3795bade1aab215ada70deae8bbc
+  EXUpdates: 51fc3e197a0acdc83876722fee17e33c9befcea6
+  EXUpdatesInterface: f459b515151bd73fff7a35366eace34a6c6a0d3f
   EXWebBrowser: 37388663fa51cbfc883de2244931a5182d948e5f
   FBLazyVector: c71c5917ec0ad2de41d5d06a5855f6d5eda06971
   FBReactNativeSpec: 1050cac0cda6ff7e2657be4e41517f6c65b83dd3
@@ -602,8 +649,10 @@ SPEC CHECKSUMS:
   RNGestureHandler: e5c7cab5f214503dcefd6b2b0cefb050e1f51c4a
   RNReanimated: 7f143675d94978c3555345d5bfa8ed6ae800c5d3
   RNScreens: 522705f2e5c9d27efb17f24aceb2bf8335bc7b8e
+  RNSentry: 290e7375aa32c7edb44b404a5d4e480aa7be9bdc
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   RNVectorIcons: 4143ba35feebab8fdbe6bc43d1e776b393d47ac8
+  Sentry: e58e062056a061ae1145e22ad3dff6e506bff177
   Yoga: e6ecf3fa25af9d4c87e94ad7d5d292eedef49749
 
 PODFILE CHECKSUM: 3d2deb65d5abc9320872d588f667982705c2d79d
