@@ -1,4 +1,5 @@
 import { useToast, useDisclose } from 'native-base';
+import * as Sentry from 'sentry-expo';
 import ExpoConstants from 'expo-constants';
 import React, {
   FC,
@@ -282,7 +283,7 @@ export const StateProvider: FC = ({ children }) => {
 
       return wallet;
     } catch (ex) {
-      console.error(ex);
+      Sentry.Native.captureException(ex);
 
       toast.show({
         placement: 'top',
@@ -307,7 +308,7 @@ export const StateProvider: FC = ({ children }) => {
 
       return wallet;
     } catch (ex) {
-      console.error(ex);
+      Sentry.Native.captureException(ex);
 
       toast.show({
         placement: 'top',
@@ -348,7 +349,7 @@ export const StateProvider: FC = ({ children }) => {
         message: 'Your wallet has been encrypted and stored!',
       });
     } catch (ex) {
-      console.error(ex);
+      Sentry.Native.captureException(ex);
 
       toast.show({
         placement: 'top',
@@ -399,7 +400,7 @@ export const StateProvider: FC = ({ children }) => {
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (ex: any) {
-      console.error(ex);
+      Sentry.Native.captureException(ex);
 
       if (/ciphertext cannot be decrypted using that key/.test(ex.message)) {
         toast.show({
@@ -500,7 +501,7 @@ export const StateProvider: FC = ({ children }) => {
         return;
       }
     } catch (ex) {
-      console.error(ex);
+      Sentry.Native.captureException(ex);
     }
 
     dispatch({ type: ActionType.RESET });
@@ -521,7 +522,7 @@ export const StateProvider: FC = ({ children }) => {
 
       return;
     } catch (ex) {
-      console.error(ex);
+      Sentry.Native.captureException(ex);
     }
 
     toast.show({
@@ -634,7 +635,7 @@ export const StateProvider: FC = ({ children }) => {
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (ex: any) {
-      console.error(ex);
+      Sentry.Native.captureException(ex);
     }
 
     // reset state

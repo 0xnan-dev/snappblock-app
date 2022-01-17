@@ -13,7 +13,7 @@ const sentryDsn = ExpoConstants.manifest?.extra?.sentryDsn;
 Sentry.init({
   dsn: sentryDsn,
   environment: process.env.APP_ENV,
-  enableInExpoDevelopment: true,
+  enableInExpoDevelopment: false,
   debug: isDev,
 });
 
