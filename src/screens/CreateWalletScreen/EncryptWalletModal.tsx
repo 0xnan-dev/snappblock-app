@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import {
   Button,
   Input,
@@ -40,6 +40,10 @@ export const EncryptWalletModal: FC<EncryptWalletModalProps> = ({
   isLoading,
   ...props
 }) => {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const passwordInputRef = useRef<any>();
+  const confirmPasswordInputRef = useRef<any>();
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   const formSchema = Yup.object().shape({
     walletName: Yup.string()
       .required('Wallet name is required')
@@ -81,11 +85,16 @@ export const EncryptWalletModal: FC<EncryptWalletModalProps> = ({
           name="walletName"
           render={({ field: { onChange, value } }) => (
             <Input
+              autoFocus
               defaultValue={value}
               mt={4}
               placeholder="Account Name"
+              returnKeyType="next"
               type="string"
               onChangeText={val => onChange(val)}
+              onSubmitEditing={() => {
+                passwordInputRef?.current?.focus();
+              }}
             />
           )}
         />
@@ -102,6 +111,7 @@ export const EncryptWalletModal: FC<EncryptWalletModalProps> = ({
           name="password"
           render={({ field: { onChange, value } }) => (
             <Input
+              ref={passwordInputRef}
               defaultValue={value}
               InputRightElement={
                 <Button
@@ -116,8 +126,12 @@ export const EncryptWalletModal: FC<EncryptWalletModalProps> = ({
               }
               mt={4}
               placeholder="Password"
+              returnKeyType="next"
               type={showPassword ? 'text' : 'password'}
               onChangeText={val => onChange(val)}
+              onSubmitEditing={() => {
+                confirmPasswordInputRef?.current?.focus();
+              }}
             />
           )}
         />
@@ -134,6 +148,7 @@ export const EncryptWalletModal: FC<EncryptWalletModalProps> = ({
           name="passwordConfirm"
           render={({ field: { onChange, value } }) => (
             <Input
+              ref={confirmPasswordInputRef}
               defaultValue={value}
               InputRightElement={
                 <Button
@@ -148,8 +163,10 @@ export const EncryptWalletModal: FC<EncryptWalletModalProps> = ({
               }
               mt={4}
               placeholder="Confirm Password"
+              returnKeyType="done"
               type={showPasswordConfirm ? 'text' : 'password'}
               onChangeText={val => onChange(val)}
+              onSubmitEditing={handleSubmit(onSubmit)}
             />
           )}
         />

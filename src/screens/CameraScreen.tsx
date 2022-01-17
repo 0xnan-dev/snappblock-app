@@ -1,4 +1,5 @@
 import { Factory, Icon, Text, View, IconButton, Box, Flex } from 'native-base';
+import { StatusBar } from 'expo-status-bar';
 import {
   SimpleLineIcons,
   MaterialIcons,
@@ -178,6 +179,7 @@ export const CameraScreen: FC<TakePictureScreenProps> = ({ navigation }) => {
 
   return (
     <View p={0}>
+      <StatusBar style="light" />
       <FactoryCamera
         ref={cameraRef}
         flashMode={flashMode}

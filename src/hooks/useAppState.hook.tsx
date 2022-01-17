@@ -117,6 +117,7 @@ enum ActionType {
   SET_SELECTED_ITEM = 'SET_SELECTED_ITEM',
   UPLOADING = 'UPLOADING',
   UPLOADED = 'UPLOADED',
+  SET_IS_LOADING = 'SET_IS_LOADING',
 }
 
 type Action =
@@ -156,7 +157,8 @@ type Action =
       picture: CameraCapturedPicture;
     }
   | { type: ActionType.UPLOADED }
-  | { type: ActionType.SET_SELECTED_ITEM; selectedItem: PhotoItem | null };
+  | { type: ActionType.SET_SELECTED_ITEM; selectedItem: PhotoItem | null }
+  | { type: ActionType.SET_IS_LOADING; isLoading: boolean };
 
 export const StateContext = createContext<AppStateContextProps>(initialState);
 
@@ -258,6 +260,11 @@ const reducer: Reducer<AppStateContextProps, Action> = (state, action) => {
       return {
         ...state,
         selectedItem: action.selectedItem,
+      };
+    case ActionType.SET_IS_LOADING:
+      return {
+        ...state,
+        isLoading: action.isLoading,
       };
     default:
       throw new Error('No matched action');
@@ -611,6 +618,9 @@ export const StateProvider: FC = ({ children }) => {
 
           const txn = await createISCNRecord(state.wallet, record);
 
+          // fetch new account balance
+          await fetchAccount();
+
           toast.show({
             placement: 'top',
             title: `Uploaded Successfully!`,
@@ -626,6 +636,9 @@ export const StateProvider: FC = ({ children }) => {
     } catch (ex: any) {
       console.error(ex);
     }
+
+    // reset state
+    dispatch({ type: ActionType.SET_IS_LOADING, isLoading: false });
 
     toast.show({
       placement: 'top',

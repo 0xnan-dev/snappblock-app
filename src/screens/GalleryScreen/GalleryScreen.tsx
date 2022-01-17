@@ -1,5 +1,6 @@
 import { FlatList, View } from 'native-base';
 import React, { useEffect, useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
 import { PhotoItem } from '../../interfaces';
 import { useAppState } from '../../hooks';
 import { PhotoCard } from './PhotoCard';
@@ -22,14 +23,15 @@ export function GalleryScreen() {
 
   return (
     <View>
+      <StatusBar style="dark" />
       <FlatList<PhotoItem>
         data={photos}
         keyExtractor={item => item.iscnId}
         renderItem={({ item }) => (
           <MemorizedPhotoCard
-            onPress={() => setSelectedItem(item)}
-            item={item}
             isLoading={isLoading}
+            item={item}
+            onPress={() => setSelectedItem(item)}
           />
         )}
       />

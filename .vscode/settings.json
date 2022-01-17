@@ -4,6 +4,7 @@
     "cosmjs",
     "iscn",
     "likecoin",
+    "randombytes",
     "secp",
     "stargate",
     "tendermint"

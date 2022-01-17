@@ -69,6 +69,7 @@ export const UnlockModal: FC<UnlockModalProps> = ({
           name="password"
           render={({ field: { onChange, value } }) => (
             <Input
+              autoFocus
               defaultValue={value}
               InputRightElement={
                 <Button
@@ -77,7 +78,6 @@ export const UnlockModal: FC<UnlockModalProps> = ({
                   roundedRight="sm"
                   variant="unstyled"
                   onPress={() => {
-                    console.log('d');
                     setShowPassword(!showPassword);
                   }}
                 >
@@ -86,8 +86,10 @@ export const UnlockModal: FC<UnlockModalProps> = ({
               }
               mt={4}
               placeholder="Password"
+              returnKeyType="done"
               type={showPassword ? 'text' : 'password'}
               onChangeText={val => onChange(val)}
+              onSubmitEditing={handleSubmit(onSubmit)}
             />
           )}
         />
