@@ -10,7 +10,12 @@
     "start": "expo start --dev-client",
     "svgr": "svgr ./assets/icons -d ./src/components/icons --typescript --native --svg-props className=",
     "test": "jest",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "publish:production": "APP_ENV=production expo publish --release-channel production",
+    "publish:staging": "APP_ENV=staging expo publish --release-channel staging",
+    "build:staging": "APP_ENV=staging eas build --profile preview --platform ios",
+    "build:production": "APP_ENV=staging eas build --profile production --platform ios",
+    "build:development": "APP_ENV=staging eas build --profile development --platform ios"
   },
   "resolutions": {
     "@cosmjs/crypto": "^0.24.0-alpha.25",

@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+const APP_ENV = process.env.APP_ENV;
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function ({ config }: any) {
   let extra = {
@@ -14,7 +16,7 @@ export default function ({ config }: any) {
     authMessage: process.env.AUTH_MESSAGE,
   };
 
-  if (process.env.APP_ENV === 'staging') {
+  if (APP_ENV === 'staging') {
     extra = {
       sentryDsn: process.env.SENTRY_DSN,
       cosmosRpc: process.env.STAG_COSMOS_RPC,

@@ -33,18 +33,37 @@ export const IPFSContext = createContext<IPFSContextProps>({
   download: null as never,
 });
 
-const captureException = (err: unknown) => {
+const captureException = (err: unknown, extra?: Record<string, string>) => {
+  const extraData = {
+    APP_ENV: process.env.APP_ENV,
+    NODE_ENV: process.env.NODE_ENV,
+  };
+
   if (isDev) {
-    console.error(err);
+    console.error(err, extra);
 
     return;
   }
 
   if (Platform.OS === 'web') {
-    return Sentry.Browser.captureException(err);
+    return Sentry.Browser.captureException(err, scope => {
+      scope.setExtras({
+        ...extraData,
+        ...extra,
+      });
+
+      return scope;
+    });
   }
 
-  return Sentry.Native.captureException(err);
+  return Sentry.Native.captureException(err, scope => {
+    scope.setExtras({
+      ...extraData,
+      ...extra,
+    });
+
+    return scope;
+  });
 };
 
 export const IPFSProvider: FC = ({ children }) => {
@@ -65,7 +84,11 @@ export const IPFSProvider: FC = ({ children }) => {
 
       return apiRes.data.accessToken;
     } catch (ex) {
-      captureException(ex);
+      captureException(ex, {
+        publicKey,
+        authMessage,
+        url: `${ipfsApiUrl}/v1/auth/login`,
+      });
     }
   };
 
