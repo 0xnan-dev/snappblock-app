@@ -61,7 +61,7 @@ export function ProfileScreen() {
         justifyContent="space-between"
         space={4}
       >
-        <VStack h="50%" space={2}>
+        <VStack space={2}>
           <Pressable onPress={() => qrCodeModalProps.onOpen()}>
             <HStack alignItems="center" justifyContent="center">
               <Text fontSize="lg" fontWeight="bold" mr={1}>
@@ -119,13 +119,7 @@ export function ProfileScreen() {
           </VStack>
         </VStack>
 
-        <Box
-          alignItems="center"
-          flex={1}
-          h="50%"
-          justifyContent="center"
-          w="100%"
-        >
+        <Box alignItems="center" flex={1} justifyContent="center" w="100%">
           <Button
             colorScheme="red"
             variant="outline"

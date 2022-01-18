@@ -16,6 +16,7 @@ import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import BigNumber from 'bignumber.js';
 import { BroadcastTxSuccess, StargateClient } from '@cosmjs/stargate';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
+import { Platform } from 'react-native';
 import {
   hashSha256,
   SecureStore,
@@ -40,6 +41,14 @@ const cosmosRpc = ExpoConstants.manifest?.extra?.cosmosRpc;
 const cosmosDenom = ExpoConstants.manifest?.extra?.cosmosDenom;
 const ipfsNodeUrl = ExpoConstants.manifest?.extra?.ipfsNodeUrl;
 
+const captureException = (err: unknown) => {
+  if (Platform.OS === 'web') {
+    return Sentry.Browser.captureException(err);
+  }
+
+  return Sentry.Native.captureException(err);
+};
+
 const toIpfsUrl = (url: string) => {
   if (/ipfs\.io/.test(url)) {
     return url.replace(/^https:\/\/ipfs\.io/, ipfsNodeUrl);
@@ -48,7 +57,7 @@ const toIpfsUrl = (url: string) => {
   return url;
 };
 
-export interface AppStateContextProps {
+export interface AppStateType {
   wallet: DirectSecp256k1HdWallet | null;
   balance: BigNumber | null;
   isLoading: boolean;
@@ -57,6 +66,8 @@ export interface AppStateContextProps {
   photos: PhotoItem[];
   hasStoredWallet: boolean;
   storedWalletName: string | null;
+}
+export interface AppStateContextProps extends AppStateType {
   createWallet: () => Promise<DirectSecp256k1HdWallet | null>;
   storeWallet: (
     walletName: string,
@@ -73,7 +84,6 @@ export interface AppStateContextProps {
     message: string
   ) => Promise<BroadcastTxSuccess | TxRaw | null>;
   setPicture: (data: CameraCapturedPicture) => void;
-  setBalance: (balance: BigNumber) => void;
   reset: () => void;
   setSelectedItem: (selectedItem: PhotoItem) => void;
 }
@@ -94,7 +104,6 @@ const initialState: AppStateContextProps = {
   upload: null as never,
   decryptWallet: null as never,
   setPicture: null as never,
-  setBalance: null as never,
   reset: null as never,
   setSelectedItem: null as never,
 };
@@ -112,7 +121,6 @@ enum ActionType {
   DECRYPTED_WALLET = 'DECRYPTED_WALLET',
   FETCHING_PHOTOS = 'FETCHING_PHOTOS',
   FETCHED_PHOTOS = 'FETCHED_PHOTOS',
-  SET_ALERT = 'SET_ALERT',
   SET_PICTURE = 'SET_PICTURE',
   SET_BALANCE = 'SET_BALANCE',
   SET_SELECTED_ITEM = 'SET_SELECTED_ITEM',
@@ -132,19 +140,16 @@ type Action =
   | { type: ActionType.STORING_WALLET }
   | {
       type: ActionType.STORED_WALLET;
-      message: string;
       wallet: DirectSecp256k1HdWallet;
       storedWalletName: string;
     }
   | { type: ActionType.RESTORING_WALLET }
   | {
       type: ActionType.RESTORED_WALLET;
-      message: string;
     }
   | { type: ActionType.DECRYPTING_WALLET }
   | {
       type: ActionType.DECRYPTED_WALLET;
-      message: string;
       wallet: DirectSecp256k1HdWallet;
       storedWalletName: string;
     }
@@ -154,8 +159,8 @@ type Action =
   | { type: ActionType.SET_BALANCE; balance: BigNumber }
   | {
       type: ActionType.UPLOADING;
-      message: string;
       picture: CameraCapturedPicture;
+      message?: string;
     }
   | { type: ActionType.UPLOADED }
   | { type: ActionType.SET_SELECTED_ITEM; selectedItem: PhotoItem | null }
@@ -163,12 +168,11 @@ type Action =
 
 export const StateContext = createContext<AppStateContextProps>(initialState);
 
-const reducer: Reducer<AppStateContextProps, Action> = (state, action) => {
+const reducer: Reducer<AppStateType, Action> = (state, action) => {
   console.debug('reducer: ', JSON.stringify(action, null, 2));
 
-  const defaultState = {
+  const defaultState: AppStateType = {
     ...state,
-    alert: null,
     balance: null,
     wallet: null,
     picture: null,
@@ -195,19 +199,11 @@ const reducer: Reducer<AppStateContextProps, Action> = (state, action) => {
         hasStoredWallet: true,
         storedWalletName: action.storedWalletName,
         wallet: action.wallet,
-        alert: {
-          status: 'success',
-          title: action.message,
-        },
       };
     case ActionType.RESTORED_WALLET:
       return {
         ...state,
         isLoading: false,
-        alert: {
-          status: 'success',
-          title: action.message,
-        },
       };
     case ActionType.DECRYPTED_WALLET:
       return {
@@ -215,10 +211,6 @@ const reducer: Reducer<AppStateContextProps, Action> = (state, action) => {
         isLoading: false,
         hasStoredWallet: true,
         wallet: action.wallet,
-        alert: {
-          status: 'success',
-          title: action.message,
-        },
       };
     case ActionType.FETCHED_PHOTOS:
       return {
@@ -277,20 +269,20 @@ export const StateProvider: FC = ({ children }) => {
   const { upload: ipfsUpload, authorize: ipfsAuthorize } = useIPFS();
   const [state, dispatch] = useReducer(reducer, initialState);
   const imagePreviewModalProps = useDisclose();
+
   const createWallet = async () => {
     try {
       const wallet = await DirectSecp256k1HdWallet.generate(24);
 
       return wallet;
     } catch (ex) {
-      Sentry.Native.captureException(ex);
-
-      toast.show({
-        placement: 'top',
-        title: 'Failed to create wallet!',
-        status: 'error',
-      });
+      captureException(ex);
     }
+
+    toast.show({
+      title: 'Failed to create wallet!',
+      status: 'error',
+    });
 
     return null;
   };
@@ -303,19 +295,26 @@ export const StateProvider: FC = ({ children }) => {
 
       dispatch({
         type: ActionType.RESTORED_WALLET,
-        message: 'Your wallet has been restored!',
+      });
+
+      toast.show({
+        title: 'Your wallet has been restored!',
+        status: 'success',
       });
 
       return wallet;
     } catch (ex) {
-      Sentry.Native.captureException(ex);
-
-      toast.show({
-        placement: 'top',
-        title: 'Failed to restore wallet!',
-        status: 'error',
-      });
+      captureException(ex);
     }
+
+    dispatch({
+      type: ActionType.RESET,
+    });
+
+    toast.show({
+      title: 'Failed to restore wallet!',
+      status: 'error',
+    });
 
     return null;
   };
@@ -346,17 +345,22 @@ export const StateProvider: FC = ({ children }) => {
         type: ActionType.STORED_WALLET,
         storedWalletName: walletName,
         wallet,
-        message: 'Your wallet has been encrypted and stored!',
       });
-    } catch (ex) {
-      Sentry.Native.captureException(ex);
 
       toast.show({
-        placement: 'top',
-        status: 'error',
-        title: 'Failed to store wallet!',
+        title: 'Your wallet has been encrypted and stored!',
+        status: 'success',
       });
+
+      return;
+    } catch (ex) {
+      captureException(ex);
     }
+
+    toast.show({
+      status: 'error',
+      title: 'Failed to store wallet!',
+    });
   };
 
   const decryptWallet = async (password: string) => {
@@ -369,7 +373,6 @@ export const StateProvider: FC = ({ children }) => {
 
       if (!serializedWallet) {
         toast.show({
-          placement: 'top',
           status: 'error',
           title: 'No stored wallet!',
         });
@@ -396,31 +399,35 @@ export const StateProvider: FC = ({ children }) => {
         type: ActionType.DECRYPTED_WALLET,
         wallet,
         storedWalletName: deserializeWallet.name,
-        message: 'Your wallet has been restored!',
       });
+
+      toast.show({
+        title: 'Your wallet has been restored!',
+        status: 'success',
+      });
+
+      return;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (ex: any) {
-      Sentry.Native.captureException(ex);
+      captureException(ex);
 
       if (/ciphertext cannot be decrypted using that key/.test(ex.message)) {
         toast.show({
-          placement: 'top',
           status: 'error',
           title: 'Invalid seed phrase!',
         });
 
         return;
       }
-
-      toast.show({
-        placement: 'top',
-        status: 'error',
-        title: 'Invalid password!',
-      });
-
-      // reset state
-      dispatch({ type: ActionType.RESET });
     }
+
+    toast.show({
+      status: 'error',
+      title: 'Invalid password!',
+    });
+
+    // reset state
+    dispatch({ type: ActionType.RESET });
   };
 
   const setPicture = (picture: CameraCapturedPicture) => {
@@ -430,16 +437,20 @@ export const StateProvider: FC = ({ children }) => {
   const fetchPhotos = async (
     fromSequence = 0
   ): Promise<{ photos: PhotoItem[]; nextSequence: number }> => {
-    dispatch({ type: ActionType.FETCHING_PHOTOS });
+    try {
+      dispatch({ type: ActionType.FETCHING_PHOTOS });
 
-    let photos = [] as PhotoItem[];
+      let photos = [] as PhotoItem[];
 
-    const queryResponse = await queryRecordsByFingerprint(
-      'https://snappblock.app',
-      fromSequence
-    );
+      const queryResponse = await queryRecordsByFingerprint(
+        'https://snappblock.app',
+        fromSequence
+      );
 
-    if (queryResponse) {
+      if (!queryResponse) {
+        throw new Error('Failed to get response from ISCN');
+      }
+
       photos = queryResponse.records
         .map<PhotoItem>(({ data }) => {
           const author = data.stakeholders.find(
@@ -465,6 +476,8 @@ export const StateProvider: FC = ({ children }) => {
         nextSequence: queryResponse.nextSequence.toNumber(),
         photos,
       };
+    } catch (ex) {
+      captureException(ex);
     }
 
     // clear state
@@ -501,18 +514,20 @@ export const StateProvider: FC = ({ children }) => {
         return;
       }
     } catch (ex) {
-      Sentry.Native.captureException(ex);
+      captureException(ex);
     }
 
     dispatch({ type: ActionType.RESET });
   };
 
   const fetchAccount = async () => {
-    if (!state.wallet) {
-      return null;
-    }
-
     try {
+      if (!state.wallet) {
+        dispatch({ type: ActionType.RESET });
+
+        throw new Error('No wallet connected');
+      }
+
       const [account] = await state.wallet.getAccounts();
       const client = await StargateClient.connect(cosmosRpc);
       const balance = await client.getBalance(account.address, cosmosDenom);
@@ -522,11 +537,10 @@ export const StateProvider: FC = ({ children }) => {
 
       return;
     } catch (ex) {
-      Sentry.Native.captureException(ex);
+      captureException(ex);
     }
 
     toast.show({
-      placement: 'top',
       status: 'error',
       title: 'Cannot get account balance, please try again later',
     });
@@ -541,108 +555,107 @@ export const StateProvider: FC = ({ children }) => {
   };
 
   const upload = async (picture: CameraCapturedPicture, message: string) => {
-    if (!state.wallet) {
-      toast.show({
-        placement: 'top',
-        status: 'error',
-        title: 'Something went wrong, please try again',
-      });
-
-      return null;
-    }
-
-    dispatch({ type: ActionType.UPLOADING, picture, message });
-
     try {
+      if (!state.wallet) {
+        // reset all state
+        dispatch({ type: ActionType.RESET });
+
+        throw new Error('No wallet connected');
+      }
+
+      dispatch({ type: ActionType.UPLOADING, picture, message });
+
       const wallet = getNewWalletFromSeed(state.wallet.mnemonic, 'cosmos');
       const [account] = await state.wallet.getAccounts();
       const { privateKey, publicKey } = wallet;
       const datePublished = new Date().toISOString().split('T')[0];
       const accountName = state.storedWalletName || 'Snappblock User';
 
-      if (privateKey) {
-        const accessToken = await ipfsAuthorize(publicKey, privateKey);
-
-        if (accessToken) {
-          // update to IPFS node and get the CID
-          let ipfsPath: string;
-
-          if (isDev) {
-            ipfsPath = 'QmaFp322feq2gLiCzWQSrupsPBLpMtgjDkWj8cq78YW7AD';
-          } else {
-            ipfsPath = await ipfsUpload(picture.uri, accessToken);
-          }
-
-          // generate picture sha256 hash
-          const hash = hashSha256(picture.uri);
-
-          // create ISCEN record
-          const record: ISCNSignPayload = {
-            name: `${accountName}'s post`,
-            recordNotes: 'Snappblock user post',
-            recordTimestamp: new Date().toISOString(),
-            contentFingerprints: [
-              // app.like.co used contentFingerprints to get IPFS image src url getIPFSUrlFromISCN()
-              `ipfs://${ipfsPath}`,
-              // a finger prints for query
-              'https://snappblock.app',
-              // sha256 hash of the picture
-              `hash://sha256/${hash}`,
-            ],
-            stakeholders: [
-              {
-                entity: {
-                  '@id': account.address,
-                  name: accountName,
-                },
-                contributionType: 'http://schema.org/author',
-                rewardProportion: 0.9,
-              },
-              {
-                entity: {
-                  '@id': 'https://github.com/0xnan-dev',
-                  name: '0xNaN',
-                },
-                contributionType: 'http://schema.org/publisher',
-                rewardProportion: 0.1,
-              },
-            ],
-            type: 'Photo',
-            description: message,
-            version: 1,
-            url: `https://ipfs.io/ipfs/${ipfsPath}`,
-            author: accountName,
-            publisher: 'Snappblock',
-            datePublished,
-            usageInfo: 'https://creativecommons.org/licenses/by/4.0',
-          };
-
-          const txn = await createISCNRecord(state.wallet, record);
-
-          // fetch new account balance
-          await fetchAccount();
-
-          toast.show({
-            placement: 'top',
-            title: `Uploaded Successfully!`,
-            status: 'success',
-          });
-
-          dispatch({ type: ActionType.UPLOADED });
-
-          return txn;
-        }
+      if (!privateKey) {
+        throw new Error('Not able to generate private key');
       }
+
+      const accessToken = await ipfsAuthorize(publicKey, privateKey);
+
+      if (!accessToken) {
+        throw new Error('Not able to get access token from IPFS API');
+      }
+
+      // update to IPFS node and get the CID
+      let ipfsPath: string;
+
+      if (isDev) {
+        ipfsPath = 'QmaFp322feq2gLiCzWQSrupsPBLpMtgjDkWj8cq78YW7AD';
+      } else {
+        ipfsPath = await ipfsUpload(picture.uri, accessToken);
+      }
+
+      // generate picture sha256 hash
+      const hash = hashSha256(picture.uri);
+
+      // create ISCEN record
+      const record: ISCNSignPayload = {
+        name: `${accountName}'s post`,
+        recordNotes: 'Snappblock user post',
+        recordTimestamp: new Date().toISOString(),
+        contentFingerprints: [
+          // app.like.co used contentFingerprints to get IPFS image src url getIPFSUrlFromISCN()
+          `ipfs://${ipfsPath}`,
+          // a finger prints for query
+          'https://snappblock.app',
+          // sha256 hash of the picture
+          `hash://sha256/${hash}`,
+        ],
+        stakeholders: [
+          {
+            entity: {
+              '@id': account.address,
+              name: accountName,
+            },
+            contributionType: 'http://schema.org/author',
+            rewardProportion: 0.9,
+          },
+          {
+            entity: {
+              '@id': 'https://github.com/0xnan-dev',
+              name: '0xNaN',
+            },
+            contributionType: 'http://schema.org/publisher',
+            rewardProportion: 0.1,
+          },
+        ],
+        type: 'Photo',
+        description: message,
+        version: 1,
+        url: `https://ipfs.io/ipfs/${ipfsPath}`,
+        author: accountName,
+        publisher: 'Snappblock',
+        datePublished,
+        usageInfo: 'https://creativecommons.org/licenses/by/4.0',
+      };
+
+      const txn = await createISCNRecord(state.wallet, record);
+
+      // fetch new account balance
+      await fetchAccount();
+
+      toast.show({
+        title: `Uploaded Successfully!`,
+        status: 'success',
+      });
+
+      dispatch({ type: ActionType.UPLOADED });
+
+      return txn;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (ex: any) {
-      Sentry.Native.captureException(ex);
+      captureException(ex);
     }
 
     // reset state
     dispatch({ type: ActionType.SET_IS_LOADING, isLoading: false });
 
     toast.show({
-      placement: 'top',
       status: 'error',
       title: 'Something went wrong, please try again',
     });

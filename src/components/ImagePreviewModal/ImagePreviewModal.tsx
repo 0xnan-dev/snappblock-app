@@ -54,6 +54,7 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const [show, setShow] = useState(false);
   const [imageSource, setImageSource] = useState<string | undefined>();
   const clientHeight = Layout.window.height;
   const y = useSharedValue(clientHeight);
@@ -118,20 +119,28 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
+      setShow(true);
+
       y.value = withTiming(0, {
         duration: 500,
         easing: Easing.bezier(0.25, 0.1, 0.25, 1),
       });
     } else {
-      y.value = withTiming(clientHeight, {
-        duration: 500,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      });
+      y.value = withTiming(
+        clientHeight,
+        {
+          duration: 500,
+          easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+        },
+        () => {
+          setShow(false);
+        }
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
-  return (
+  return show ? (
     <PanGestureHandler onGestureEvent={gestureHandler}>
       <Animated.View style={[animatedStyle, styles.container]}>
         <Center p={4}>
@@ -166,5 +175,5 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
         </Box>
       </Animated.View>
     </PanGestureHandler>
-  );
+  ) : null;
 };
