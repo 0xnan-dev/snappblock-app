@@ -1,13 +1,16 @@
 import React, { FC, createContext, useContext } from 'react';
+import * as Sentry from 'sentry-expo';
 import ExpoConstants from 'expo-constants';
 import axios from 'axios';
+import { Platform } from 'react-native';
 import { signMsg } from '../lib/sign-msg';
 
+const isDev = process.env.NODE_ENV !== 'production';
 const ipfsApiUrl = ExpoConstants.manifest?.extra?.ipfsApiUrl;
 const authMessage = ExpoConstants.manifest?.extra?.authMessage;
 
 interface IPFSContextProps {
-  authorize: (publicKey: string, pirvateKey: string) => Promise<string | null>;
+  authorize: (publicKey: string, pirvateKey: string) => Promise<string | void>;
   upload: (fileUri: string, accessToken: string) => Promise<string>; // return IPFS path
   download: (ipfsPath: string, accessToken: string) => Promise<ArrayBuffer>;
 }
@@ -30,11 +33,25 @@ export const IPFSContext = createContext<IPFSContextProps>({
   download: null as never,
 });
 
+const captureException = (err: unknown) => {
+  if (isDev) {
+    console.error(err);
+
+    return;
+  }
+
+  if (Platform.OS === 'web') {
+    return Sentry.Browser.captureException(err);
+  }
+
+  return Sentry.Native.captureException(err);
+};
+
 export const IPFSProvider: FC = ({ children }) => {
   const authorize = async (
     publicKey: string, // base64 string
     pirvateKey: string // hex string
-  ): Promise<string | null> => {
+  ): Promise<string | void> => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const signature = signMsg(authMessage!, pirvateKey); // base64 signature
@@ -48,7 +65,7 @@ export const IPFSProvider: FC = ({ children }) => {
 
       return apiRes.data.accessToken;
     } catch (ex) {
-      return null;
+      captureException(ex);
     }
   };
 

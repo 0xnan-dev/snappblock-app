@@ -42,6 +42,12 @@ const cosmosDenom = ExpoConstants.manifest?.extra?.cosmosDenom;
 const ipfsNodeUrl = ExpoConstants.manifest?.extra?.ipfsNodeUrl;
 
 const captureException = (err: unknown) => {
+  if (isDev) {
+    console.error(err);
+
+    return;
+  }
+
   if (Platform.OS === 'web') {
     return Sentry.Browser.captureException(err);
   }
