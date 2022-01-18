@@ -2,6 +2,7 @@ import React, { FC, createContext, useContext } from 'react';
 import * as Sentry from 'sentry-expo';
 import ExpoConstants from 'expo-constants';
 import axios from 'axios';
+import * as FileSystem from 'expo-file-system';
 import { Platform } from 'react-native';
 import { signMsg } from '../lib/sign-msg';
 
@@ -21,7 +22,17 @@ type AuthenticatonType = {
 };
 
 async function dataURItoBlob(dataURI: string) {
-  const response = await fetch(dataURI);
+  let myDataUri = dataURI;
+
+  if (Platform.OS === 'ios') {
+    const base64Response = await FileSystem.readAsStringAsync(dataURI, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+
+    myDataUri = `data:image/jpg;base64,${base64Response}`;
+  }
+
+  const response = await fetch(myDataUri);
   const blob = await response.blob();
 
   return blob;
@@ -72,6 +83,10 @@ export const IPFSProvider: FC = ({ children }) => {
   const upload = async (fileUri: string, accessToken: string) => {
     const formData = new FormData();
     const imageBlob = await dataURItoBlob(fileUri);
+
+    if (!imageBlob) {
+      throw new Error();
+    }
 
     formData.append('file', imageBlob);
 
