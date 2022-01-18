@@ -588,13 +588,7 @@ export const StateProvider: FC = ({ children }) => {
       }
 
       // update to IPFS node and get the CID
-      let ipfsPath: string;
-
-      if (isDev) {
-        ipfsPath = 'QmaFp322feq2gLiCzWQSrupsPBLpMtgjDkWj8cq78YW7AD';
-      } else {
-        ipfsPath = await ipfsUpload(picture.uri, accessToken);
-      }
+      const ipfsPath = await ipfsUpload(picture.uri, accessToken);
 
       // generate picture sha256 hash
       const hash = hashSha256(picture.uri);

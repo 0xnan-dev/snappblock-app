@@ -22,7 +22,7 @@ export function GalleryScreen() {
   }, []);
 
   return (
-    <View>
+    <View px={0}>
       <StatusBar style="dark" />
       <FlatList<PhotoItem>
         data={photos}

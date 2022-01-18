@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
 import {
   Text,
   FormControl,
@@ -87,6 +88,7 @@ export function EditingScreen({ navigation }: TakePictureScreenProps) {
 
   return (
     <>
+      <StatusBar style="dark" />
       <Image size="full" source={picture} />
 
       <Modal

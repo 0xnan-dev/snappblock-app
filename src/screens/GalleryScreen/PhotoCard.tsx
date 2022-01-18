@@ -39,7 +39,7 @@ export const PhotoCard: FC<PhotoCardProps> = ({
 
   return (
     <Pressable onPress={onPress}>
-      <VStack key={item.iscnId} mb={8} space={2}>
+      <VStack key={item.iscnId} mb={8} px={4} space={2}>
         <Box position="relative">
           {isLoading || !isImageLoaded ? (
             <Skeleton

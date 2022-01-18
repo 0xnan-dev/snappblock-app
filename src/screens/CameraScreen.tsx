@@ -200,6 +200,7 @@ export const CameraScreen: FC<TakePictureScreenProps> = ({ navigation }) => {
         <ToolBar hasStatusBar maxHeight={`${Constants.statusBarHeight + 48}px`}>
           <Box>
             <StyledIconButton
+              disabled={!hasPermission}
               icon={<Icon as={<MaterialIcons name={flashModeIcon} />} />}
               onPress={() => handleOnFlashModeChange()}
             />
@@ -233,6 +234,7 @@ export const CameraScreen: FC<TakePictureScreenProps> = ({ navigation }) => {
                 size: '64px',
                 color: 'white',
               }}
+              disabled={!hasPermission}
               icon={
                 <Icon as={<MaterialCommunityIcons name="circle-slice-8" />} />
               }
@@ -241,6 +243,7 @@ export const CameraScreen: FC<TakePictureScreenProps> = ({ navigation }) => {
           </Box>
           <Box>
             <StyledIconButton
+              disabled={!hasPermission}
               icon={<Icon as={<SimpleLineIcons name="refresh" />} />}
               onPress={() => handleOnTypeChange()}
             />
