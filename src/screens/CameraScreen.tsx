@@ -1,6 +1,6 @@
 import { Factory, Icon, Text, View, IconButton, Box, Flex } from 'native-base';
 import Constants from 'expo-constants';
-import { StatusBar } from 'expo-status-bar';
+import { setStatusBarStyle } from 'expo-status-bar';
 import {
   SimpleLineIcons,
   MaterialIcons,
@@ -68,10 +68,12 @@ export const CameraScreen: FC<TakePictureScreenProps<'Camera'>> = ({
   const cameraRef = useRef<Camera>();
 
   navigation.addListener('focus', () => {
+    setStatusBarStyle('light');
     if (hasPermission && isCameraReady) cameraRef.current?.resumePreview();
   });
 
   navigation.addListener('blur', () => {
+    setStatusBarStyle('dark');
     if (hasPermission && isCameraReady) cameraRef.current?.pausePreview();
   });
 
@@ -195,7 +197,6 @@ export const CameraScreen: FC<TakePictureScreenProps<'Camera'>> = ({
 
   return (
     <View p={0}>
-      <StatusBar style="light" />
       <FactoryCamera
         ref={cameraRef}
         flashMode={flashMode}

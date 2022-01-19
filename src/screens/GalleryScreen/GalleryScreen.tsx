@@ -1,6 +1,5 @@
 import { FlatList, View } from 'native-base';
 import React, { FC, useEffect, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { RefreshControl } from 'react-native';
 import { PhotoItem } from '../../interfaces';
 import { useAppState } from '../../hooks';
@@ -37,7 +36,6 @@ export const GalleryScreen: FC<GalleryScreenProps<'Gallery'>> = ({
 
   return (
     <View px={0}>
-      <StatusBar style="dark" />
       <FlatList<PhotoItem>
         data={photos}
         keyExtractor={item => item.iscnId}

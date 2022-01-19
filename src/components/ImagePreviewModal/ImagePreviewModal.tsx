@@ -1,4 +1,13 @@
-import { Text, Image, Box, HStack, Avatar, Center, Spinner } from 'native-base';
+import {
+  useToast,
+  Text,
+  Image,
+  Box,
+  HStack,
+  Avatar,
+  Center,
+  Spinner,
+} from 'native-base';
 import { StyleSheet } from 'react-native';
 import React, { FC, useEffect, useState } from 'react';
 import {
@@ -21,6 +30,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { Layout } from '../../constants';
 
 dayjs.extend(relativeTime);
+
+const ANIMATION_DURATION = 250;
 
 export interface ImagePreviewModalProps {
   source?: string;
@@ -61,6 +72,8 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
   const [show, setShow] = useState(true);
   const [imageSource, setImageSource] = useState<string | undefined>();
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [loadStartedTime, setLoadStartedTime] = useState(0);
+  const toast = useToast();
   const clientHeight = Layout.window.height;
   const y = useSharedValue(clientHeight);
   const shortenAddress = fromAddress
@@ -110,9 +123,6 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
     return {
       opacity,
       transform: [
-        // {
-        //   translateY: y.value,
-        // },
         {
           scale,
         },
@@ -124,7 +134,7 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
   useEffect(() => {
     const timeout = setTimeout(() => {
       setImageSource(source);
-    }, 500);
+    }, ANIMATION_DURATION);
 
     return () => {
       clearTimeout(timeout);
@@ -134,14 +144,14 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
   useEffect(() => {
     if (show) {
       y.value = withTiming(0, {
-        duration: 250,
+        duration: ANIMATION_DURATION,
         easing: Easing.bezier(0.25, 0.1, 0.25, 1),
       });
     } else {
       y.value = withTiming(
         clientHeight,
         {
-          duration: 250,
+          duration: ANIMATION_DURATION,
           easing: Easing.bezier(0.25, 0.1, 0.25, 1),
         },
         () => {
@@ -151,6 +161,34 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show]);
+
+  // showing a info toast when it take to long to load the image
+  useEffect(() => {
+    const checkLoadedTime = () => {
+      console.debug('checkLoadedTime()');
+
+      const now = new Date().getTime();
+
+      if (now > loadStartedTime + 3000) {
+        toast.show({
+          title: 'Raw image size is too large, Please be patient!',
+          status: 'info',
+        });
+      }
+    };
+
+    const timeout = setTimeout(() => {
+      if (!isImageLoaded) {
+        checkLoadedTime();
+      }
+    }, 3000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadStartedTime, isImageLoaded]);
 
   return (
     <PanGestureHandler onGestureEvent={gestureHandler}>
@@ -173,6 +211,7 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
             flex={1}
             resizeMode="contain"
             source={{ uri: imageSource }}
+            onLoad={() => setLoadStartedTime(new Date().getTime())}
             onLoadEnd={() => setIsImageLoaded(true)}
           />
         ) : null}

@@ -17,7 +17,6 @@ import React, { useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { MaterialIcons } from '@expo/vector-icons';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { StatusBar } from 'expo-status-bar';
 import { useAppState } from '../hooks';
 import { LikecoinLogo, Modal } from '../components';
 
@@ -54,7 +53,6 @@ export function ProfileScreen() {
 
   return (
     <View flex={1}>
-      <StatusBar style="dark" />
       <VStack
         alignItems="center"
         flex={1}

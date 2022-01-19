@@ -2,6 +2,7 @@ import { SimpleLineIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { FC } from 'react';
 import { View, Icon, IIconProps, useToken } from 'native-base';
+import { useNavigation } from '@react-navigation/native';
 import { ProfileScreen } from '../screens';
 import { MainTabParamList } from '../types/navigation';
 import { TakePictureNavigator } from './TakePictureStack';
@@ -27,6 +28,13 @@ export function BottomTabNavigator() {
   return (
     <BottomTab.Navigator
       initialRouteName="Gallery"
+      screenListeners={({ route }) => ({
+        state: e => {
+          if (route.name === 'TakePicture') {
+            console.log(route);
+          }
+        },
+      })}
       screenOptions={{
         tabBarActiveTintColor: colorPrimary500,
       }}

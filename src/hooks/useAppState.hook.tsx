@@ -558,6 +558,11 @@ export const StateProvider: FC = ({ children }) => {
 
       dispatch({ type: ActionType.UPLOADING, picture, message });
 
+      toast.show({
+        title: 'Please be patient, it take a while to process and upload...',
+        status: 'info',
+      });
+
       const wallet = getNewWalletFromSeed(state.wallet.mnemonic, 'cosmos');
       const [account] = await state.wallet.getAccounts();
       const { privateKey, publicKey } = wallet;

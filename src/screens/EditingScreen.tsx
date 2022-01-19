@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import { StatusBar } from 'expo-status-bar';
 import {
   Text,
   FormControl,
@@ -12,6 +11,7 @@ import {
   HStack,
   useDisclose,
   useToast,
+  Container,
 } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -89,8 +89,7 @@ export function EditingScreen({
   }
 
   return (
-    <>
-      <StatusBar style="dark" />
+    <Container>
       <Image size="full" source={picture} />
 
       <Modal
@@ -158,6 +157,6 @@ export function EditingScreen({
           </Box>
         </VStack>
       </Modal>
-    </>
+    </Container>
   );
 }
