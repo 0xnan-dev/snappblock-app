@@ -1,6 +1,6 @@
 {
   "name": "snappblock",
-  "version": "1.0.22",
+  "version": "1.0.24",
   "license": "MIT",
   "main": "index.js",
   "scripts": {
@@ -14,8 +14,8 @@
     "publish:production": "APP_ENV=production expo publish --release-channel production",
     "publish:staging": "APP_ENV=staging expo publish --release-channel staging",
     "build:staging": "APP_ENV=staging eas build --profile preview --platform ios",
-    "build:production": "APP_ENV=staging eas build --profile production --platform ios",
-    "build:development": "APP_ENV=staging eas build --profile development --platform ios",
+    "build:production": "APP_ENV=production eas build --profile production --platform ios",
+    "build:development": "eas build --profile development --platform ios",
     "submit:ios": "eas submit --platform ios --latest"
   },
   "resolutions": {

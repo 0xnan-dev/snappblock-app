@@ -48,7 +48,9 @@ const ToolBar: FC<ComponentProps<typeof Flex> & { hasStatusBar?: boolean }> = ({
   );
 };
 
-export const CameraScreen: FC<TakePictureScreenProps> = ({ navigation }) => {
+export const CameraScreen: FC<TakePictureScreenProps<'Camera'>> = ({
+  navigation,
+}) => {
   const { setPicture } = useAppState();
   const [hasPermission, setHasPermission] = useState(false);
   const [flashMode, setFlashMode] = useState(Camera.Constants.FlashMode.off);
@@ -64,6 +66,14 @@ export const CameraScreen: FC<TakePictureScreenProps> = ({ navigation }) => {
   const [type, setType] = useState(Camera.Constants.Type.back);
   const FactoryCamera = Factory(Camera);
   const cameraRef = useRef<Camera>();
+
+  navigation.addListener('focus', () => {
+    if (hasPermission && isCameraReady) cameraRef.current?.resumePreview();
+  });
+
+  navigation.addListener('blur', () => {
+    if (hasPermission && isCameraReady) cameraRef.current?.pausePreview();
+  });
 
   useEffect(() => {
     (async () => {
