@@ -20,8 +20,6 @@ describe('cosmos-keys', () => {
       const hdWallet = await DirectSecp256k1HdWallet.fromMnemonic(MNEMONIC);
       const [account] = await hdWallet.getAccounts();
 
-      console.log(wallet);
-
       expect(wallet.cosmosAddress).toBe(account.address);
     });
   });

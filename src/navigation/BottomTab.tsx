@@ -28,13 +28,6 @@ export function BottomTabNavigator() {
   return (
     <BottomTab.Navigator
       initialRouteName="Gallery"
-      screenListeners={({ route }) => ({
-        state: e => {
-          if (route.name === 'TakePicture') {
-            console.log(route);
-          }
-        },
-      })}
       screenOptions={{
         tabBarActiveTintColor: colorPrimary500,
       }}

@@ -34,6 +34,7 @@ export default function App() {
   } else {
     return (
       <SafeAreaProvider>
+        <StatusBar style="dark" />
         <NativeBaseProvider colorModeManager={colorModeManger} theme={theme}>
           <IPFSProvider>
             <StateProvider>

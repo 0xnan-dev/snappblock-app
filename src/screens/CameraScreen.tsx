@@ -1,6 +1,5 @@
 import { Factory, Icon, Text, View, IconButton, Box, Flex } from 'native-base';
 import Constants from 'expo-constants';
-import { setStatusBarStyle } from 'expo-status-bar';
 import {
   SimpleLineIcons,
   MaterialIcons,
@@ -9,6 +8,7 @@ import {
 import React, { useEffect, ComponentProps, FC, useRef, useState } from 'react';
 import { Camera } from 'expo-camera';
 import { Dimensions, Platform } from 'react-native';
+import { useIsFocused, useNavigationState } from '@react-navigation/native';
 import { useAppState } from '../hooks';
 import { TakePictureScreenProps } from '../types';
 
@@ -56,6 +56,7 @@ export const CameraScreen: FC<TakePictureScreenProps<'Camera'>> = ({
   const [flashMode, setFlashMode] = useState(Camera.Constants.FlashMode.off);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [isRatioSet, setIsRatioSet] = useState(false);
+  const isFocused = useIsFocused();
   const [imagePadding, setImagePadding] = useState(0);
   const { height, width } = Dimensions.get('window');
   const screenRatio = height / width;
@@ -66,16 +67,6 @@ export const CameraScreen: FC<TakePictureScreenProps<'Camera'>> = ({
   const [type, setType] = useState(Camera.Constants.Type.back);
   const FactoryCamera = Factory(Camera);
   const cameraRef = useRef<Camera>();
-
-  navigation.addListener('focus', () => {
-    setStatusBarStyle('light');
-    if (hasPermission && isCameraReady) cameraRef.current?.resumePreview();
-  });
-
-  navigation.addListener('blur', () => {
-    setStatusBarStyle('dark');
-    if (hasPermission && isCameraReady) cameraRef.current?.pausePreview();
-  });
 
   useEffect(() => {
     (async () => {
@@ -197,70 +188,75 @@ export const CameraScreen: FC<TakePictureScreenProps<'Camera'>> = ({
 
   return (
     <View p={0}>
-      <FactoryCamera
-        ref={cameraRef}
-        flashMode={flashMode}
-        flex={1}
-        h="100%"
-        my={imagePadding}
-        ratio={ratio}
-        type={type}
-        useCamera2Api={true}
-        onCameraReady={handleOnCameraReady}
-      >
-        <ToolBar hasStatusBar maxHeight={`${Constants.statusBarHeight + 48}px`}>
-          <Box>
-            <StyledIconButton
-              disabled={!hasPermission}
-              icon={<Icon as={<MaterialIcons name={flashModeIcon} />} />}
-              onPress={() => handleOnFlashModeChange()}
-            />
-          </Box>
-        </ToolBar>
+      {isFocused ? (
+        <FactoryCamera
+          ref={cameraRef}
+          flashMode={flashMode}
+          flex={1}
+          h="100%"
+          my={imagePadding}
+          ratio={ratio}
+          type={type}
+          useCamera2Api={true}
+          onCameraReady={handleOnCameraReady}
+        >
+          <ToolBar
+            hasStatusBar
+            maxHeight={`${Constants.statusBarHeight + 48}px`}
+          >
+            <Box>
+              <StyledIconButton
+                disabled={!hasPermission}
+                icon={<Icon as={<MaterialIcons name={flashModeIcon} />} />}
+                onPress={() => handleOnFlashModeChange()}
+              />
+            </Box>
+          </ToolBar>
 
-        <Box backgroundColor="transparent" flex={1}>
-          {hasPermission === false ? (
-            <View
-              alignItems="center"
-              backgroundColor="rgba(0,0,0,0.75)"
-              justifyContent="center"
-            >
-              <Text color="white">No access to camera</Text>
-            </View>
-          ) : null}
-        </Box>
+          <Box backgroundColor="transparent" flex={1}>
+            {hasPermission === false ? (
+              <View
+                alignItems="center"
+                backgroundColor="rgba(0,0,0,0.75)"
+                justifyContent="center"
+              >
+                <Text color="white">No access to camera</Text>
+              </View>
+            ) : null}
+          </Box>
 
-        <ToolBar maxHeight="72px">
-          <Box>
-            <StyledIconButton
-              icon={<Icon as={<SimpleLineIcons name="picture" />} />}
-              onPress={() => {
-                handleBackToGallery();
-              }}
-            />
-          </Box>
-          <Box>
-            <StyledIconButton
-              _icon={{
-                size: '64px',
-                color: 'white',
-              }}
-              disabled={!hasPermission}
-              icon={
-                <Icon as={<MaterialCommunityIcons name="circle-slice-8" />} />
-              }
-              onPress={() => handleTakePicture()}
-            />
-          </Box>
-          <Box>
-            <StyledIconButton
-              disabled={!hasPermission}
-              icon={<Icon as={<SimpleLineIcons name="refresh" />} />}
-              onPress={() => handleOnTypeChange()}
-            />
-          </Box>
-        </ToolBar>
-      </FactoryCamera>
+          <ToolBar maxHeight="72px">
+            <Box>
+              <StyledIconButton
+                icon={<Icon as={<SimpleLineIcons name="picture" />} />}
+                onPress={() => {
+                  handleBackToGallery();
+                }}
+              />
+            </Box>
+            <Box>
+              <StyledIconButton
+                _icon={{
+                  size: '64px',
+                  color: 'white',
+                }}
+                disabled={!hasPermission}
+                icon={
+                  <Icon as={<MaterialCommunityIcons name="circle-slice-8" />} />
+                }
+                onPress={() => handleTakePicture()}
+              />
+            </Box>
+            <Box>
+              <StyledIconButton
+                disabled={!hasPermission}
+                icon={<Icon as={<SimpleLineIcons name="refresh" />} />}
+                onPress={() => handleOnTypeChange()}
+              />
+            </Box>
+          </ToolBar>
+        </FactoryCamera>
+      ) : null}
     </View>
   );
 };

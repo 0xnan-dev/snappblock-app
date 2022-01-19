@@ -35,7 +35,7 @@ export const GalleryScreen: FC<GalleryScreenProps<'Gallery'>> = ({
   }, [selectedItem]);
 
   return (
-    <View px={0}>
+    <View px={0} py={0}>
       <FlatList<PhotoItem>
         data={photos}
         keyExtractor={item => item.iscnId}
