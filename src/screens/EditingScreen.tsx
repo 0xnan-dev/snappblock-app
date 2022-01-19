@@ -9,9 +9,9 @@ import {
   Icon,
   VStack,
   HStack,
+  View,
   useDisclose,
   useToast,
-  Container,
 } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -89,8 +89,8 @@ export function EditingScreen({
   }
 
   return (
-    <Container>
-      <Image size="full" source={picture} />
+    <View flex={1} p={0}>
+      <Image alt="Photo" size="full" source={picture} />
 
       <Modal
         closeOnOverlayClick={false}
@@ -157,6 +157,6 @@ export function EditingScreen({
           </Box>
         </VStack>
       </Modal>
-    </Container>
+    </View>
   );
 }
