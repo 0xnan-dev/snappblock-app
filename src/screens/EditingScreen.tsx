@@ -9,9 +9,9 @@ import {
   Icon,
   VStack,
   HStack,
+  View,
   useDisclose,
   useToast,
-  View,
 } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -90,7 +90,7 @@ export function EditingScreen({
 
   return (
     <View flex={1} p={0}>
-      <Image h="100%" size="full" source={picture} w="100%" />
+      <Image alt="photo" h="100%" size="full" source={picture} w="100%" />
 
       <Modal
         closeOnOverlayClick={false}
