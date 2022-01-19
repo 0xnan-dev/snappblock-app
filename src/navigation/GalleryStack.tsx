@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { TransitionPresets } from '@react-navigation/stack';
 import * as React from 'react';
 import { GalleryScreen, PhotoScreen } from '../screens';
 
