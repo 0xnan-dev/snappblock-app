@@ -95,6 +95,7 @@ export function EditingScreen({
       <Modal
         closeOnOverlayClick={false}
         disabled={isLoading || isUploading}
+        isKeyboardDismissable={!(isLoading || isUploading)}
         okButtonProps={{
           isLoading: isLoading || isUploading,
           leftIcon: (

@@ -12,11 +12,11 @@ import {
   useToast,
   Pressable,
   useDisclose,
+  useClipboard,
 } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { MaterialIcons } from '@expo/vector-icons';
-import Clipboard from '@react-native-clipboard/clipboard';
 import { useAppState } from '../hooks';
 import { LikecoinLogo, Modal } from '../components';
 
@@ -25,12 +25,13 @@ export function ProfileScreen() {
   const [address, setAddress] = useState('Unknown address');
   const qrCodeModalProps = useDisclose();
   const toast = useToast();
+  const { onCopy } = useClipboard();
   const shortanAddress = `${address.slice(0, 12)}...${address.slice(-4)}`;
   const balanceStr = balance ? balance.shiftedBy(-9).toFixed(0, 0) : '0';
 
   const copyAddress = () => {
     if (address !== 'Unknown address') {
-      Clipboard.setString(address);
+      onCopy(address);
 
       toast.show({
         placement: 'top',
