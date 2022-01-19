@@ -10,7 +10,7 @@ module.exports = {
   ...config,
   transformer: {
     ...transformer,
-    // This was important for me
+    assetPlugins: ['expo-asset/tools/hashAssetFiles'],
     getTransformOptions: async () => ({
       transform: {
         experimentalImportSupport: false,

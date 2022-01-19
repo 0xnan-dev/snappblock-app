@@ -1,5 +1,7 @@
 import './shim';
 
+import 'expo-asset';
+
 import 'text-encoding';
 
 import 'react-native-gesture-handler';

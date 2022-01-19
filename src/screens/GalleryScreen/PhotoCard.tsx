@@ -55,7 +55,7 @@ export const PhotoCard: FC<PhotoCardProps> = ({
             alt={item.description}
             h={250}
             resizeMode="cover"
-            source={{ uri: item.photo }}
+            source={{ uri: item.previewPhoto }}
             w="100%"
             onLoadEnd={handleOnLoadEnd}
           />

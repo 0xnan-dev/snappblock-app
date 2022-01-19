@@ -1,12 +1,9 @@
 import React, { FC, createContext, useContext } from 'react';
-import * as Sentry from 'sentry-expo';
 import ExpoConstants from 'expo-constants';
 import axios from 'axios';
-import * as FileSystem from 'expo-file-system';
-import { Platform } from 'react-native';
 import { signMsg } from '../lib/sign-msg';
+import { captureException, captureMessage } from '../lib';
 
-const isDev = process.env.NODE_ENV !== 'production';
 const ipfsApiUrl = ExpoConstants.manifest?.extra?.ipfsApiUrl;
 const authMessage = ExpoConstants.manifest?.extra?.authMessage;
 
@@ -21,61 +18,18 @@ type AuthenticatonType = {
   expiresIn: string;
 };
 
-async function dataURItoBlob(dataURI: string) {
-  let myDataUri = dataURI;
-
-  if (Platform.OS === 'ios') {
-    const base64Response = await FileSystem.readAsStringAsync(dataURI, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-
-    myDataUri = `data:image/jpg;base64,${base64Response}`;
-  }
-
-  const response = await fetch(myDataUri);
-  const blob = await response.blob();
-
-  return blob;
-}
-
 export const IPFSContext = createContext<IPFSContextProps>({
   authorize: null as never,
   upload: null as never,
   download: null as never,
 });
 
-const captureException = (err: unknown, extra?: Record<string, string>) => {
-  const extraData = {
-    APP_ENV: process.env.APP_ENV,
-    NODE_ENV: process.env.NODE_ENV,
-  };
+async function dataURItoBlob(dataURI: string) {
+  const response = await fetch(dataURI);
+  const blob = await response.blob();
 
-  if (isDev) {
-    console.error(err, extra);
-
-    return;
-  }
-
-  if (Platform.OS === 'web') {
-    return Sentry.Browser.captureException(err, scope => {
-      scope.setExtras({
-        ...extraData,
-        ...extra,
-      });
-
-      return scope;
-    });
-  }
-
-  return Sentry.Native.captureException(err, scope => {
-    scope.setExtras({
-      ...extraData,
-      ...extra,
-    });
-
-    return scope;
-  });
-};
+  return blob;
+}
 
 export const IPFSProvider: FC = ({ children }) => {
   const authorize = async (
@@ -105,13 +59,33 @@ export const IPFSProvider: FC = ({ children }) => {
 
   const upload = async (fileUri: string, accessToken: string) => {
     const formData = new FormData();
-    const imageBlob = await dataURItoBlob(fileUri);
 
-    if (!imageBlob) {
-      throw new Error();
+    if (/^data/.test(fileUri)) {
+      const imageBlob = await dataURItoBlob(fileUri);
+
+      if (!imageBlob) {
+        throw new Error();
+      }
+
+      formData.append('file', imageBlob);
+    } else if (/^file/.test(fileUri)) {
+      const type = fileUri.substring(fileUri.lastIndexOf('.') + 1);
+
+      formData.append('file', {
+        uri: fileUri,
+        name: 'file',
+        type: `image/${type}`,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any);
+    } else {
+      throw new Error('Image type not supported');
     }
 
-    formData.append('file', imageBlob);
+    // send message to Sentry
+    captureMessage('upload()', {
+      apiUrl: `${ipfsApiUrl}/ipfs`,
+      fileUri: fileUri,
+    });
 
     const apiRes = await axios.post<string>(`${ipfsApiUrl}/ipfs`, formData, {
       headers: {

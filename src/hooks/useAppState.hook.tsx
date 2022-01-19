@@ -1,5 +1,4 @@
-import { useToast, useDisclose } from 'native-base';
-import * as Sentry from 'sentry-expo';
+import { useToast } from 'native-base';
 import ExpoConstants from 'expo-constants';
 import React, {
   FC,
@@ -16,15 +15,15 @@ import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import BigNumber from 'bignumber.js';
 import { BroadcastTxSuccess, StargateClient } from '@cosmjs/stargate';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
-import { Platform } from 'react-native';
 import {
   hashSha256,
   SecureStore,
   getNewWalletFromSeed,
   createISCNRecord,
   queryRecordsByFingerprint,
+  resizePhoto,
+  captureException,
 } from '../lib';
-import { ImagePreviewModal } from '../components';
 import { PhotoItem } from '../interfaces';
 import { useIPFS } from './ipfs.hook';
 
@@ -36,25 +35,11 @@ type StoredWalletType = {
   wallet: DirectSecp256k1HdWallet;
 };
 
-const isDev = process.env.NODE_ENV !== 'production';
 const cosmosRpc = ExpoConstants.manifest?.extra?.cosmosRpc;
 const cosmosDenom = ExpoConstants.manifest?.extra?.cosmosDenom;
 const ipfsNodeUrl = ExpoConstants.manifest?.extra?.ipfsNodeUrl;
 
-const captureException = (err: unknown) => {
-  if (isDev) {
-    console.error(err);
-
-    return;
-  }
-
-  if (Platform.OS === 'web') {
-    return Sentry.Browser.captureException(err);
-  }
-
-  return Sentry.Native.captureException(err);
-};
-
+// replace ipfs url to self hosted node url
 const toIpfsUrl = (url: string) => {
   if (/ipfs\.io/.test(url)) {
     return url.replace(/^https:\/\/ipfs\.io/, ipfsNodeUrl);
@@ -91,7 +76,7 @@ export interface AppStateContextProps extends AppStateType {
   ) => Promise<BroadcastTxSuccess | TxRaw | null>;
   setPicture: (data: CameraCapturedPicture) => void;
   reset: () => void;
-  setSelectedItem: (selectedItem: PhotoItem) => void;
+  setSelectedItem: (selectedItem: PhotoItem | null) => void;
 }
 
 const initialState: AppStateContextProps = {
@@ -274,7 +259,6 @@ export const StateProvider: FC = ({ children }) => {
   const toast = useToast();
   const { upload: ipfsUpload, authorize: ipfsAuthorize } = useIPFS();
   const [state, dispatch] = useReducer(reducer, initialState);
-  const imagePreviewModalProps = useDisclose();
 
   const createWallet = async () => {
     try {
@@ -468,6 +452,9 @@ export const StateProvider: FC = ({ children }) => {
             iscnId: data['@id'] as string,
             date: new Date(data.contentMetadata.recordTimestamp),
             photo: toIpfsUrl(data.contentMetadata.url),
+            previewPhoto: toIpfsUrl(
+              data.contentMetadata.previewUrl || data.contentMetadata.url
+            ),
             description: data.contentMetadata.description,
             fromAddress: author.entity['@id'],
             authorName: author.entity.name,
@@ -587,8 +574,12 @@ export const StateProvider: FC = ({ children }) => {
         throw new Error('Not able to get access token from IPFS API');
       }
 
+      // resize picture for preview
+      const previewPicture = await resizePhoto(picture);
+
       // update to IPFS node and get the CID
       const ipfsPath = await ipfsUpload(picture.uri, accessToken);
+      const previewIpfsPath = await ipfsUpload(previewPicture.uri, accessToken);
 
       // generate picture sha256 hash
       const hash = hashSha256(picture.uri);
@@ -628,6 +619,7 @@ export const StateProvider: FC = ({ children }) => {
         description: message,
         version: 1,
         url: `https://ipfs.io/ipfs/${ipfsPath}`,
+        previewUrl: `https://ipfs.io/ipfs/${previewIpfsPath}`,
         author: accountName,
         publisher: 'Snappblock',
         datePublished,
@@ -672,16 +664,6 @@ export const StateProvider: FC = ({ children }) => {
     init();
   }, []);
 
-  // open model when selected an item
-  useEffect(() => {
-    if (state.selectedItem !== null) {
-      imagePreviewModalProps.onOpen();
-    } else {
-      imagePreviewModalProps.onClose();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.selectedItem]);
-
   useEffect(() => {
     let interval = -1;
 
@@ -717,16 +699,6 @@ export const StateProvider: FC = ({ children }) => {
       }}
     >
       {children}
-      <ImagePreviewModal
-        description={state.selectedItem?.description}
-        fromAddress={state.selectedItem?.fromAddress}
-        publishedDate={state.selectedItem?.date}
-        source={state.selectedItem?.photo}
-        {...imagePreviewModalProps}
-        onClose={() => {
-          setSelectedItem(null);
-        }}
-      />
     </StateContext.Provider>
   );
 };

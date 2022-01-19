@@ -2,9 +2,10 @@ import { SimpleLineIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { FC } from 'react';
 import { View, Icon, IIconProps, useToken } from 'native-base';
-import { GalleryScreen, ProfileScreen } from '../screens';
+import { ProfileScreen } from '../screens';
 import { MainTabParamList } from '../types/navigation';
 import { TakePictureNavigator } from './TakePictureStack';
+import { GalleryNavigator } from './GalleryStack';
 
 const TabBarIcon: FC<
   IIconProps & {
@@ -31,11 +32,12 @@ export function BottomTabNavigator() {
       }}
     >
       <BottomTab.Screen
-        component={GalleryScreen}
+        component={GalleryNavigator}
         name="Gallery"
         options={{
           tabBarLabel: '',
           headerTitleAlign: 'center',
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <TabBarIcon color={color} name="layers" top={2} />
           ),

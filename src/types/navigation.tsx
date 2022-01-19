@@ -9,6 +9,7 @@ import {
   NavigatorScreenParams,
 } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { PhotoItem } from '../interfaces';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -25,12 +26,6 @@ export type TakePictureParamList = {
 
 export type MainStackScreenProps<Screen extends keyof MainStackParamList> =
   NativeStackScreenProps<MainStackParamList, Screen>;
-
-export type MainTabParamList = {
-  Gallery: undefined;
-  TakePicture: NavigatorScreenParams<TakePictureParamList> | undefined;
-  Profile: undefined;
-};
 
 export type MainTabScreenProps<Screen extends keyof MainTabParamList> =
   CompositeScreenProps<
@@ -49,10 +44,33 @@ export type MainStackParamList = {
   Main: NavigatorScreenParams<MainTabParamList> | undefined;
 };
 
-export type TakePictureScreenProps = CompositeScreenProps<
-  BottomTabScreenProps<MainTabParamList, 'TakePicture'>,
+export type TakePictureScreenProps<Screen extends keyof TakePictureParamList> =
   CompositeScreenProps<
-    NativeStackScreenProps<MainStackParamList>,
-    NativeStackScreenProps<TakePictureParamList>
-  >
->;
+    BottomTabScreenProps<MainTabParamList, 'TakePicture'>,
+    CompositeScreenProps<
+      NativeStackScreenProps<MainStackParamList>,
+      NativeStackScreenProps<TakePictureParamList, Screen>
+    >
+  >;
+
+export type GalleryParamList = {
+  Gallery: undefined;
+  Photo: {
+    photo: PhotoItem;
+  };
+};
+
+export type GalleryScreenProps<Screen extends keyof GalleryParamList> =
+  CompositeScreenProps<
+    CompositeScreenProps<
+      NativeStackScreenProps<GalleryParamList, Screen>,
+      NativeStackScreenProps<MainStackParamList>
+    >,
+    BottomTabScreenProps<MainTabParamList, 'Gallery'>
+  >;
+
+export type MainTabParamList = {
+  Gallery: NavigatorScreenParams<GalleryParamList> | undefined;
+  TakePicture: NavigatorScreenParams<TakePictureParamList> | undefined;
+  Profile: undefined;
+};

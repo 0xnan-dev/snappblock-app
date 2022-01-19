@@ -6,6 +6,7 @@ export interface ModalProps extends IModalProps {
   isLoading?: boolean;
   onClickCancel?: () => void;
   onClickOk?: () => void;
+  disabled?: boolean;
   okText?: string;
   cancelText?: string;
   okButtonProps?: ComponentProps<typeof Button>;
@@ -28,6 +29,7 @@ export const Modal: FC<ModalProps> = ({
   onClickCancel,
   onClickOk,
   title,
+  disabled,
   showFooter = true,
   okButtonProps,
   cancelButtonProps,
@@ -35,7 +37,7 @@ export const Modal: FC<ModalProps> = ({
 }) => (
   <BaseModal isOpen={isOpen} {...props}>
     <BaseModal.Content maxWidth="420px">
-      <BaseModal.CloseButton />
+      <BaseModal.CloseButton disabled={isLoading || disabled} />
       {title && <BaseModal.Header>{title}</BaseModal.Header>}
       <BaseModal.Body>{children}</BaseModal.Body>
       {showFooter && (
@@ -44,7 +46,7 @@ export const Modal: FC<ModalProps> = ({
             <Button
               variant="ghost"
               onPress={onClickCancel}
-              {...cancelButtonProps}
+              {...{ disabled: isLoading || disabled, ...cancelButtonProps }}
             >
               {cancelText}
             </Button>
@@ -52,7 +54,7 @@ export const Modal: FC<ModalProps> = ({
               colorScheme="primary"
               isLoading={isLoading}
               onPress={onClickOk}
-              {...okButtonProps}
+              {...{ disabled: isLoading || disabled, ...okButtonProps }}
             >
               {okText}
             </Button>

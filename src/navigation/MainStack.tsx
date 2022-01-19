@@ -10,8 +10,8 @@ export function MainNavigator() {
   return (
     <MainStack.Navigator>
       <MainStack.Screen
-        name="Main"
         component={BottomTabNavigator}
+        name="Main"
         options={{
           headerShown: false,
         }}

@@ -1,4 +1,4 @@
-import { Text, Image, Box, HStack, Avatar, Center } from 'native-base';
+import { Text, Image, Box, HStack, Avatar, Center, Spinner } from 'native-base';
 import { StyleSheet } from 'react-native';
 import React, { FC, useEffect, useState } from 'react';
 import {
@@ -23,14 +23,11 @@ import { Layout } from '../../constants';
 dayjs.extend(relativeTime);
 
 export interface ImagePreviewModalProps {
-  isOpen: boolean;
   source?: string;
   description?: string;
   fromAddress?: string;
   publishedDate?: Date;
-  onOpen: () => void;
   onClose: () => void;
-  onToggle: () => void;
 }
 
 const styles = StyleSheet.create({
@@ -46,16 +43,24 @@ const styles = StyleSheet.create({
   },
 });
 
+const LoadingImage: FC = () => (
+  <Box h="100%" left={0} position="absolute" top={0} w="100%">
+    <Center flex={1}>
+      <Spinner accessibilityLabel="Loading photo" size="lg" />
+    </Center>
+  </Box>
+);
+
 export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
   source,
   fromAddress,
   publishedDate,
   description,
-  isOpen,
   onClose,
 }) => {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
   const [imageSource, setImageSource] = useState<string | undefined>();
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const clientHeight = Layout.window.height;
   const y = useSharedValue(clientHeight);
   const shortenAddress = fromAddress
@@ -77,10 +82,10 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
       const delta = ctx.startY + event.translationY;
 
       if (delta > clientHeight / 4 || delta < -clientHeight / 4) {
-        runOnJS(onClose)();
+        runOnJS(setShow)(false);
+      } else {
+        y.value = withSpring(0);
       }
-
-      y.value = withSpring(0);
     },
   });
 
@@ -88,17 +93,26 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
     const scale = interpolate(
       y.value,
       [-clientHeight, 0, clientHeight],
-      [0.5, 1, 0.5],
+      [0.25, 1, 0.25],
+      {
+        extrapolateRight: Extrapolate.CLAMP,
+      }
+    );
+    const opacity = interpolate(
+      y.value,
+      [-clientHeight, 0, clientHeight],
+      [0, 1, 0],
       {
         extrapolateRight: Extrapolate.CLAMP,
       }
     );
 
     return {
+      opacity,
       transform: [
-        {
-          translateY: y.value,
-        },
+        // {
+        //   translateY: y.value,
+        // },
         {
           scale,
         },
@@ -118,29 +132,27 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
   }, [source]);
 
   useEffect(() => {
-    if (isOpen) {
-      setShow(true);
-
+    if (show) {
       y.value = withTiming(0, {
-        duration: 500,
+        duration: 250,
         easing: Easing.bezier(0.25, 0.1, 0.25, 1),
       });
     } else {
       y.value = withTiming(
         clientHeight,
         {
-          duration: 500,
+          duration: 250,
           easing: Easing.bezier(0.25, 0.1, 0.25, 1),
         },
         () => {
-          setShow(false);
+          onClose();
         }
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
+  }, [show]);
 
-  return show ? (
+  return (
     <PanGestureHandler onGestureEvent={gestureHandler}>
       <Animated.View style={[animatedStyle, styles.container]}>
         <Center p={4}>
@@ -155,18 +167,18 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
           </Text>
         </Center>
 
-        {/* XXX: added a empty box here to make <Image /> could correctly display */}
         {imageSource ? (
           <Image
             alt={description || 'No image'}
             flex={1}
             resizeMode="contain"
             source={{ uri: imageSource }}
+            onLoadEnd={() => setIsImageLoaded(true)}
           />
-        ) : (
-          <Box flex={1} />
-        )}
-        <Box p={4}>
+        ) : null}
+
+        {!isImageLoaded ? <LoadingImage /> : null}
+        <Box mb={8} p={4}>
           {description ? (
             <Text color="white" textAlign="center">
               {description}
@@ -175,5 +187,5 @@ export const ImagePreviewModal: FC<ImagePreviewModalProps> = ({
         </Box>
       </Animated.View>
     </PanGestureHandler>
-  ) : null;
+  );
 };

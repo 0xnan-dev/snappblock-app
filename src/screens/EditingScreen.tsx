@@ -26,7 +26,9 @@ export interface EditingFormType {
   message: string;
 }
 
-export function EditingScreen({ navigation }: TakePictureScreenProps) {
+export function EditingScreen({
+  navigation,
+}: TakePictureScreenProps<'Editing'>) {
   const { fetchPhotos, balance, picture, isLoading, upload } = useAppState();
   const toast = useToast();
   const [isUploading, setIsUploading] = useState(false);
@@ -92,13 +94,10 @@ export function EditingScreen({ navigation }: TakePictureScreenProps) {
       <Image size="full" source={picture} />
 
       <Modal
-        cancelButtonProps={{
-          disabled: isLoading || isUploading,
-        }}
         closeOnOverlayClick={false}
+        disabled={isLoading || isUploading}
         okButtonProps={{
           isLoading: isLoading || isUploading,
-          disabled: !isBalanceSufficent,
           leftIcon: (
             <Icon as={Ionicons} name="cloud-upload-outline" size="sm" />
           ),
