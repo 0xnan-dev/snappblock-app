@@ -1,6 +1,7 @@
 import { FlatList, View } from 'native-base';
 import React, { FC, useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import { RefreshControl } from 'react-native';
 import { PhotoItem } from '../../interfaces';
 import { useAppState } from '../../hooks';
 import { GalleryScreenProps } from '../../types';
@@ -15,13 +16,15 @@ export const GalleryScreen: FC<GalleryScreenProps<'Gallery'>> = ({
     useAppState();
   const [sequence, setSequence] = useState(0);
 
+  const refetch = async () => {
+    const { nextSequence } = await fetchPhotos(sequence);
+
+    setSequence(nextSequence);
+  };
+
   // fetch photos
   useEffect(() => {
-    (async function () {
-      const { nextSequence } = await fetchPhotos(sequence);
-
-      setSequence(nextSequence);
-    })();
+    refetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -38,6 +41,9 @@ export const GalleryScreen: FC<GalleryScreenProps<'Gallery'>> = ({
       <FlatList<PhotoItem>
         data={photos}
         keyExtractor={item => item.iscnId}
+        refreshControl={
+          <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+        }
         renderItem={({ item }) => (
           <MemorizedPhotoCard
             isLoading={isLoading}
