@@ -1,9 +1,11 @@
-import React, { useState, FC } from 'react';
+import React, { useState, FC, useRef } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import {
   VStack,
+  Box,
+  Text,
   Button,
   View,
   TextArea,
@@ -26,19 +28,21 @@ interface EnterSeedPhraseFormType {
 const HideIcon: FC = () => (
   <Icon
     as={<MaterialIcons name="visibility-off" />}
-    size={5}
     color="muted.400"
+    size={5}
   />
 );
 
 const ShowIcon: FC = () => (
-  <Icon as={<MaterialIcons name="visibility" />} size={5} color="muted.400" />
+  <Icon as={<MaterialIcons name="visibility" />} color="muted.400" size={5} />
 );
 
 export const RestoreWalletScreen: FC<
   StackScreenProps<WelcomeStackParamList, 'RestoreWallet'>
 > = () => {
   const { restoreWallet, storeWallet, isLoading } = useAppState();
+  const passwordInputRef = useRef<any>();
+  const seedPhraseTextAreaRef = useRef<any>();
   const [showPassword, setShowPassword] = useState(false);
   const formSchema = Yup.object().shape({
     walletName: Yup.string()
@@ -68,95 +72,115 @@ export const RestoreWalletScreen: FC<
 
   return (
     <View>
-      <VStack space={4}>
-        <FormControl isRequired isInvalid={Boolean(errors.walletName)}>
-          <Controller
-            control={control}
-            name="walletName"
-            render={({ field: { onChange, value } }) => (
-              <Input
-                defaultValue={value}
-                type="string"
-                onChangeText={val => onChange(val)}
-                placeholder="Wallet Name"
-              />
+      <Box flex={1}>
+        <VStack space={4}>
+          <FormControl isInvalid={Boolean(errors.walletName)} isRequired>
+            <Controller
+              control={control}
+              name="walletName"
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  autoFocus
+                  defaultValue={value}
+                  placeholder="Wallet Name"
+                  returnKeyType="next"
+                  type="string"
+                  onChangeText={val => onChange(val)}
+                  onSubmitEditing={() => {
+                    passwordInputRef?.current?.focus();
+                  }}
+                />
+              )}
+            />
+            {errors.password && (
+              <FormControl.ErrorMessage
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {errors.password.message}
+              </FormControl.ErrorMessage>
             )}
-          />
-          {errors.password && (
-            <FormControl.ErrorMessage
-              leftIcon={<WarningOutlineIcon size="xs" />}
-            >
-              {errors.password.message}
-            </FormControl.ErrorMessage>
-          )}
-        </FormControl>
+          </FormControl>
 
-        <FormControl isRequired isInvalid={Boolean(errors.password)}>
-          <Controller
-            control={control}
-            name="password"
-            render={({ field: { onChange, value } }) => (
-              <Input
-                defaultValue={value}
-                type={showPassword ? 'text' : 'password'}
-                onChangeText={val => onChange(val)}
-                InputRightElement={
-                  <Button
-                    ml={1}
-                    roundedLeft={0}
-                    roundedRight="sm"
-                    variant="unstyled"
-                    onPress={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <ShowIcon /> : <HideIcon />}
-                  </Button>
-                }
-                placeholder="Password"
-              />
+          <FormControl isInvalid={Boolean(errors.password)} isRequired>
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  defaultValue={value}
+                  InputRightElement={
+                    <Button
+                      mr={2}
+                      roundedLeft={0}
+                      roundedRight="sm"
+                      size={5}
+                      variant="unstyled"
+                      onPress={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <ShowIcon /> : <HideIcon />}
+                    </Button>
+                  }
+                  placeholder="Password"
+                  returnKeyType="next"
+                  type={showPassword ? 'text' : 'password'}
+                  onChangeText={val => onChange(val)}
+                  onSubmitEditing={() => {
+                    seedPhraseTextAreaRef?.current?.focus();
+                  }}
+                />
+              )}
+            />
+            {errors.password && (
+              <FormControl.ErrorMessage
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {errors.password.message}
+              </FormControl.ErrorMessage>
             )}
-          />
-          {errors.password && (
-            <FormControl.ErrorMessage
-              leftIcon={<WarningOutlineIcon size="xs" />}
-            >
-              {errors.password.message}
-            </FormControl.ErrorMessage>
-          )}
-        </FormControl>
+          </FormControl>
 
-        <FormControl isRequired isInvalid={Boolean(errors.seedPhrase)}>
-          <FormControl.Label>Enter a 24-word seed phrase</FormControl.Label>
-          <Controller
-            control={control}
-            name="seedPhrase"
-            render={({ field: { onChange, value } }) => (
-              <TextArea
-                placeholder=""
-                onChangeText={val => onChange(val)}
-                defaultValue={value}
-                numberOfLines={4}
-                autoCapitalize="none"
-                secureTextEntry={true}
-              />
+          <FormControl isInvalid={Boolean(errors.seedPhrase)} isRequired>
+            <FormControl.Label>Enter a 24-word seed phrase</FormControl.Label>
+            <Controller
+              control={control}
+              name="seedPhrase"
+              render={({ field: { onChange, value } }) => (
+                <TextArea
+                  autoCapitalize="none"
+                  defaultValue={value}
+                  mb={2}
+                  numberOfLines={4}
+                  placeholder=""
+                  returnKeyType="done"
+                  secureTextEntry={true}
+                  onChangeText={val => onChange(val)}
+                  onSubmitEditing={handleSubmit(handleImportSeedSubmit)}
+                />
+              )}
+            />
+            <Text color="gray.500" fontSize="sm">
+              Separated by space character
+            </Text>
+            {errors.seedPhrase && (
+              <FormControl.ErrorMessage
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {errors.seedPhrase.message}
+              </FormControl.ErrorMessage>
             )}
-          />
-          {errors.seedPhrase && (
-            <FormControl.ErrorMessage
-              leftIcon={<WarningOutlineIcon size="xs" />}
-            >
-              {errors.seedPhrase.message}
-            </FormControl.ErrorMessage>
-          )}
-        </FormControl>
+          </FormControl>
+        </VStack>
+      </Box>
 
+      <Box>
         <Button
+          colorScheme="primary"
           isLoading={isLoading}
           onPress={handleSubmit(handleImportSeedSubmit)}
-          colorScheme="primary"
         >
           Submit
         </Button>
-      </VStack>
+      </Box>
     </View>
   );
 };

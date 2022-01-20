@@ -12,7 +12,7 @@ export function GalleryNavigator() {
       <Gallery.Screen
         component={GalleryScreen}
         name="Gallery"
-        options={{ headerTitleAlign: 'center' }}
+        options={{ title: 'Gallery', headerTitleAlign: 'center' }}
       />
       <Gallery.Screen
         component={PhotoScreen}

@@ -8,7 +8,7 @@ import {
 import React, { useEffect, ComponentProps, FC, useRef, useState } from 'react';
 import { Camera } from 'expo-camera';
 import { Dimensions, Platform } from 'react-native';
-import { useIsFocused, useNavigationState } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import { useAppState } from '../hooks';
 import { TakePictureScreenProps } from '../types';
 
@@ -67,14 +67,6 @@ export const CameraScreen: FC<TakePictureScreenProps<'Camera'>> = ({
   const [type, setType] = useState(Camera.Constants.Type.back);
   const FactoryCamera = Factory(Camera);
   const cameraRef = useRef<Camera>();
-
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-
-      setHasPermission(status === 'granted');
-    })();
-  }, []);
 
   const prepareRatio = async () => {
     let desiredRatio = '4:3'; // Start with the system default
@@ -172,6 +164,16 @@ export const CameraScreen: FC<TakePictureScreenProps<'Camera'>> = ({
     }
   };
 
+  // get permissions
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+
+      setHasPermission(status === 'granted');
+    })();
+  }, []);
+
+  // update flash mode state
   useEffect(() => {
     if (flashMode === Camera.Constants.FlashMode.auto) {
       setFlashModeIcon('flash-auto');

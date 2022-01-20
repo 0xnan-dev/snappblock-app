@@ -115,9 +115,10 @@ export const EncryptWalletModal: FC<EncryptWalletModalProps> = ({
               defaultValue={value}
               InputRightElement={
                 <Button
-                  ml={1}
+                  mr={5}
                   roundedLeft={0}
                   roundedRight="sm"
+                  size={5}
                   variant="unstyled"
                   onPress={() => setShowPassword(!showPassword)}
                 >
@@ -152,9 +153,10 @@ export const EncryptWalletModal: FC<EncryptWalletModalProps> = ({
               defaultValue={value}
               InputRightElement={
                 <Button
-                  ml={1}
+                  mr={5}
                   roundedLeft={0}
                   roundedRight="sm"
+                  size={5}
                   variant="unstyled"
                   onPress={() => setShowPasswordConfirm(!showPasswordConfirm)}
                 >

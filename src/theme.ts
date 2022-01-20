@@ -47,6 +47,19 @@ export const theme = extendTheme({
           fontWeight: 'bold',
         },
       },
+      defaultProps: {
+        size: 'lg',
+      },
+    },
+    Input: {
+      defaultProps: {
+        size: 'xl',
+      },
+    },
+    TextArea: {
+      defaultProps: {
+        size: 'xl',
+      },
     },
   },
   config: {

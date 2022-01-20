@@ -2,7 +2,6 @@ import { SimpleLineIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { FC } from 'react';
 import { View, Icon, IIconProps, useToken } from 'native-base';
-import { useNavigation } from '@react-navigation/native';
 import { ProfileScreen } from '../screens';
 import { MainTabParamList } from '../types/navigation';
 import { TakePictureNavigator } from './TakePictureStack';
@@ -14,7 +13,9 @@ const TabBarIcon: FC<
     color: string;
   }
 > = props => {
-  return <Icon as={<SimpleLineIcons />} size={28} {...props} />;
+  return (
+    <Icon as={<SimpleLineIcons name={props.name} />} size={28} {...props} />
+  );
 };
 
 export const BottomTab = createBottomTabNavigator<MainTabParamList>();
@@ -40,7 +41,7 @@ export function BottomTabNavigator() {
           headerTitleAlign: 'center',
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <TabBarIcon color={color} name="layers" top={2} />
+            <TabBarIcon color={color} ml="100%" name="layers" top={2} />
           ),
         }}
       />
@@ -56,20 +57,18 @@ export function BottomTabNavigator() {
           },
           tabBarIcon: () => (
             <View
-              // eslint-disable-next-line react-native/no-inline-styles
-              style={{
-                top: -24,
-                position: 'absolute',
-                borderColor: colorPrimary200,
-                borderWidth: 2,
-                borderStyle: 'solid',
-                height: 64,
-                width: 64,
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: 64,
-                backgroundColor: colorPrimary500,
-              }}
+              alignItems="center"
+              backgroundColor="primary.500"
+              borderColor={colorPrimary200}
+              borderRadius="full"
+              borderStyle="solid"
+              borderWidth={2}
+              h={16}
+              justifyContent="center"
+              ml="100%"
+              position="absolute"
+              top={-24}
+              w={16}
             >
               <TabBarIcon color="white" name="camera" />
             </View>
@@ -84,7 +83,7 @@ export function BottomTabNavigator() {
           tabBarLabel: '',
           headerTitleAlign: 'center',
           tabBarIcon: ({ color }) => (
-            <TabBarIcon color={color} name="settings" top={2} />
+            <TabBarIcon color={color} ml="100%" name="settings" top={2} />
           ),
         }}
       />

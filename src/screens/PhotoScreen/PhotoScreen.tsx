@@ -14,7 +14,8 @@ export const PhotoScreen: FC<
   const selectedItem = route.params.photo;
 
   const handlePreviewModalClose = () => {
-    navigation.goBack();
+    // XXX: navigation.goBack() doesnt work in IOS
+    navigation.navigate('Gallery');
   };
 
   return (

@@ -73,9 +73,10 @@ export const UnlockModal: FC<UnlockModalProps> = ({
               defaultValue={value}
               InputRightElement={
                 <Button
-                  ml={1}
+                  mr={2}
                   roundedLeft={0}
                   roundedRight="sm"
+                  size={5}
                   variant="unstyled"
                   onPress={() => {
                     setShowPassword(!showPassword);
